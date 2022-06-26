@@ -128,5 +128,28 @@ if (!$chunks || $chunk == $chunks - 1) {
     rename("{$filePath}.part", $filePath);
 }
 
+// Rebuild the file - WORK IN PROGRESS
+$tmp_name = $_FILES['file']['tmp_name'];
+$filename = $_FILES['file']['name'];
+$num = $_POST['chunk'];
+$num_chunks = $_POST['chunks'];
+
+move_uploaded_file($tmp_name, $filePath.$num);
+
+if ($num === $num_chunks) {
+    for ($i = 1; $i <= $num_chunks; $i++) {
+
+        $file = fopen($filePath.$i, 'rb');
+        $buff = fread($file, 2097152);
+        fclose($file);
+
+        $final = fopen($filePath, 'ab');
+        $write = fwrite($final, $buff);
+        fclose($final);
+
+        unlink($filePath.$i);
+    }
+}
+
 // Return Success JSON-RPC response
  die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');

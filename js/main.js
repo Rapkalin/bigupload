@@ -8,6 +8,7 @@ var uploader = new plupload.Uploader({
   chunk_size : '10mb',
 	send_chunk_number : true,
 	urlstream_upload : true,
+	max_retries: 3,
 	filters : {
 		mime_types: [
 			{
@@ -34,6 +35,7 @@ var uploader = new plupload.Uploader({
 		PostInit: function () {
 
 //      document.getElementById('filelist').innerHTML = '';
+			// Open the window to select and upload the files
 			document.getElementById('uploadfiles').onclick = function () {
 				console.log("2- Post init before start");
 				uploader.start();
@@ -41,6 +43,7 @@ var uploader = new plupload.Uploader({
 			};
 		},
 
+		// Display the files in the following div
 		FilesAdded: function (up, files) {
 			plupload.each(files, function (file) {
 				console.log("1- fileadded test", file);
@@ -48,17 +51,20 @@ var uploader = new plupload.Uploader({
 			});
 		},
 
+		// Display progress in console and DOM
 		UploadProgress: function (up, file) {
 			console.log("upload progress", file);
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 		},
 
+		// Handle errors
 		Error: function (up, err) {
 			document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
 		},
 
+		// Display in console and file are uploaded
 		FileUploaded: function (up, file, info) {
-			console.log("3- file uploaded", file);
+			console.log("4- file uploaded", file);
 			console.log(info);
 			var response = jQuery.parseJSON(info.response);
 			if (response.st == "ok") {
@@ -66,16 +72,15 @@ var uploader = new plupload.Uploader({
 			}
 		},
 
+		// Doesn't fire :(
 		ChunkUploaded: function (up, file, info) {
-			console.log("chunkloaded test");
+			console.log("3-  Chunk uploaded: ", file);
+			console.log("3- chunk info", info)
 		}
 
 	}
 
 });
-// uploader.bind('ChunkUploaded', function(up, file, info) {
-//	console.log("ChunkUploaded successful: ", file);
-//  });
 
 
 uploader.init();
