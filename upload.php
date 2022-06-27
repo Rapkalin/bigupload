@@ -115,12 +115,12 @@ if (!empty($_FILES)) {
     }
 }
 
-    while ($buff = fread($in, 4096)) {
+    while ($buff = fread($in, 21480752)) {
         fwrite($out, $buff);
     }
 
-@fclose($out);
-@fclose($in);
+//@fclose($out);
+//@fclose($in);
 
 // Check if file has been uploaded
 if (!$chunks || $chunk == $chunks - 1) {
@@ -130,17 +130,37 @@ if (!$chunks || $chunk == $chunks - 1) {
 
 // Rebuild the file - WORK IN PROGRESS
 $tmp_name = $_FILES['file']['tmp_name'];
-$filename = $_FILES['file']['name'];
+// $filename = $_FILES['file']['name'];
 $num = $_POST['chunk'];
 $num_chunks = $_POST['chunks'];
+
+
+// On crée un nouveau fichier vide préfixé d'un uniqId final_xxx s'il n'existe pas
+if (!isset($finalFile))  {
+    $finalFile = fopen("final_file.mp4", "w");
+    move_uploaded_file($finalFile, $targetDir."/");
+}
+// On range l'URL de chaque chunk file dans un tableau
+$chunkedFilesUrls = [];
+$chunkedFilesUrls[] = $fileName;
+var_dump($chunkedFilesUrls);
+// On ouvre chaque chunk file
+//fopen($chunkFile)
+// on append chaque contenu de chunk dans le fichier final_xxx et on ferme chaque chunk apres utilisation
+//fwrite(...)
+//fclose($chunkFile)
+// On ferme le fichier final
+//fclose($finalFinale)
 
 move_uploaded_file($tmp_name, $filePath.$num);
 
 if ($num === $num_chunks) {
     for ($i = 1; $i <= $num_chunks; $i++) {
+        echo "file <br>";
+        echo $file;
 
         $file = fopen($filePath.$i, 'rb');
-        $buff = fread($file, 2097152);
+        $buff = fread($file, 21480752);
         fclose($file);
 
         $final = fopen($filePath, 'ab');
@@ -150,6 +170,10 @@ if ($num === $num_chunks) {
         unlink($filePath.$i);
     }
 }
+
+@fclose($out);
+@fclose($in);
+
 
 // Return Success JSON-RPC response
  die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');
