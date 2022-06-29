@@ -6,28 +6,21 @@ var uploader = new plupload.Uploader({
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
   chunk_size : '10mb',
-	send_chunk_number : true,
-	urlstream_upload : true,
+//	send_chunk_number : true,
+// 	urlstream_upload : true,
+	multipart : true,
 	max_retries: 3,
-	filters : {
+/*	filters : {
 		mime_types: [
 			{
 				title : "Video files",
 				extensions : "mp4"
 			}
 		]
-	},
+	},*/
 //	flash_swf_url : '../js/Moxie.swf',
 //	silverlight_xap_url : '../js/Moxie.xap',
 //  multipart_params : {directory : 'test'},
-
-//	filters : {
-//		max_file_size : '50mb',
-//		mime_types: [
-//			{title : "Image files", extensions : "jpg,gif,png"},
-//			{title : "Zip files", extensions : "zip"}
-//		]
-//	},
 
 
   init: {
@@ -72,7 +65,7 @@ var uploader = new plupload.Uploader({
 			}
 		},
 
-		// Doesn't fire :(
+		// Display info on each part/chunk uploaded
 		ChunkUploaded: function (up, file, info) {
 			console.log("3-  Chunk uploaded: ", file);
 			console.log("3- chunk info", info)
