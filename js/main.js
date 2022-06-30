@@ -4,8 +4,6 @@ var uploader = new plupload.Uploader({
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
   chunk_size : '50mb',
-	send_chunk_number : true,
- 	urlstream_upload : true,
 	multipart : false,
 	max_retries: 3,
 
