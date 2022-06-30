@@ -1,1 +1,5 @@
 uploads/*
+.DS_Store
+vendor
+vendor/*
+website/app/uploads/*
