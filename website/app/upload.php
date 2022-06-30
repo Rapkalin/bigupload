@@ -43,8 +43,8 @@ $cleanupTargetDir = true; // Remove old files
 $maxFileAge = 5 * 3600; // Temp file age in seconds
 
 // Create target dir
-if (!file_exists($targetDir)) {
-    mkdir($targetDir);
+if (!file_exists($targetDir) && !mkdir($targetDir) && !is_dir($targetDir)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $targetDir));
 }
 
 // Get a file name
@@ -53,7 +53,7 @@ if (isset($_REQUEST["name"])) {
 } elseif (!empty($_FILES)) {
     $fileName = $_FILES["file"]["name"];
 } else {
-    $fileName = uniqid("file_");
+    $fileName = uniqid("file_", TRUE);
 }
 
 // Create path to file
@@ -72,12 +72,12 @@ if ($cleanupTargetDir) {
     $file = readdir($dir);
 
     if ($file != "." && $file != ".." && $file != ".DS_Store") {
-        while ($file !== false) {
+        while ($file = true) {
             $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
 
 
             // If temp file is current file proceed to the next
-            if ($tmpfilePath == $filePath) {
+            if ($tmpfilePath === $filePath) {
                 continue;
             }
 
