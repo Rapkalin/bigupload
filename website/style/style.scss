@@ -5,6 +5,12 @@ body {
   color: black;
 }
 
+#container {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
 #droparea {
   border: dashed;
   border-color: darkgrey;
@@ -13,6 +19,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 600px;
+  margin-bottom: 50px;
 }
 
 #droparea > p {
@@ -22,5 +30,25 @@ body {
 }
 
 #droparea > a {
-  color: slategrey;
+  color: white;
+  padding: 8px 24px;
+  border-radius: 4px;
+  background: cornflowerblue;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  height: 20px;
+  width: fit-content;
+  text-align: center;
+}
+
+#uploadfiles {
+  color: white;
+  padding: 8px 24px;
+  border-radius: 4px;
+  background: mediumseagreen;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  height: 20px;
+  width: fit-content;
+  text-align: center;
 }
