@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'pickfiles', // you can pass an id...
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
-  chunk_size : '50mb',
+  chunk_size : '200mb',
 	multipart : false,
 	max_retries: 3,
 
@@ -37,7 +37,7 @@ var uploader = new plupload.Uploader({
 			document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
 		},
 
-		// Display in console and file are uploaded
+		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
 			console.log("4- file uploaded", file);
 			console.log(info);
@@ -47,7 +47,7 @@ var uploader = new plupload.Uploader({
 			}
 		},
 
-		// Display info on each part/chunk uploaded
+		// Display info when each part/chunk is uploaded
 		ChunkUploaded: function (up, file, info) {
 			console.log("3-  Chunk uploaded: ", file);
 			console.log("3- chunk info", info)
