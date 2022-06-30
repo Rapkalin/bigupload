@@ -10,24 +10,12 @@ var uploader = new plupload.Uploader({
  	urlstream_upload : true,
 	multipart : false,
 	max_retries: 3,
-/*	filters : {
-		mime_types: [
-			{
-				title : "Video files",
-				extensions : "mp4"
-			}
-		]
-	},*/
-//	flash_swf_url : '../js/Moxie.swf',
-//	silverlight_xap_url : '../js/Moxie.xap',
   multipart_params : {directory : 'test'},
 
 
   init: {
 
 		PostInit: function () {
-
-//      document.getElementById('filelist').innerHTML = '';
 			// Open the window to select and upload the files
 			document.getElementById('uploadfiles').onclick = function () {
 				console.log("2- Post init before start");
@@ -75,11 +63,6 @@ var uploader = new plupload.Uploader({
 
 });
 
-
 uploader.init();
-
-/*uploader.bind('BeforeChunkUpload', function(up, file) {
-  console.log("Before Chunk Upload");
-});*/
 
 
