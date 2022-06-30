@@ -6,9 +6,9 @@ var uploader = new plupload.Uploader({
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
   chunk_size : '10mb',
-//	send_chunk_number : true,
-// 	urlstream_upload : true,
-	multipart : true,
+	send_chunk_number : true,
+ 	urlstream_upload : true,
+	multipart : false,
 	max_retries: 3,
 /*	filters : {
 		mime_types: [
@@ -20,7 +20,7 @@ var uploader = new plupload.Uploader({
 	},*/
 //	flash_swf_url : '../js/Moxie.swf',
 //	silverlight_xap_url : '../js/Moxie.xap',
-//  multipart_params : {directory : 'test'},
+  multipart_params : {directory : 'test'},
 
 
   init: {

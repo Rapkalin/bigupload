@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
 //$targetDir = 'uploads';
 // $cleanupTargetDir = true; // Remove old files
-$maxFileAge = 10; // Temp file age in seconds
+$maxFileAge = 5 * 3600; // Temp file age in seconds
 
 // Create target dir
 if (!file_exists($targetDir)) {
@@ -137,27 +137,40 @@ if (!$chunks || $chunk === $chunks - 1) {
     if ($chunk === $chunks - 1) {
 
         // Scan the dir and retrieve all the temp files including
-        // the last file in which we want to append the data of the other temp files.
+        // the last/final file in which we want to append the data of the other temp files.
         $files = scandir($targetDir);
         $finalFile = $files[count($files) - 1];
         $finalFilePath = $targetDir . "/" . $finalFile;
         $finalFileOpen = fopen($finalFilePath, "ab");
+        $file_info = pathinfo($finalFilePath);
+        $file_extension = $file_info['extension'];
+        switch ($file_extension) {
+            case 'mp4': $ctype= 'video/mp4'; break;
+        }
 
-        // We add the data of each file in the last file.
+        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+        header("Cache-Control: no-store, no-cache, must-revalidate");
+        header("Cache-Control: post-check=0, pre-check=0", false);
+        header("Pragma: no-cache");
+        header('Content-Type: ' . $ctype);
+
+        // We add the data of each file in the final file.
         foreach($files as $file) {
             if ($file !== "." && $file !== ".." && $file !== $finalFile) {
                 // Appending all the temp files in one final file
                 $filePath = $targetDir . "/" . $file;
                 $ChunkPath = fopen($filePath, "rb");
-                $ChunkFile = fread($ChunkPath, 21480752);
-                fwrite($finalFileOpen, $ChunkFile);
+                while ($ChunkFile = fread($ChunkPath, filesize($filePath))) {
+                    fwrite($finalFileOpen, $ChunkFile);
+                }
                 fclose($ChunkPath);
                 // We delete the temp files
-                // unlink($ChunksPath);
+                unlink($ChunksPath);
             }
         }
 
-        // We close the last file.
+        // We close the final file.
         fclose($finalFileOpen);
     }
 
