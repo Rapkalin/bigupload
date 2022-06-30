@@ -12,7 +12,7 @@ var uploader = new plupload.Uploader({
 		// Display the files in the following div
 		FilesAdded: function (up, files) {
 			plupload.each(files, function (file) {
-				console.log("1- fileadded test", file);
+				console.log("1- Fileadded", file);
 				document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
 			});
 		},
@@ -28,19 +28,19 @@ var uploader = new plupload.Uploader({
 
 		// Display progress in console and DOM
 		UploadProgress: function (up, file) {
-			console.log("upload progress", file);
+			console.log("Upload progress", file);
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 		},
 
 		// Display info when each part/chunk is uploaded
 		ChunkUploaded: function (up, file, info) {
-			console.log("3-  Chunk uploaded: ", file);
+			console.log("3- Chunk uploaded: ", file);
 			console.log("3- chunk info", info)
 		},
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			console.log("4- file uploaded", file);
+			console.log("4- File uploaded", file);
 			console.log(info);
 			var response = jQuery.parseJSON(info.response);
 			if (response.st == "ok") {

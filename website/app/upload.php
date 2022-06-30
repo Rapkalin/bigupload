@@ -44,7 +44,7 @@ $maxFileAge = 5 * 3600; // Temp file age in seconds
 
 // Create target dir
 if (!file_exists($targetDir)) {
-    @mkdir($targetDir);
+    mkdir($targetDir);
 }
 
 // Get a file name
@@ -83,7 +83,7 @@ if ($cleanupTargetDir) {
 
             // Remove temp file if it is older than the max age and is not the current file
             if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $maxFileAge)) {
-                @unlink($tmpfilePath);
+                unlink($tmpfilePath);
             }
         }
 
@@ -117,8 +117,8 @@ while ($buff = fread($in, 4096)) {
     fwrite($out, $buff);
 }
 
-@fclose($out);
-@fclose($in);
+fclose($out);
+fclose($in);
 
 // Check if file has been uploaded
 if (!$chunks || $chunk === $chunks - 1) {
