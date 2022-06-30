@@ -1,0 +1,57 @@
+body {
+  background: white;
+  font-family: Verdana;
+  font-size: 13px;
+  color: black;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#droparea {
+  border: dashed;
+  border-color: darkgrey;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 600px;
+  margin-bottom: 50px;
+}
+
+#droparea > p {
+  color: darkgrey;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#droparea > a {
+  color: white;
+  padding: 8px 24px;
+  border-radius: 4px;
+  background: cornflowerblue;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  height: 20px;
+  width: fit-content;
+  text-align: center;
+}
+
+#uploadbutton {
+  padding: 8px 24px;
+  border-radius: 4px;
+  background: mediumseagreen;
+  transition: background 0.3s ease;
+  height: 20px;
+  width: fit-content;
+  text-align: center;
+}
+
+#uploadbutton > a {
+  text-decoration: none;
+  color: white;
+}

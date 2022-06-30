@@ -4,6 +4,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 
 <title>Plupload - Raph test example</title>
+    <link rel="stylesheet" href="website/style/style.scss">
 
 <!-- production -->
 <script type="application/javascript" src="vendor/components/jquery/jquery.js"></script>
@@ -14,22 +15,26 @@
 -->
 
 </head>
-<body style="font: 13px Verdana; background: #eee; color: #333">
+<body>
 
-<h1>This is a test to use Plupload</h1>
+<h1>UPLOAD AREA</h1>
+<p>Choose the file you want to upload and let the magic happens :)</p>
 
-<p>Shows you how to use the core plupload API.</p>
 <div id="filelist"></div>
-<br />
+<br/>
 
 <div id="container">
-    <a id="pickfiles" href="javascript:;">[Select files]</a>
-    <a id="uploadfiles" href="javascript:;">[Upload files]</a>
+    <div id="droparea">
+        <p>Drop your files here</p>
+        <a id="browsefiles" href="javascript:;">or Select your files</a>
+    </div>
+    <div id="uploadbutton">
+        <a id="uploadfiles" href="javascript:;">Upload your files</a>
+    </div>
 </div>
 
-<br />
+<br/>
 <pre id="console"></pre>
-
 
 <script type="text/javascript" src="website/js/main.js"></script>
 </body>
