@@ -16,11 +16,11 @@
 
 
 // Make sure file is not cached (as it happens for example on iOS devices)
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-header("Cache-Control: no-store, no-cache, must-revalidate");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
+//header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+//header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+//header("Cache-Control: no-store, no-cache, must-revalidate");
+//header("Cache-Control: post-check=0, pre-check=0", false);
+//header("Pragma: no-cache");
 
 /*
 // Support CORS
@@ -43,7 +43,6 @@ $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
 $cleanupTargetDir = true; // Remove old files
 $maxFileAge = 5 * 3600; // Temp file age in seconds
 
-
 // Create target dir
 if (!file_exists($targetDir)) {
     @mkdir($targetDir);
@@ -58,12 +57,12 @@ if (isset($_REQUEST["name"])) {
     $fileName = uniqid("file_");
 }
 
+// Create path to file
 $filePath = $targetDir . DIRECTORY_SEPARATOR . $fileName;
 
 // Chunking might be enabled
 $chunk = isset($_REQUEST["chunk"]) ? (int) $_REQUEST["chunk"] : 0;
 $chunks = isset($_REQUEST["chunks"]) ? (int) $_REQUEST["chunks"] : 0;
-
 
 // Remove old temp files
 if ($cleanupTargetDir) {
@@ -76,7 +75,6 @@ if ($cleanupTargetDir) {
     if ($file != "." && $file != ".." && $file != ".DS_Store") {
         while ($file !== false) {
             $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
-    //        $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $fileName . ".part";
 
 
             // If temp file is current file proceed to the next
@@ -115,65 +113,19 @@ if (!empty($_FILES)) {
     }
 }
 
-    while ($buff = fread($in, 21480752)) {
-        fwrite($out, $buff);
-    }
-
-//@fclose($out);
-//@fclose($in);
-
-// Check if file has been uploaded
-if (!$chunks || $chunk == $chunks - 1) {
-    // Strip the temp .part suffix off
-    rename("{$filePath}.part", $filePath);
-}
-
-// Rebuild the file - WORK IN PROGRESS
-$tmp_name = $_FILES['file']['tmp_name'];
-// $filename = $_FILES['file']['name'];
-$num = $_POST['chunk'];
-$num_chunks = $_POST['chunks'];
-
-
-// On crée un nouveau fichier vide préfixé d'un uniqId final_xxx s'il n'existe pas
-if (!isset($finalFile))  {
-    $finalFile = fopen("final_file.mp4", "w");
-    move_uploaded_file($finalFile, $targetDir."/");
-}
-// On range l'URL de chaque chunk file dans un tableau
-$chunkedFilesUrls = [];
-$chunkedFilesUrls[] = $fileName;
-var_dump($chunkedFilesUrls);
-// On ouvre chaque chunk file
-//fopen($chunkFile)
-// on append chaque contenu de chunk dans le fichier final_xxx et on ferme chaque chunk apres utilisation
-//fwrite(...)
-//fclose($chunkFile)
-// On ferme le fichier final
-//fclose($finalFinale)
-
-move_uploaded_file($tmp_name, $filePath.$num);
-
-if ($num === $num_chunks) {
-    for ($i = 1; $i <= $num_chunks; $i++) {
-        echo "file <br>";
-        echo $file;
-
-        $file = fopen($filePath.$i, 'rb');
-        $buff = fread($file, 21480752);
-        fclose($file);
-
-        $final = fopen($filePath, 'ab');
-        $write = fwrite($final, $buff);
-        fclose($final);
-
-        unlink($filePath.$i);
-    }
+// The file is rebuild here
+while ($buff = fread($in, 4096)) {
+    fwrite($out, $buff);
 }
 
 @fclose($out);
 @fclose($in);
 
+// Check if file has been uploaded
+if (!$chunks || $chunk === $chunks - 1) {
+    // Strip the temp .part suffix off
+    rename("{$filePath}.part", $filePath);
+}
 
 // Return Success JSON-RPC response
  die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');

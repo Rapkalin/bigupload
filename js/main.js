@@ -1,40 +1,15 @@
-// Custom example logic
-
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'pickfiles', // you can pass an id...
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
-  chunk_size : '10mb',
-	send_chunk_number : true,
-	urlstream_upload : true,
+  chunk_size : '50mb',
+	multipart : false,
 	max_retries: 3,
-	filters : {
-		mime_types: [
-			{
-				title : "Video files",
-				extensions : "mp4"
-			}
-		]
-	},
-//	flash_swf_url : '../js/Moxie.swf',
-//	silverlight_xap_url : '../js/Moxie.xap',
-//  multipart_params : {directory : 'test'},
-
-//	filters : {
-//		max_file_size : '50mb',
-//		mime_types: [
-//			{title : "Image files", extensions : "jpg,gif,png"},
-//			{title : "Zip files", extensions : "zip"}
-//		]
-//	},
-
 
   init: {
 
 		PostInit: function () {
-
-//      document.getElementById('filelist').innerHTML = '';
 			// Open the window to select and upload the files
 			document.getElementById('uploadfiles').onclick = function () {
 				console.log("2- Post init before start");
@@ -72,21 +47,15 @@ var uploader = new plupload.Uploader({
 			}
 		},
 
-		// Doesn't fire :(
+		// Display info on each part/chunk uploaded
 		ChunkUploaded: function (up, file, info) {
 			console.log("3-  Chunk uploaded: ", file);
 			console.log("3- chunk info", info)
 		}
 
 	}
-
 });
 
-
 uploader.init();
-
-/*uploader.bind('BeforeChunkUpload', function(up, file) {
-  console.log("Before Chunk Upload");
-});*/
 
 
