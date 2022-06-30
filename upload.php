@@ -132,48 +132,6 @@ while ($buff = fread($in, 4096)) {
 if (!$chunks || $chunk === $chunks - 1) {
     // Strip the temp .part suffix off
     rename("{$filePath}.part", $filePath);
-
-    // Check if it is the last uploaded file/chunk.
-    if ($chunk === $chunks - 1) {
-
-        // Scan the dir and retrieve all the temp files including
-        // the last/final file in which we want to append the data of the other temp files.
-        $files = scandir($targetDir);
-        $finalFile = $files[count($files) - 1];
-        $finalFilePath = $targetDir . "/" . $finalFile;
-        $finalFileOpen = fopen($finalFilePath, "ab");
-        $file_info = pathinfo($finalFilePath);
-        $file_extension = $file_info['extension'];
-        switch ($file_extension) {
-            case 'mp4': $ctype= 'video/mp4'; break;
-        }
-
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-        header("Cache-Control: no-store, no-cache, must-revalidate");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");
-        header('Content-Type: ' . $ctype);
-
-        // We add the data of each file in the final file.
-        foreach($files as $file) {
-            if ($file !== "." && $file !== ".." && $file !== $finalFile) {
-                // Appending all the temp files in one final file
-                $filePath = $targetDir . "/" . $file;
-                $ChunkPath = fopen($filePath, "rb");
-                while ($ChunkFile = fread($ChunkPath, filesize($filePath))) {
-                    fwrite($finalFileOpen, $ChunkFile);
-                }
-                fclose($ChunkPath);
-                // We delete the temp files
-                unlink($ChunksPath);
-            }
-        }
-
-        // We close the final file.
-        fclose($finalFileOpen);
-    }
-
 }
 
 // Return Success JSON-RPC response
