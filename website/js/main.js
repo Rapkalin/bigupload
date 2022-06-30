@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'pickfiles', // you can pass an id...
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'website/app/upload.php',
-  chunk_size : '2mb',
+  chunk_size : '50mb',
 	multipart : false,
 	max_retries: 3,
 
