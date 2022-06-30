@@ -40,19 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 // Settings
 $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
 //$targetDir = 'uploads';
-// $cleanupTargetDir = true; // Remove old files
+$cleanupTargetDir = true; // Remove old files
 $maxFileAge = 5 * 3600; // Temp file age in seconds
 
 // Create target dir
 if (!file_exists($targetDir)) {
     @mkdir($targetDir);
-}
-
-// For MacOS: Clean the hidden file in $targetDir by removing ".DS_STORE files
-// To be noted noted that the to "." and ".." are just symbols and cannot be removed.
-// . represents the directory you are in and .. represents the parent directory.
-if (file_exists("{$targetDir}/.DS_STORE")) {
-    unlink("{$targetDir}/.DS_STORE");
 }
 
 // Get a file name
@@ -72,32 +65,32 @@ $chunk = isset($_REQUEST["chunk"]) ? (int) $_REQUEST["chunk"] : 0;
 $chunks = isset($_REQUEST["chunks"]) ? (int) $_REQUEST["chunks"] : 0;
 
 // Remove old temp files
-// if ($cleanupTargetDir) {
-//    if (!is_dir($targetDir) || !$dir = opendir($targetDir)) {
-//        die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
-//    }
+if ($cleanupTargetDir) {
+    if (!is_dir($targetDir) || !$dir = opendir($targetDir)) {
+        die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
+    }
 
-//    $file = readdir($dir);
+    $file = readdir($dir);
 
-//    if ($file != "." && $file != ".." && $file != ".DS_Store") {
-//        while ($file !== false) {
-//            $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
+    if ($file != "." && $file != ".." && $file != ".DS_Store") {
+        while ($file !== false) {
+            $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
 
 
             // If temp file is current file proceed to the next
-//            if ($tmpfilePath == $filePath) {
-//                continue;
-//            }
+            if ($tmpfilePath == $filePath) {
+                continue;
+            }
 
             // Remove temp file if it is older than the max age and is not the current file
-//            if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $maxFileAge)) {
-//                @unlink($tmpfilePath);
-//            }
-//        }
+            if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $maxFileAge)) {
+                @unlink($tmpfilePath);
+            }
+        }
 
-//        closedir($dir);
-//    }
-//}
+        closedir($dir);
+    }
+}
 
 
 // Open temp file
@@ -120,6 +113,7 @@ if (!empty($_FILES)) {
     }
 }
 
+// The file is rebuild here
 while ($buff = fread($in, 4096)) {
     fwrite($out, $buff);
 }
@@ -127,7 +121,6 @@ while ($buff = fread($in, 4096)) {
 @fclose($out);
 @fclose($in);
 
-// Rebuild the file - WORK IN PROGRESS
 // Check if file has been uploaded
 if (!$chunks || $chunk === $chunks - 1) {
     // Strip the temp .part suffix off
