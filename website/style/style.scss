@@ -8,7 +8,7 @@ body {
 #container {
   display: flex;
   flex-direction: column;
-  align-content: center;
+  align-items: center;
 }
 
 #droparea {
@@ -41,14 +41,17 @@ body {
   text-align: center;
 }
 
-#uploadfiles {
-  color: white;
+#uploadbutton {
   padding: 8px 24px;
   border-radius: 4px;
   background: mediumseagreen;
   transition: background 0.3s ease;
-  text-decoration: none;
   height: 20px;
   width: fit-content;
   text-align: center;
+}
+
+#uploadbutton > a {
+  text-decoration: none;
+  color: white;
 }
