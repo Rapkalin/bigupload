@@ -14,13 +14,12 @@
 #!! is not recommended to be used in production environment as it is. Be sure to
 #!! revise it and customize to your needs.
 
-
 // Make sure file is not cached (as it happens for example on iOS devices)
-//header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-//header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-//header("Cache-Control: no-store, no-cache, must-revalidate");
-//header("Cache-Control: post-check=0, pre-check=0", false);
-//header("Pragma: no-cache");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
 /*
 // Support CORS
@@ -44,8 +43,8 @@ $cleanupTargetDir = true; // Remove old files
 $maxFileAge = 5 * 3600; // Temp file age in seconds
 
 // Create target dir
-if (!file_exists($targetDir)) {
-    @mkdir($targetDir);
+if (!file_exists($targetDir) && !mkdir($targetDir) && !is_dir($targetDir)) {
+        throw new \RuntimeException(sprintf('Directory "%s" was not created', $targetDir));
 }
 
 // Get a file name
@@ -54,7 +53,7 @@ if (isset($_REQUEST["name"])) {
 } elseif (!empty($_FILES)) {
     $fileName = $_FILES["file"]["name"];
 } else {
-    $fileName = uniqid("file_");
+    $fileName = uniqid("file_", TRUE);
 }
 
 // Create path to file
@@ -73,18 +72,18 @@ if ($cleanupTargetDir) {
     $file = readdir($dir);
 
     if ($file != "." && $file != ".." && $file != ".DS_Store") {
-        while ($file !== false) {
+        while ($file = true) {
             $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
 
 
             // If temp file is current file proceed to the next
-            if ($tmpfilePath == $filePath) {
+            if ($tmpfilePath === $filePath) {
                 continue;
             }
 
             // Remove temp file if it is older than the max age and is not the current file
             if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $maxFileAge)) {
-                @unlink($tmpfilePath);
+                unlink($tmpfilePath);
             }
         }
 
@@ -118,8 +117,8 @@ while ($buff = fread($in, 4096)) {
     fwrite($out, $buff);
 }
 
-@fclose($out);
-@fclose($in);
+fclose($out);
+fclose($in);
 
 // Check if file has been uploaded
 if (!$chunks || $chunk === $chunks - 1) {
