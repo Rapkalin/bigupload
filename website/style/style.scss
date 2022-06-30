@@ -1,0 +1,26 @@
+body {
+  background: white;
+  font-family: Verdana;
+  font-size: 13px;
+  color: black;
+}
+
+#droparea {
+  border: dashed;
+  border-color: darkgrey;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#droparea > p {
+  color: darkgrey;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#droparea > a {
+  color: slategrey;
+}
