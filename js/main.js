@@ -1,17 +1,13 @@
-// Custom example logic
-
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'pickfiles', // you can pass an id...
   container: document.getElementById('container'), // ... or DOM Element itself
   url : 'upload.php',
-  chunk_size : '10mb',
+  chunk_size : '50mb',
 	send_chunk_number : true,
  	urlstream_upload : true,
 	multipart : false,
 	max_retries: 3,
-  multipart_params : {directory : 'test'},
-
 
   init: {
 
@@ -60,7 +56,6 @@ var uploader = new plupload.Uploader({
 		}
 
 	}
-
 });
 
 uploader.init();
