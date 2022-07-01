@@ -6,11 +6,21 @@ var uploader = new plupload.Uploader({
 	url : 'website/app/upload.php',
   multi_selection : false,
   chunk_size : '50mb',
+  filters: {
+    mime_types: [
+      { title: "Image files", extensions: "jpg,jpeg,png,gif" },
+      { title: "Video files", extensions: "mp4,mov"},
+      { title: "Pdf files", extensions: "pdf"},
+      { title: "Audio files", extensions: "mp3"},
+      { title: "Subtitles", extensions: "vtt, srt"},
+      { title: "Zip files", extensions: "zip" },
+    ],
+    prevent_duplicates: true
+  },
 	multipart : false,
 	max_retries: 3,
 
   init: {
-
 		// Display the files in the following div
 		FilesAdded: function (up, files) {
         plupload.each(files, function (file) {
