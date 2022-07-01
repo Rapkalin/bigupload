@@ -5,6 +5,11 @@ body {
   color: black;
 }
 
+#title, #subtitle {
+  text-align: center;
+  color : darkgrey;
+}
+
 #container {
   display: flex;
   flex-direction: column;
@@ -29,7 +34,7 @@ body {
   font-size: 16px;
 }
 
-#droparea > a {
+#browsefilesBta {
   color: white;
   padding: 8px 24px;
   border-radius: 4px;
@@ -40,8 +45,12 @@ body {
   width: fit-content;
   text-align: center;
 }
+#browsefilesBta:hover {
+  color: white;
+  background: royalblue;
+}
 
-#uploadbutton {
+#uploadBta {
   padding: 8px 24px;
   border-radius: 4px;
   background: mediumseagreen;
@@ -51,7 +60,47 @@ body {
   text-align: center;
 }
 
-#uploadbutton > a {
+#uploadBta > a {
   text-decoration: none;
   color: white;
+}
+
+#uploadBta:hover {
+  background: forestgreen;
+}
+
+#droparea > span {
+  margin-bottom: 10px;
+  color: darkgrey;
+  font-size: 13px;
+}
+
+.addedFile {
+  position: relative;
+  text-align: center;
+  color: white;
+  border: 1px solid darkgray;
+  padding: 18px 12px;
+  height: 18px;
+  margin-bottom: 15px;
+}
+
+.progressBar {
+  background-color: mediumseagreen;
+  position: absolute;
+  height: 100%;
+  width: 5%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.btaBG {
+  background-color: #c6c5c5;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -2;
+  top: 0;
+  left: 0;
 }
