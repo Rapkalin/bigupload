@@ -4,6 +4,7 @@ var uploader = new plupload.Uploader({
   container : document.getElementById('container'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
 	url : 'website/app/upload.php',
+  multi_selection : false,
   chunk_size : '50mb',
 	multipart : false,
 	max_retries: 3,
@@ -12,10 +13,11 @@ var uploader = new plupload.Uploader({
 
 		// Display the files in the following div
 		FilesAdded: function (up, files) {
-			plupload.each(files, function (file) {
-				console.log("1- Fileadded", file);
-				document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><div class="progressBar"></div><div class="btaBG"></div></div>';
-			});
+        plupload.each(files, function (file) {
+          console.log("1- Fileadded", file);
+            document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><div class="progressBar"></div><div class="btaBG"></div></div>';
+        });
+
 		},
 
 		PostInit: function () {
@@ -26,6 +28,17 @@ var uploader = new plupload.Uploader({
 				return false;
 			};
 		},
+
+    QueueChanged: function (up) {
+      console.log("queue", up);
+      if (up.files.length = 1) {
+        document.getElementById('droparea').id = 'dropareaOff';
+        document.getElementById('browsefilesBta').classList.add('hidden');
+        document.getElementById('browsefilesBtaOff').classList.remove('hidden');
+        document.getElementById('tooManyFiles').classList.remove('hidden');
+      }
+      console.log("queue", up);
+    },
 
 		// Display progress in console and DOM
 		UploadProgress: function (up, file) {
@@ -60,5 +73,3 @@ var uploader = new plupload.Uploader({
 });
 
 uploader.init();
-
-
