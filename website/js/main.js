@@ -54,8 +54,8 @@ var uploader = new plupload.Uploader({
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			// console.log("4- File uploaded", file);
-			// console.log(info);
+			 console.log("4- File uploaded", file);
+      document.getElementById('downloadBta').classList.remove('hidden');
 			var response = jQuery.parseJSON(info.response);
 			if (response.st == "ok") {
 				window.location.href = window.location.href.replace('?saved', '') + '?saved';
