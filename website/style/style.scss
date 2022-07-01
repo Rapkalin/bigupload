@@ -16,7 +16,8 @@ body {
   align-items: center;
 }
 
-#droparea {
+#droparea,
+#dropareaOff {
   border: dashed;
   border-color: darkgrey;
   height: 150px;
@@ -28,7 +29,8 @@ body {
   margin-bottom: 50px;
 }
 
-#droparea > p {
+#droparea > p,
+#dropareaOff > p {
   color: darkgrey;
   font-weight: bold;
   font-size: 16px;
@@ -39,6 +41,18 @@ body {
   padding: 8px 24px;
   border-radius: 4px;
   background: cornflowerblue;
+  transition: background 0.3s ease;
+  text-decoration: none;
+  height: 20px;
+  width: fit-content;
+  text-align: center;
+}
+
+#browsefilesBtaOff {
+  color: white;
+  padding: 8px 24px;
+  border-radius: 4px;
+  background: darkgray;
   transition: background 0.3s ease;
   text-decoration: none;
   height: 20px;
@@ -69,10 +83,19 @@ body {
   background: forestgreen;
 }
 
-#droparea > span {
+#dropareaOr
+{
   margin-bottom: 10px;
   color: darkgrey;
   font-size: 13px;
+  text-align: center;
+}
+
+#tooManyFiles {
+  margin-bottom: 10px;
+  color: red;
+  font-size: 13px;
+  text-align: center;
 }
 
 .addedFile {
@@ -103,4 +126,8 @@ body {
   z-index: -2;
   top: 0;
   left: 0;
+}
+
+.hidden {
+  display: none;
 }
