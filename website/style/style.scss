@@ -29,7 +29,7 @@ body {
   font-size: 16px;
 }
 
-#droparea > a {
+#browsefilesBta {
   color: white;
   padding: 8px 24px;
   border-radius: 4px;
@@ -40,8 +40,12 @@ body {
   width: fit-content;
   text-align: center;
 }
+#browsefilesBta:hover {
+  color: white;
+  background: royalblue;
+}
 
-#uploadbutton {
+#uploadBta {
   padding: 8px 24px;
   border-radius: 4px;
   background: mediumseagreen;
@@ -51,9 +55,13 @@ body {
   text-align: center;
 }
 
-#uploadbutton > a {
+#uploadBta > a {
   text-decoration: none;
   color: white;
+}
+
+#uploadBta:hover {
+  background: forestgreen;
 }
 
 #droparea > span {
