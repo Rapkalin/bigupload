@@ -5,6 +5,11 @@ body {
   color: black;
 }
 
+#title, #subtitle {
+  text-align: center;
+  color : darkgrey;
+}
+
 #container {
   display: flex;
   flex-direction: column;
