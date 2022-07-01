@@ -1,6 +1,6 @@
 ![node](https://img.shields.io/badge/nodejs-v8.17.0-83CD29.svg?style=flat-square)
-![php](https://img.shields.io/badge/PHP-v8.0-828cb7.svg?style=flat-square) 
-![composer](https://img.shields.io/badge/Composer-v2.3.7-644D31.svg?style=flat-square) 
+![php](https://img.shields.io/badge/PHP-v8.0-828cb7.svg?style=flat-square)
+![composer](https://img.shields.io/badge/Composer-v2.3.7-644D31.svg?style=flat-square)
 
 # GETTING STARTED
 
@@ -10,7 +10,7 @@
 
 
 Description
-This project has been created for a search and development purpose. 
+This project has been created for a search and development purpose.
 It allows a user to download heavy files such as videos, jpgs, pdf etc. using the Plupload library.
 
 # <a name="installation"></a>PROJECT INSTALLATION
@@ -38,15 +38,15 @@ for <http://bigupload.local>
 <VirtualHost *:80>
    ServerName bigupload.local
    DocumentRoot "${INSTALL_DIR}/your-folder-name/bigupload"
- 
+
    ServerAlias bigupload.local.*
-   
+
    <Directory "${INSTALL_DIR}/your-folder-name/bigupload">
      Options Includes FollowSymLinks
      AllowOverride All
    </Directory>
 </VirtualHost>
-    
+
 ```
 
 ## <a name="back-installation"></a> 3/ BACK-END INSTALL
@@ -64,22 +64,4 @@ compose install or compose i
 
 
 ## <a name="front-installation"></a>4/ FRONT-END INSTALL / BUILD
-
-### 4.1- Prerequisites
-#### 4.1.1- NPM
-- From the root directory (/bigupload), enter the following command. This command will install the Front-end dependencies linked to the *package.json*.
-```
-npm install or npm i
-```
-
-#### 4.1.2- Bower
-Bower is required to import JS libraries files :
-```
-npm install bower -g
-```
-
-- Then, still in the same root directory, enter the following command. This command cannot be run before the *npm install* and will finalize the installation of the Front-end dependencies.
-
-```
-bower update
-```
+- Nothing needed for the Front end install
