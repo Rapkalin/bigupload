@@ -14,7 +14,7 @@ var uploader = new plupload.Uploader({
 		FilesAdded: function (up, files) {
 			plupload.each(files, function (file) {
 				console.log("1- Fileadded", file);
-				document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+				document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><div class="progressBar"></div><div class="btaBG"></div></div>';
 			});
 		},
 
@@ -31,6 +31,8 @@ var uploader = new plupload.Uploader({
 		UploadProgress: function (up, file) {
 			console.log("Upload progress", file);
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+			$('#'+file.id).find('.progressBar').css('width', file.percent+'%');
+			$('#'+file.id).find('.addedFile').css('color', 'white');
 		},
 
 		// Display info when each part/chunk is uploaded

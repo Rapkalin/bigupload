@@ -69,3 +69,33 @@ body {
   color: darkgrey;
   font-size: 13px;
 }
+
+.addedFile {
+  position: relative;
+  text-align: center;
+  color: white;
+  border: 1px solid darkgray;
+  padding: 18px 12px;
+  height: 18px;
+  margin-bottom: 15px;
+}
+
+.progressBar {
+  background-color: mediumseagreen;
+  position: absolute;
+  height: 100%;
+  width: 5%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.btaBG {
+  background-color: #c6c5c5;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -2;
+  top: 0;
+  left: 0;
+}
