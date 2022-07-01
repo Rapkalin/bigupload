@@ -92,7 +92,8 @@ if ($cleanupTargetDir) {
 }
 
 
-// Open temp file
+// Open temp file and rebuild the file
+// create the finalfile ($filePath.part) that will be written with the chunk files
 if (!$out = @fopen("{$filePath}.part", $chunks ? "ab" : "wb")) {
     die('{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}');
 }
