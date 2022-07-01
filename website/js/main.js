@@ -1,6 +1,6 @@
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
-  browse_button : 'browsefiles', // you can pass an id...
+  browse_button : 'browsefilesBta', // you can pass an id...
   container : document.getElementById('container'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
 	url : 'website/app/upload.php',
