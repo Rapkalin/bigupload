@@ -1,0 +1,10 @@
+{
+    "name": "rapkalin/bigupload",
+    "description": "Bigupload is a project to allow the upload of heavy files including videos",
+    "author": "Raphael Kalinowski <raphael@myminicom.com>",
+
+    "require": {
+        "symfony/var-dumper": "^6.0",
+        "components/jquery": "^3.6"
+    }
+}
