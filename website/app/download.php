@@ -2,7 +2,7 @@
 
 // echo "hello";
 
-// $file = "uploads/van-cleef-arpels.mp4";
+// $fileName = "uploads/van-cleef-arpels.mp4";
 
 // header('Content-Type: application/octet-stream');
 // header('Content-Transfer-Encoding: Binary');
