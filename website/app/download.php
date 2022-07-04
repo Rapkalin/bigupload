@@ -1,9 +1,9 @@
 <?php
 
 // echo "hello";
-$fileName = "uploads/van-cleef-arpels.mp4";
+$fileName = $_GET['fileName'];
 
-$path = $fileName;
+$path = "uploads/" . $fileName;
 $size = filesize($path);
 $fp = fopen($path, "rb");
 $content = fread($fp, $size);
