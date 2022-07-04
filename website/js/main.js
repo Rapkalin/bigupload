@@ -57,7 +57,10 @@ var uploader = new plupload.Uploader({
 			console.log("4- File uploaded", file);
 			var response = jQuery.parseJSON(info.response);
 			// dynamiser href JS id="downloadFile"
-			console.log(response.result.fileName);
+			fileName = response.result.fileName;
+			console.log("fileName", fileName);
+			var tag = document.getElementById('downloadFile');
+			tag.href = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
 			document.getElementById('downloadBta').classList.remove('hidden');
 		},
 
