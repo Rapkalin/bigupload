@@ -4,11 +4,11 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 
 <title>Big Upload Project</title>
-    <link rel="stylesheet" href="website/style/style.scss">
+    <link rel="stylesheet" href="style/style.scss">
 
 <!-- production -->
 <script type="application/javascript" src="vendor/components/jquery/jquery.js"></script>
-<script type="text/javascript" src="website/js/library/plupload.full.min.js"></script>
+<script type="text/javascript" src="js/library/plupload.full.min.js"></script>
 <!-- debug
 <script type="text/javascript" src="../js/moxie.js"></script>
 <script type="text/javascript" src="../js/plupload.dev.js"></script>
@@ -32,12 +32,15 @@
     <div id="uploadBta">
         <a id="uploadfiles" href="javascript:;">Upload your files</a>
     </div>
+    <div id="downloadBta" class="hidden">
+        <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
+    </div>
 </div>
 
 <br/>
 
 <pre id="console"></pre>
 
-<script type="text/javascript" src="website/js/main.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
 </body>
 </html>

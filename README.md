@@ -50,18 +50,12 @@ for <http://bigupload.local>
 ```
 
 ## <a name="back-installation"></a> 3/ BACK-END INSTALL
-### 3.1- Prerequisites
-Use the version V.2.17.3 of composer
-Warning : do not use PhpStorm to launch the composer  command.
-( Problems with symlink )
-
-### 3.2- Dependencies installation
+### 3.1- Dependencies installation
 - From the root directory (/bigupload), enter the command:
 ```
 compose install or compose i
 ```
 - This command will install the back dependencies linked to the *composer.json*
-
 
 ## <a name="front-installation"></a>4/ FRONT-END INSTALL / BUILD
 - Nothing needed for the Front end install
