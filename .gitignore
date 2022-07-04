@@ -1,6 +1,7 @@
 uploads/*
 .DS_Store
-vendor
-vendor/*
+website/vendor
+website/vendor/*
 website/app/uploads/*
 .idea
+composer.lock
