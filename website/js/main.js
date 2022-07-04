@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'browsefilesBta', // you can pass an id...
   container : document.getElementById('container'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
-	url : 'website/app/upload.php',
+	url : 'app/upload.php',
   multi_selection : false,
   chunk_size : '50mb',
 	multipart : false,
@@ -54,12 +54,11 @@ var uploader = new plupload.Uploader({
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			 console.log("4- File uploaded", file);
-      document.getElementById('downloadBta').classList.remove('hidden');
+			console.log("4- File uploaded", file);
 			var response = jQuery.parseJSON(info.response);
-			if (response.st == "ok") {
-				window.location.href = window.location.href.replace('?saved', '') + '?saved';
-			}
+			// dynamiser href JS id="downloadFile"
+			console.log(response.result.fileName);
+			document.getElementById('downloadBta').classList.remove('hidden');
 		},
 
 		// Handle errors

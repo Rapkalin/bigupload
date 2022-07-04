@@ -1,20 +1,15 @@
 <?php
 
 // echo "hello";
+$fileName = "uploads/van-cleef-arpels.mp4";
 
-// $fileName = "uploads/van-cleef-arpels.mp4";
+$path = $fileName;
+$size = filesize($path);
+$fp = fopen($path, "rb");
+$content = fread($fp, $size);
+fclose($fp);
 
-// header('Content-Type: application/octet-stream');
-// header('Content-Transfer-Encoding: Binary');
-// header('Content-disposition: attachment; filename="' . basename($file) . '"');
-
-    $path = $fileName;
-    $size = filesize($path);
-    $fp = fopen($path, "rb");
-    $content = fread($fp, $size);
-    fclose($fp);
-
-    header("Content-length: ".$size);
-    header("Content-type: application/octet-stream");
-    header("Content-disposition: attachment; filename=".$fileName.";" );
-    echo $content;
+header("Content-length: ".$size);
+header("Content-type: application/octet-stream");
+header("Content-disposition: attachment; filename=".$fileName.";" );
+echo $content;
