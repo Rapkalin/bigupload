@@ -1,0 +1,31 @@
+<application>
+  <component name="FileTypeManager" version="18">
+    <extensionMap>
+      <mapping pattern="RemoteMediaEntity.php" type="PHP" />
+      <mapping pattern="ModulePlaylistsSlideshow.php" type="PHP" />
+      <mapping pattern="PushRepository.php" type="PHP" />
+      <mapping pattern="PreferredCodeRepository.php" type="PHP" />
+      <mapping ext="install" type="PHP" />
+      <mapping ext="theme" type="PHP" />
+      <mapping pattern="ENABLE_INSTALL_TOOL" type="PLAIN_TEXT" />
+      <mapping pattern=".env.local" type="PLAIN_TEXT" />
+      <mapping pattern="exclude_delivery" type="PLAIN_TEXT" />
+      <mapping pattern="BlockTwoColumns" type="PLAIN_TEXT" />
+      <mapping pattern="BlockThreeColumns" type="PLAIN_TEXT" />
+      <mapping ext="env" type="PLAIN_TEXT" />
+      <mapping ext="sqlite" type="PLAIN_TEXT" />
+      <mapping ext="2" type="PLAIN_TEXT" />
+      <mapping ext="1" type="PLAIN_TEXT" />
+      <mapping ext="3" type="PLAIN_TEXT" />
+      <mapping ext="template" type="PLAIN_TEXT" />
+      <mapping ext="map" type="PLAIN_TEXT" />
+      <mapping ext="info" type="PLAIN_TEXT" />
+      <mapping pattern="bulma_sass" type="SCSS" />
+      <mapping pattern="louvre_repositories.info.yml" type="YAML" />
+      <removed_mapping ext="env" approved="true" type=".env file" />
+      <removed_mapping ext="gql" approved="true" type="Graql" />
+      <removed_mapping ext="gql" approved="true" type="PLAIN_TEXT" />
+      <mapping ext="gql" type="GraphQL" />
+    </extensionMap>
+  </component>
+</application>
