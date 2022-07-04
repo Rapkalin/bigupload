@@ -66,9 +66,18 @@ var uploader = new plupload.Uploader({
 		FileUploaded: function (up, file, info) {
 			console.log("4- File uploaded", file);
 			var response = jQuery.parseJSON(info.response);
-			// dynamiser href JS id="downloadFile"
-			console.log(response.result.fileName);
+
+			// get the name of the file and recreate the filepath to be downloaded
+			fileName = response.result.fileName;
+			var tag = document.getElementById('downloadFile');
+			tag.href = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
+
+			// Hiding upload button and making download button and link visible
+			document.getElementById('uploadBta').classList.add('hidden');
 			document.getElementById('downloadBta').classList.remove('hidden');
+			document.getElementById('downloadLink').innerText = tag.href;
+			document.getElementById('downloadLink').classList.remove('hidden');
+			document.getElementById('downloadText').classList.remove('hidden');
 		},
 
 		// Handle errors
