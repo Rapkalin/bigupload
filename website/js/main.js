@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'browsefilesBta', // you can pass an id...
   container : document.getElementById('container'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
-	url : 'website/app/upload.php',
+	url : 'app/upload.php',
   multi_selection : false,
   chunk_size : '50mb',
   filters: {
@@ -64,12 +64,20 @@ var uploader = new plupload.Uploader({
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			// console.log("4- File uploaded", file);
-			// console.log(info);
+			console.log("4- File uploaded", file);
 			var response = jQuery.parseJSON(info.response);
-			if (response.st == "ok") {
-				window.location.href = window.location.href.replace('?saved', '') + '?saved';
-			}
+
+			// get the name of the file and recreate the filepath to be downloaded
+			fileName = response.result.fileName;
+			var tag = document.getElementById('downloadFile');
+			tag.href = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
+
+			// Hiding upload button and making download button and link visible
+			document.getElementById('uploadBta').classList.add('hidden');
+			document.getElementById('downloadBta').classList.remove('hidden');
+			document.getElementById('downloadLink').innerText = tag.href;
+			document.getElementById('downloadLink').classList.remove('hidden');
+			document.getElementById('downloadText').classList.remove('hidden');
 		},
 
 		// Handle errors

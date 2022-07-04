@@ -6,5 +6,8 @@
     "require": {
         "symfony/var-dumper": "^6.0",
         "components/jquery": "^3.6"
+    },
+    "config": {
+        "vendor-dir": "website/vendor"
     }
 }
