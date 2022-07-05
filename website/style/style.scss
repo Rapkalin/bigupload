@@ -77,6 +77,10 @@ body {
   text-align: center;
 }
 
+#downloadBta {
+  margin-right: 5px;
+}
+
 #uploadBta > a,
 #downloadBta > a {
   text-decoration: none;
@@ -87,8 +91,7 @@ body {
   background: forestgreen;
 }
 
-#dropareaOr
-{
+#dropareaOr {
   margin-bottom: 10px;
   color: darkgrey;
   font-size: 13px;
@@ -133,6 +136,36 @@ body {
   left: 0;
 }
 
+textarea {
+  width: 50%;
+  height: 100%;
+  line-height: 100%;
+  text-align: center;
+  border: none;
+  color: darkgrey;
+  margin-top: 15px;
+}
+
+#downloadClipBoard {
+  padding: 8px 24px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  border-radius: 4px;
+  background: cornflowerblue;
+  transition: background 0.3s ease;
+  height: inherit;
+  width: fit-content;
+  text-align: center;
+  color: white;
+  border: none;
+}
+
 .hidden {
   display: none;
 }
+
+#downloadOrCopy {
+  display: flex;
+  justify-content: space-evenly;
+}
+
