@@ -76,7 +76,7 @@ var uploader = new plupload.Uploader({
 			document.getElementById('uploadBta').classList.add('hidden');
 			document.getElementById('downloadBta').classList.remove('hidden');
 			document.getElementById('downloadLink').innerText = tag.href;
-			document.getElementById('downloadLink').classList.remove('hidden');
+			// document.getElementById('downloadLink').classList.remove('hidden');
 			document.getElementById('downloadClipBoard').classList.remove('hidden');
 		},
 
