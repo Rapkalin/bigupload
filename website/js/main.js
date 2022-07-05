@@ -12,7 +12,7 @@ var uploader = new plupload.Uploader({
       { title: "Video files", extensions: "mp4,mov"},
       { title: "Pdf files", extensions: "pdf"},
       { title: "Audio files", extensions: "mp3"},
-      { title: "Subtitles", extensions: "vtt, srt"},
+      { title: "Subtitles", extensions: "vtt,srt"},
       { title: "Zip files", extensions: "zip" },
     ],
     prevent_duplicates: true
@@ -24,7 +24,7 @@ var uploader = new plupload.Uploader({
 		// Display the files in the following div
 		FilesAdded: function (up, files) {
         plupload.each(files, function (file) {
-          // console.log("1- Fileadded", file);
+            console.log("1- Fileadded", file);
             document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><div class="progressBar"></div><div class="btaBG"></div></div>';
         });
 
@@ -33,7 +33,7 @@ var uploader = new plupload.Uploader({
 		PostInit: function () {
 			// Open the window to select and upload the files
 			document.getElementById('uploadfiles').onclick = function () {
-				// console.log("2- Post init before start");
+				console.log("2- Post init before start");
 				uploader.start();
 				return false;
 			};
@@ -50,7 +50,7 @@ var uploader = new plupload.Uploader({
 
 		// Display progress in console and DOM
 		UploadProgress: function (up, file) {
-			// console.log("Upload progress", file);
+			console.log("Upload progress", file);
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 			$('#'+file.id).find('.progressBar').css('width', file.percent+'%');
 			$('#'+file.id).find('.addedFile').css('color', 'white');
@@ -58,7 +58,7 @@ var uploader = new plupload.Uploader({
 
 		// Display info when each part/chunk is uploaded
 		ChunkUploaded: function (up, file, info) {
-			// console.log("3- Chunk uploaded: ", file);
+			console.log("3- Chunk uploaded: ", file);
 			// console.log("3- chunk info", info)
 		},
 
@@ -77,7 +77,7 @@ var uploader = new plupload.Uploader({
 			document.getElementById('downloadBta').classList.remove('hidden');
 			document.getElementById('downloadLink').innerText = tag.href;
 			document.getElementById('downloadLink').classList.remove('hidden');
-			document.getElementById('downloadText').classList.remove('hidden');
+			document.getElementById('downloadClipBoard').classList.remove('hidden');
 		},
 
 		// Handle errors

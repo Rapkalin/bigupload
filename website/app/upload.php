@@ -127,5 +127,5 @@ if (!$chunks || $chunk === $chunks - 1) {
     rename("{$filePath}.part", $filePath);
 }
 
-// Return Success JSON-RPC response
+// Return Success JSON-RPC response to FileUploaded event in main.js
  die('{"jsonrpc" : "2.0", "result" : { "fileName": "' . $fileName . '" }, "id" : "id"}');

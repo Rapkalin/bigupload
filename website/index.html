@@ -35,8 +35,11 @@
     <div id="downloadBta" class="hidden">
         <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
     </div>
-    <p id="downloadText" class="hidden">or copy the link: </p>
-    <p id="downloadLink" class="hidden">link</p>
+
+    <!-- <div id="copyArea"> -->
+        <button id="downloadClipBoard" class="hidden" onclick="copyToClipboard()">or copy the link: </button>
+        <textarea id="downloadLink" class="hidden" name="text" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' readonly>link</textarea>
+    <!-- </div> -->
 </div>
 
 <br/>
@@ -44,5 +47,6 @@
 <pre id="console"></pre>
 
 <script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/copyToClipBoard.js"></script>
 </body>
 </html>
