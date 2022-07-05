@@ -5,3 +5,4 @@ website/vendor/*
 website/app/uploads/*
 .idea
 composer.lock
+*.xml
