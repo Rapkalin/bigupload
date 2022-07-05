@@ -4,7 +4,7 @@
     "author": "Raphael Kalinowski <raphael@myminicom.com>",
 
     "require": {
-        "symfony/var-dumper": "^6.0",
+        "symfony/var-dumper": "^v5.4.9",
         "components/jquery": "^3.6"
     },
     "config": {
