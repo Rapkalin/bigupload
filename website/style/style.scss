@@ -87,7 +87,8 @@ body {
   color: white;
 }
 
-#uploadBta:hover {
+#uploadBta:hover,
+#downloadBta:hover {
   background: forestgreen;
 }
 
@@ -136,6 +137,11 @@ body {
   left: 0;
 }
 
+#downloadOrCopy {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 textarea {
   width: 50%;
   height: 100%;
@@ -160,12 +166,12 @@ textarea {
   border: none;
 }
 
-.hidden {
-  display: none;
+#downloadClipBoard:hover {
+  background: royalblue;
+  cursor: pointer;
 }
 
-#downloadOrCopy {
-  display: flex;
-  justify-content: space-evenly;
+.hidden {
+  display: none;
 }
 
