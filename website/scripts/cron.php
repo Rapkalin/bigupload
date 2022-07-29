@@ -17,13 +17,16 @@ echo "Server path is $serverPath" . "\n";
 if (count(scandir($serverPath)) > 0) {
     echo "Analysing directory... $serverPath" . "\n";
     $arrayFiles = array_diff(scandir($serverPath), array('.', '..'));
+
+    // Check if there are files to be deleted in the directory
     if (count($arrayFiles) > 0) {
         foreach($arrayFiles as $file) {
             $filePath = $serverPath . $file;
             $fileCreatedAt = date("F d Y H:i:s.", filectime($filePath));
             $todayDate = date("F d Y H:i:s.");
-            // Si la date du fichier + 6  heures = date d'aujourd'hui
-            if (strtotime($fileCreatedAt . ' + 6 hours') === $todayDate) {
+
+            // If the created time of the file is more than 6 hours old so we delete the file
+            if (strtotime($fileCreatedAt . ' + 6 hours') >= $todayDate) {
                 echo "Deleting: " . $file . "\n";
                 echo "Uploaded date: " . $fileCreatedAt . " for file: $file" ."\n";
                 echo "Today date is... " . $todayDate . "\n";
@@ -35,10 +38,10 @@ if (count(scandir($serverPath)) > 0) {
                     echo "Couldn't delete file" . "\n";
                 }
             } else {
-                echo "This file is too young to die";
+                echo "This file is too young to die!!";
             }
         }
     } else {
-    echo "No file to delete" . "\n";
+        echo "No file to delete" . "\n";
     }
 }
