@@ -3,6 +3,12 @@
 // Setup the following cron to remove the files on you server once a day
 // 0 0 * * * php  ~/Users/r.kalinowski/Sites/bigupload/website/scripts/cron.php
 
+// Info for how long we can let a file live on the server
+$dateTest = date("F d Y H:i:s.");
+$extraTime = ' + 1 minute';
+$extraDate = date("F d Y H:i:s.", strtotime($dateTest . $extraTime));
+echo "Today is $dateTest and a minute after is $extraDate" . "\n";;
+
 // Use the right path if you are on prod env or if you are on local env.
 // Server : "/bigupload/website/app/uploads/";
 // Local : "website/app/uploads/";
@@ -28,6 +34,7 @@ if (count(scandir($serverPath)) > 0) {
         foreach($arrayFiles as $file) {
             $filePath = $serverPath . $file;
             $fileCreatedAt = date("F d Y H:i:s.", filectime($filePath));
+            $fileCreatedAtExtraTime = date("F d Y H:i:s.", strtotime($fileCreatedAt . $extraTime));
             $todayDate = date("F d Y H:i:s.");
 
             echo "--- CHECKING IF FILE IS OLD ENOUGH TO BE DELETED ---" . "\n";
@@ -36,7 +43,7 @@ if (count(scandir($serverPath)) > 0) {
             echo "------" . "\n" . "\n";
 
             // If the created time of the file is more than 6 hours old so we delete the file
-            if (strtotime($fileCreatedAt . ' + 6 hours') <= $todayDate) {
+            if ($fileCreatedAtExtraTime <= $todayDate) {
                 echo "--- DELETING IN PROGRESS ---" . "\n";
                 echo "Deleting: " . $file . "\n" . "\n";
                 if (unlink($serverPath . $file)) {
