@@ -4,10 +4,7 @@
 // 0 0 * * * php  ~/Users/r.kalinowski/Sites/bigupload/website/scripts/cron.php
 
 // Info for how long we can let a file live on the server
-$dateTest = date("F d Y H:i:s.");
 $extraTime = ' + 1 minute';
-$extraDate = date("F d Y H:i:s.", strtotime($dateTest . $extraTime));
-echo "Today is $dateTest and a minute after is $extraDate" . "\n";;
 
 // Use the right path if you are on prod env or if you are on local env.
 // Server : "/bigupload/website/app/uploads/";
