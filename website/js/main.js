@@ -77,6 +77,8 @@ var uploader = new plupload.Uploader({
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
 						// check for any errors.
 						// In case of an error, throw.
+						console.log('LOONG URL TESSSST', longUrl);
+						tag.href = longUrl;
 						throw new Error("Something went wrong!");
 					}
 
@@ -84,20 +86,12 @@ var uploader = new plupload.Uploader({
 				})
 				.then((data) => {
 					// This is where you handle what to do with the response.
-					shortUrl = data;
+					console.log('SHORT URL TESSSST', data);
+					tag.href = data;
 				})
 				.catch((error) => {
 					// This is where you handle errors.
 				});
-
-
-			if (typeof shortUrl !== 'undefined') {
-				console.log('SHORT URL TESSSST', shortUrl);
-				tag.href = shortUrl;
-			} else {
-				console.log('LOONG URL TESSSST', longUrl);
-				tag.href = longUrl;
-			}
 
 			// Hiding upload button and making download button and link visible
 			document.getElementById('uploadBta').classList.add('hidden');
