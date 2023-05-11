@@ -1,9 +1,12 @@
 <?php
 
-$url = $_GET['longUrl'];
+if (is_string($_GET['longUrl'])) {
+    $url = strip_tags($_GET['longUrl']);
+} else {
+    die('Something went wrong with the URL');
+}
 
 $api_url = 'https://tinyurl.com/api-create.php?url=' . $url;
-
 
 try {
     $curl = curl_init();
@@ -33,5 +36,6 @@ try {
     echo json_encode($new_url);
 
 } catch (\Exception $e) {
-    var_dump('exeption error', $e);
+    var_dump('exception error', $e);
+    die();
 }

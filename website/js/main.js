@@ -72,7 +72,7 @@ var uploader = new plupload.Uploader({
 			var tag = document.getElementById('downloadFile');
 			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
 
-			fetch("app/utils.php?longUrl=" + longUrl)
+			fetch("app/tiny-url.php?longUrl=" + longUrl)
 				.then((response) => {
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
 						// check for any errors.
@@ -92,12 +92,12 @@ var uploader = new plupload.Uploader({
 				})
 				.catch((error) => {
 					// This is where you handle errors.
+					console.warn('something went wrong with the tinyURL: ' + error)
 				});
 
 			// Hiding upload button and making download button and link visible
 			document.getElementById('uploadBta').classList.add('hidden');
 			document.getElementById('downloadBta').classList.remove('hidden');
-			// document.getElementById('downloadLink').classList.remove('hidden');
 			document.getElementById('downloadClipBoard').classList.remove('hidden');
 		},
 
