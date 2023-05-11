@@ -30,9 +30,6 @@ try {
 
     /* Process $content here */
     curl_close($curl);
-
-    var_dump('short url', $new_url);
-    var_dump('api url', $api_url);
     echo json_encode($new_url);
 
 } catch (\Exception $e) {

@@ -84,9 +84,8 @@ var uploader = new plupload.Uploader({
 				})
 				.then((data) => {
 					// This is where you handle what to do with the response.
-					console.log('uuuuuurl');
+					console.log('uuuuuurl shorrt');
 					console.log(data);
-					alert(data); // Will alert: 42
 				})
 				.catch((error) => {
 					// This is where you handle errors.
