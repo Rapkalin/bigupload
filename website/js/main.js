@@ -4,7 +4,7 @@ var uploader = new plupload.Uploader({
   container : document.getElementById('container'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
 	url : 'app/upload.php',
-  multi_selection : false,
+  multi_selection : true,
   chunk_size : '50mb',
   filters: {
     mime_types: [
@@ -24,7 +24,7 @@ var uploader = new plupload.Uploader({
 		// Display the files in the following div
 		FilesAdded: function (up, files) {
         plupload.each(files, function (file) {
-            console.log("1- Fileadded", file);
+            // console.log("1- Fileadded", file);
             document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><div class="progressBar"></div><div class="btaBG"></div></div>';
         });
 
@@ -33,7 +33,7 @@ var uploader = new plupload.Uploader({
 		PostInit: function () {
 			// Open the window to select and upload the files
 			document.getElementById('uploadfiles').onclick = function () {
-				console.log("2- Post init before start");
+				// console.log("2- Post init before start");
 				uploader.start();
 				return false;
 			};
@@ -50,7 +50,7 @@ var uploader = new plupload.Uploader({
 
 		// Display progress in console and DOM
 		UploadProgress: function (up, file) {
-			console.log("Upload progress", file);
+			// console.log("Upload progress", file);
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 			$('#'+file.id).find('.progressBar').css('width', file.percent+'%');
 			$('#'+file.id).find('.addedFile').css('color', 'white');
@@ -58,13 +58,13 @@ var uploader = new plupload.Uploader({
 
 		// Display info when each part/chunk is uploaded
 		ChunkUploaded: function (up, file, info) {
-			console.log("3- Chunk uploaded: ", file);
+			// console.log("3- Chunk uploaded: ", file);
 			// console.log("3- chunk info", info)
 		},
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			console.log("4- File uploaded", file);
+			// console.log("4- File uploaded", file);
 			var response = jQuery.parseJSON(info.response);
 
 			// get the name of the file and recreate the filepath to be downloaded
@@ -84,8 +84,7 @@ var uploader = new plupload.Uploader({
 				})
 				.then((data) => {
 					// This is where you handle what to do with the response.
-					console.log('uuuuuurl shorrt');
-					console.log(data);
+					shortUrl = data;
 				})
 				.catch((error) => {
 					// This is where you handle errors.
