@@ -77,8 +77,8 @@ var uploader = new plupload.Uploader({
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
 						// check for any errors.
 						// In case of an error, throw.
-						console.log('LOONG URL TESSSST', longUrl);
 						tag.href = longUrl;
+						document.getElementById('downloadLink').innerText = tag.href;
 						throw new Error("Something went wrong!");
 					}
 
@@ -86,8 +86,9 @@ var uploader = new plupload.Uploader({
 				})
 				.then((data) => {
 					// This is where you handle what to do with the response.
-					console.log('SHORT URL TESSSST', data);
 					tag.href = data;
+					console.log('tag href: ' + tag.href)
+					document.getElementById('downloadLink').innerText = tag.href;
 				})
 				.catch((error) => {
 					// This is where you handle errors.
@@ -96,7 +97,6 @@ var uploader = new plupload.Uploader({
 			// Hiding upload button and making download button and link visible
 			document.getElementById('uploadBta').classList.add('hidden');
 			document.getElementById('downloadBta').classList.remove('hidden');
-			document.getElementById('downloadLink').innerText = tag.href;
 			// document.getElementById('downloadLink').classList.remove('hidden');
 			document.getElementById('downloadClipBoard').classList.remove('hidden');
 		},
