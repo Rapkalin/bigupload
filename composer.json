@@ -5,7 +5,9 @@
 
     "require": {
         "symfony/var-dumper": "^v5.4.9",
-        "components/jquery": "^3.6"
+        "components/jquery": "^3.6",
+        "ext-curl": "*",
+        "ext-json": "*"
     },
     "config": {
         "vendor-dir": "website/vendor"

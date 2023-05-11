@@ -9,6 +9,9 @@ $fp = fopen($path, "rb");
 $content = fread($fp, $size);
 fclose($fp);
 
+
+var_dump('$path', $path);
+die();
 header("Content-length: ".$size);
 header("Content-type: application/octet-stream");
 header("Content-disposition: attachment; filename=".$fileName.";" );

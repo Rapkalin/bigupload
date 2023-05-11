@@ -70,7 +70,36 @@ var uploader = new plupload.Uploader({
 			// get the name of the file and recreate the filepath to be downloaded
 			fileName = response.result.fileName;
 			var tag = document.getElementById('downloadFile');
-			tag.href = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
+			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
+
+			fetch("app/utils.php?longUrl=" + longUrl)
+				.then((response) => {
+					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
+						// check for any errors.
+						// In case of an error, throw.
+						throw new Error("Something went wrong!");
+					}
+
+					return response.json(); // Parse the JSON data.
+				})
+				.then((data) => {
+					// This is where you handle what to do with the response.
+					console.log('uuuuuurl');
+					console.log(data);
+					alert(data); // Will alert: 42
+				})
+				.catch((error) => {
+					// This is where you handle errors.
+				});
+
+
+			if (typeof shortUrl !== 'undefined') {
+				console.log('SHORT URL TESSSST', shortUrl);
+				tag.href = shortUrl;
+			} else {
+				console.log('LOONG URL TESSSST', longUrl);
+				tag.href = longUrl;
+			}
 
 			// Hiding upload button and making download button and link visible
 			document.getElementById('uploadBta').classList.add('hidden');
