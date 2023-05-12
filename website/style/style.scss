@@ -12,19 +12,23 @@ body {
   align-items: center;
 }
 
-#descriptionArea {
-  color: white;
+#uploadFrom {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
+  height: auto;
+  width: 30em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 15px 30px 15px;
 }
 
-#uploadTitle {
-  font-size: -webkit-xxx-large;
-  text-align: center;
-}
-
-#subtitle {
-  text-align: center;
-  font-size: medium;
-  font-weight: 700;
+#uploadContainer {
+  width: 50%;
+  display: flex;
+  justify-content: center;
 }
 
 #uploadArea {
@@ -38,12 +42,48 @@ body {
   border-color: darkgrey;
   border-radius: 10px;
   height: 16em;
+  width: 20em;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-bottom: 30px;
   padding: 10px;
+}
+
+#descriptionArea {
+  color: white;
+}
+
+#uploadTitle {
+  font-size: -webkit-xxx-large;
+  text-align: center;
+}
+
+#dropareaOff {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#dropareaOff > p {
+  text-align: center;
+  font-weight: bold;
+  font-size: 2em;
+  color: #6e6e6e;
+}
+
+#subtitle {
+  text-align: center;
+  font-size: medium;
+  font-weight: 700;
+}
+
+#dropareaOr {
+  margin-bottom: 10px;
+  color: darkgrey;
+  font-size: 13px;
+  text-align: center;
 }
 
 #droparea > p {
@@ -85,17 +125,13 @@ body {
 #uploadBta,
 #downloadBta {
   padding: 8px 24px;
-  margin-bottom: 5px;
   border-radius: 4px;
   background: mediumseagreen;
   transition: background 0.3s ease;
   height: 20px;
   width: fit-content;
   text-align: center;
-}
-
-#downloadBta {
-  margin-right: 5px;
+  margin-bottom: 10px;
 }
 
 #uploadBta > a,
@@ -109,39 +145,17 @@ body {
   background: forestgreen;
 }
 
-#dropareaOr {
-  margin-bottom: 10px;
-  color: darkgrey;
-  font-size: 13px;
-  text-align: center;
-}
-
-#tooManyFiles {
-  margin-bottom: 10px;
-  font-style: italic;
-  color: darkgray;
-  font-size: 13px;
-  text-align: center;
-}
-
 .addedFile {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: darkgrey;
+  align-items: center;
+  border-radius: 10px;
+  padding: 7px 12px;
+  margin-top: 6px;
+  height: auto;
   text-align: center;
-  color: white;
-  border: 1px solid darkgray;
-  padding: 18px 12px;
-  height: 18px;
-  margin-bottom: 15px;
-}
-
-.progressBar {
-  background-color: mediumseagreen;
-  position: absolute;
-  height: 100%;
-  width: 5%;
-  top: 0;
-  left: 0;
-  z-index: -1;
+  margin-bottom: 6px;
 }
 
 .btaBG {
@@ -156,8 +170,13 @@ body {
 
 #downloadOrCopy {
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
 }
+
+progress::-moz-progress-bar { background: mediumseagreen; }
+progress::-webkit-progress-value { background: mediumseagreen; }
+progress { backcolor: mediumseagreen; }
 
 textarea {
   width: 50%;
@@ -169,10 +188,9 @@ textarea {
   margin-top: 15px;
 }
 
-#downloadClipBoard {
+.downloadClipBoard {
   padding: 8px 24px;
   margin-bottom: 5px;
-  margin-left: 5px;
   border-radius: 4px;
   background: cornflowerblue;
   transition: background 0.3s ease;
@@ -183,29 +201,11 @@ textarea {
   border: none;
 }
 
-#downloadClipBoard:hover {
+.downloadClipBoard:hover {
   background: royalblue;
   cursor: pointer;
 }
 
 .hidden {
   display: none;
-}
-
-#uploadFrom {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
-  height: 28em;
-  width: 23em;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#uploadContainer {
-  width: 50%;
-  display: flex;
-  justify-content: center;
 }

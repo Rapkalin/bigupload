@@ -26,7 +26,8 @@
                         <p>Drop your files here</p>
                         <span id="dropareaOr">or</span>
                         <a id="browsefilesBta" href="javascript:;">Select your files</a>
-                        <a id="browsefilesBtaOff" class="hidden">Select your files</a>
+                        <button id="refreshButton" class="downloadClipBoard hidden" onClick="window.location.href=window.location.href">Upload new files</button>
+
                     </div>
                     <div id="filelist"></div>
                     <div id="uploadBta">
@@ -38,7 +39,7 @@
                         </div>
 
                         <!-- <div id="copyArea"> -->
-                        <button id="downloadClipBoard" class="hidden" onclick="copyToClipboard()">Copy the download link</button>
+                        <button class="downloadClipBoard" class="hidden" onclick="copyToClipboard()">Copy the link</button>
                         <textarea readonly id="downloadLink" class="hidden">link</textarea>
                         <!-- </div> -->
                     </div>
