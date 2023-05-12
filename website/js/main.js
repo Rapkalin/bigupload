@@ -4,7 +4,7 @@ var uploader = new plupload.Uploader({
   container : document.getElementById('uploadArea'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
 	url : 'app/upload.php',
-  multi_selection : true,
+  multi_selection : false,
   chunk_size : '50mb',
   filters: {
     mime_types: [
