@@ -44,6 +44,8 @@ var uploader = new plupload.Uploader({
         document.getElementById('droparea').id = 'dropareaOff';
         document.getElementById('browsefilesBta').classList.add('hidden');
         document.getElementById('refreshButton').classList.remove('hidden');
+        document.getElementById('uploadBta').classList.remove('hidden');
+        document.getElementById('copyLinkButton').classList.remove('hidden');
       }
     },
 
