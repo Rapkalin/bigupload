@@ -9,6 +9,7 @@
 <!-- production -->
 <script type="application/javascript" src="vendor/components/jquery/jquery.js"></script>
 <script type="text/javascript" src="js/library/plupload/plupload.full.min.js"></script>
+
 <!-- debug
 <script type="text/javascript" src="../js/moxie.js"></script>
 <script type="text/javascript" src="../js/plupload.dev.js"></script>
@@ -17,38 +18,47 @@
 </head>
 <body>
 
-<h1 id="title">UPLOAD AREA</h1>
-<p id="subtitle">Choose the file you want to upload and let the magic happens :)</p>
+    <div id="container">
+        <div id="uploadContainer">
+            <div id="uploadFrom">
+                <div id="uploadArea">
+                    <div id="droparea">
+                        <p>Drop your files here</p>
+                        <span id="dropareaOr">or</span>
+                        <a id="browsefilesBta" href="javascript:;">Select your files</a>
+                        <a id="browsefilesBtaOff" class="hidden">Select your files</a>
+                    </div>
+                    <div id="filelist"></div>
+                    <div id="uploadBta">
+                        <a id="uploadfiles" href="javascript:;">Upload your files</a>
+                    </div>
+                    <div id="downloadOrCopy">
+                        <div id="downloadBta" class="hidden">
+                            <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
+                        </div>
 
-<div id="container">
-    <div id="droparea">
-        <p>Drop your files here</p>
-        <span id="dropareaOr">or</span>
-        <a id="browsefilesBta" href="javascript:;">Select your files</a>
-        <a id="browsefilesBtaOff" class="hidden">Select your files</a>
-        <span id="tooManyFiles" class="hidden">*Info: You cannot upload more than one file at the time.<br/>Please reload the page to upload a new file.</span>
-    </div>
-    <div id="filelist"></div>
-    <div id="uploadBta">
-        <a id="uploadfiles" href="javascript:;">Upload your files</a>
-    </div>
-    <div id="downloadOrCopy">
-        <div id="downloadBta" class="hidden">
-            <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
+                        <!-- <div id="copyArea"> -->
+                        <button id="downloadClipBoard" class="hidden" onclick="copyToClipboard()">Copy the download link</button>
+                        <textarea readonly id="downloadLink" class="hidden">link</textarea>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- <div id="copyArea"> -->
-        <button id="downloadClipBoard" class="hidden" onclick="copyToClipboard()">Copy the download link</button>
-        <textarea readonly id="downloadLink" class="hidden">link</textarea>
-        <!-- </div> -->
+        <div id="descriptionArea">
+            <h1 id="uploadTitle">WELCOME TO BIGUPLOAD</h1>
+            <p id="subtitle">Choose the file you want to upload and let the magic happens :)</p>
+        </div>
+
     </div>
-</div>
 
-<br/>
 
-<pre id="console"></pre>
+    <br/>
 
-<script type="text/javascript" src="js/main.js"></script>
-<script type="text/javascript" src="js/copyToClipBoard.js"></script>
+    <pre id="console"></pre>
+
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/copyToClipBoard.js"></script>
 </body>
 </html>

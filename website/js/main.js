@@ -1,7 +1,7 @@
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'browsefilesBta', // you can pass an id...
-  container : document.getElementById('container'), // ... or DOM Element itself
+  container : document.getElementById('uploadArea'), // ... or DOM Element itself
   drop_element : "droparea", // add a drop area using the id in the index
 	url : 'app/upload.php',
   multi_selection : true,
@@ -44,7 +44,6 @@ var uploader = new plupload.Uploader({
         document.getElementById('droparea').id = 'dropareaOff';
         document.getElementById('browsefilesBta').classList.add('hidden');
         document.getElementById('browsefilesBtaOff').classList.remove('hidden');
-        document.getElementById('tooManyFiles').classList.remove('hidden');
       }
     },
 
@@ -72,6 +71,7 @@ var uploader = new plupload.Uploader({
 			var tag = document.getElementById('downloadFile');
 			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
 
+			// SHORTEN THE LONGURL FOR THE CLIPBOARD
 			fetch("app/tiny-url.php?longUrl=" + longUrl)
 				.then((response) => {
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
@@ -87,7 +87,6 @@ var uploader = new plupload.Uploader({
 				.then((data) => {
 					// This is where you handle what to do with the response.
 					tag.href = data;
-					console.log('tag href: ' + tag.href)
 					document.getElementById('downloadLink').innerText = tag.href;
 				})
 				.catch((error) => {
