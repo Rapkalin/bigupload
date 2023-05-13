@@ -3,28 +3,31 @@ body {
   background-size: cover;
   font-family: Verdana, sans-serif;
   font-size: 13px;
+  margin: 0px;
+  height: 100vh;
 }
 
 #container {
   color: black;
-  height: 100vh;
   display: flex;
   align-items: center;
+  flex-direction: row-reverse;
+  height: inherit;
 }
 
 #fileSelect {
-  color: darkgrey !important;
+  color: #4c4c4c !important;
   font-size: 1em !important;
   font-weight: lighter !important;
   text-align: center !important;
 }
 
 #uploadFrom {
-  background: #fff;
+  background: #ffffffb0;;
   border-radius: 10px;
   box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
   height: auto;
-  width: 30em;
+  width: 24em;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,7 +48,7 @@ body {
 }
 
 #droparea {
-  border: 2px dashed;
+  border: 1px dashed;
   border-color: darkgrey;
   border-radius: 10px;
   height: 16em;
@@ -87,7 +90,7 @@ body {
 
 #dropareaOr {
   margin-bottom: 10px;
-  color: darkgrey;
+  color: #4c4c4c;
   font-size: 13px;
   text-align: center;
 }
@@ -179,10 +182,6 @@ body {
   flex-direction: column;
   align-items: center;
 }
-
-progress::-moz-progress-bar { background: mediumseagreen; }
-progress::-webkit-progress-value { background: mediumseagreen; }
-progress { backcolor: mediumseagreen; }
 
 textarea {
   width: 50%;
