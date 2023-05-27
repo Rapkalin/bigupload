@@ -43,9 +43,11 @@ var uploader = new plupload.Uploader({
       if (up.files.length > 0) {
         document.getElementById('droparea').id = 'dropareaOff';
         document.getElementById('browsefilesBta').classList.add('hidden');
+        document.getElementById('dropareaOr').classList.add('hidden');
         document.getElementById('refreshButton').classList.remove('hidden');
         document.getElementById('uploadBta').classList.remove('hidden');
-        document.getElementById('copyLinkButton').classList.remove('hidden');
+        document.getElementById('uploadBta').style.display = 'flex';
+        document.getElementById('uploadBta').style.alignItems = 'center';
       }
     },
 
@@ -98,9 +100,9 @@ var uploader = new plupload.Uploader({
 				});
 
 			// Hiding upload button and making download button and link visible
-			document.getElementById('uploadBta').classList.add('hidden');
-			document.getElementById('downloadBta').classList.remove('hidden');
-			document.getElementById('downloadClipBoard').classList.remove('hidden');
+			document.getElementById('uploadBta').style.display = 'none';
+			document.getElementById('downloadOrCopy').classList.remove('hidden');
+			document.getElementById('downloadOrCopy').style.display = 'flex';
 		},
 
 		// Handle errors
