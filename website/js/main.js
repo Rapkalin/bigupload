@@ -76,15 +76,9 @@ var uploader = new plupload.Uploader({
 			var tag = document.getElementById('downloadFile');
 			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
 
-			console.log('longUrl');
-			console.log(longUrl);
-
 			// SHORTEN THE LONGURL FOR THE CLIPBOARD
 			fetch("app/tiny-url.php?longUrl=" + longUrl)
 				.then((response) => {
-					console.warn('response');
-					console.log(response);
-					console.log(response.json());
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
 						// check for any errors.
 						// In case of an error, throw.
@@ -97,8 +91,6 @@ var uploader = new plupload.Uploader({
 				})
 				.then((data) => {
 					// This is where you handle what to do with the response.
-					console.warn('data');
-					console.log(data);
 					tag.href = data;
 					document.getElementById('downloadLink').innerText = tag.href;
 				})

@@ -36,6 +36,5 @@ try {
     echo json_encode($new_url);
 
 } catch (\Exception $e) {
-    var_dump('exception error', $e);
-    die();
+    throw new Exception('something went wrong: ', $e);
 }
