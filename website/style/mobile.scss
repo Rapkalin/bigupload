@@ -62,8 +62,14 @@
   }
 
   #descriptionArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
     color: white;
     height: 50em;
+    padding-left: 2em;
+    padding-right: 2em;
   }
 
   #uploadTitle {
