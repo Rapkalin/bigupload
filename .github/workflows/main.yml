@@ -1,0 +1,90 @@
+name: Deploy website on push new tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 8.1 ]
+
+    steps:
+      - name: checkout bigupload
+        uses: actions/checkout@v3
+
+      - name: Restore the Composer cache directory
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-'8.0'-composer-
+
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          dev: no
+          args: --prefer-dist --no-interaction
+
+      - name: Zip artifact for deployment
+        run: zip -r release.zip website/app/* -x ".git/*" -x ".github/*"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app
+          path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: create or replace backup release
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          script: "[ ! -d ~/bigupload/website ] || rm -rf ~/bigupload/old_website && mv -fu ~/bigupload/website ~/bigupload/old_website"
+
+      - name: checkout bigupload
+        uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app
+
+      - name: unzip artifact for deployment
+        run: |
+          unzip -o release.zip
+
+      - name: Deploy with rsync
+        uses: burnett01/rsync-deployments@5.2
+        with:
+          switches: -avzr --delete
+          path: ./website
+          remote_path: ~/bigupload
+          remote_host: ${{ secrets.DEPLOY_HOST }}
+          remote_user: ${{ secrets.DEPLOY_USER }}
+          remote_key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: create new Symlink
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          script: |
+            ln -nsrf ~/bigupload/shared/.env ~/bigupload/website/.env
+            rm ~/bigupload/website/.htaccess
+            ln -nsrf ~/bigupload/shared/.htaccess ~/bigupload/website/.htaccess

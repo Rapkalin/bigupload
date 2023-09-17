@@ -1,0 +1,20 @@
+name: Run scripts BDD and media uploads
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run scripts import BDD and medias prod to preprod
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          script: |
+            cd ~/preprod-bigupload/shared/scripts
+            ~/bin/php import-prod-db-for-preprod.php 
+            ~/bin/php sync-uploads.php
