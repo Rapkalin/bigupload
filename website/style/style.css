@@ -1,5 +1,5 @@
-@import url("mobile.scss");
-@import url("laptop.scss");
+@import url("laptop.css");
+@import url("mobile.css");
 
 html {
   background: white;
@@ -10,6 +10,6 @@ body {
   background-size: cover;
   font-family: Verdana, sans-serif;
   font-size: 13px;
-  margin: 0px;
+  margin: 0;
   height: 100vh;
 }
