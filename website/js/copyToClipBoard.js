@@ -24,19 +24,16 @@ function copyToClipboard(textToCopy) {
         If permission to read the clipboard is granted or if the user will
         be prompted to allow it, we proceed.
          */
-        if (result.state !== 'denied') {
-            var copyText = document.getElementById("downloadLink");
-            navigator.clipboard.writeText(textToCopy)
-                .then(text => {
-                    console.info("Text successfully copied: " + text);
+        navigator.clipboard.writeText(textToCopy)
+            .then(text => {
+                console.info("Text successfully copied: " + text);
 
-                    // If copy to clipboard worked we return true
-                    return true;
-                })
-                .catch(err => {
-                    console.error('Failed to read clipboard contents: ' + err);
-                });
-        }
+                // If copy to clipboard worked we return true
+                return true;
+            })
+            .catch(err => {
+                console.error('Failed to read clipboard contents: ' + err);
+            });
     } catch (e) {
         console.error('Error with clipboard-read: ' + e)
     }
