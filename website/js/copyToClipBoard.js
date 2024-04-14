@@ -84,7 +84,7 @@ function fallbackCopyTextToClipboard(textToCopy) {
  * @returns {string}
  */
 function browserCheck () {
-    return (function (agent) {
+    var browser = (function (agent) {
         switch (true) {
             case agent.indexOf("edge") > -1:
                 return "MS Edge (EdgeHtml)";
@@ -103,7 +103,9 @@ function browserCheck () {
             default:
                 return "other";
         }
-    });
+    })(window.navigator.userAgent.toLowerCase());
+
+    return browser;
 }
 
 /**
