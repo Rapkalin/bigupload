@@ -1,27 +1,31 @@
-/* hi-res laptops and desktops */
-@media (min-width:1281px) {
+/* smartphones, iPhone, portrait 480x320 phones */
+@media (max-width:480px)  {
+  body {
+    background-position: inherit;
+  }
 
   #container {
     color: black;
     display: flex;
     align-items: center;
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
     height: inherit;
+    justify-content: center;
   }
 
   #fileSelect {
     color: #4c4c4c !important;
-    font-size: 1em !important;
+    font-size: 2em !important;
     font-weight: lighter !important;
     text-align: center !important;
   }
 
   #uploadFrom {
-    background: #ffffffb0;;
+    background: #ffffffb0;
     border-radius: 10px;
     box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
     height: auto;
-    width: 24em;
+    width: inherit;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,9 +34,10 @@
   }
 
   #uploadContainer {
-    width: 50%;
     display: flex;
     justify-content: center;
+    height: auto;
+    width: 50em;
   }
 
   #uploadArea {
@@ -41,19 +46,14 @@
     align-items: center;
   }
 
-  #uploadArea > div > button, #uploadBta {
-    height: 3em;
-    font-size: 1em;
+  #uploadArea > div > button {
+    height: 2em;
+    font-size: 2em;
     margin-top: 1em;
     align-items: center;
   }
 
-    #droparea {
-    border: 1px dashed;
-    border-color: darkgrey;
-    border-radius: 10px;
-    height: 16em;
-    width: 20em;
+  #droparea {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,12 +66,14 @@
     flex-direction: column;
     justify-content: center;
     color: white;
+    color: white;
+    height: 50em;
     padding-left: 2em;
     padding-right: 2em;
   }
 
   #uploadTitle {
-    font-size: -webkit-xxx-large;
+    font-size: 8em;
     text-align: center;
   }
 
@@ -84,27 +86,35 @@
   #dropareaOff > p {
     text-align: center;
     font-weight: bold;
-    font-size: 2em;
+    font-size: 4em;
     color: #6e6e6e;
   }
 
   #subtitle {
     text-align: center;
-    font-size: medium;
+    font-size: 3em;
     font-weight: 700;
+    padding-left: 2em;
+    padding-right: 2em;
   }
 
   #dropareaOr {
     margin-bottom: 10px;
     color: #4c4c4c;
-    font-size: 13px;
+    font-size: 2em;
     text-align: center;
   }
 
   #droparea > p {
     color: cornflowerblue;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 4em;
+  }
+  #droparea > a {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    align-items: center;
   }
 
   #browsefilesBta {
@@ -114,10 +124,10 @@
     background: cornflowerblue;
     transition: background 0.3s ease;
     text-decoration: none;
-    height: 20px;
+    height: 2em;
     width: fit-content;
     text-align: center;
-    font-size: 1em;
+    font-size: 2em;
   }
 
   #browsefilesBtaOff {
@@ -138,33 +148,38 @@
     background: royalblue;
   }
 
-  #uploadBta,
-  #downloadBta {
+  #uploadBta {
+    height: 2em;
+    width: fit-content;
+    font-size: 2em;
+  }
+
+
+  #uploadBta {
     padding: 8px 24px;
     border-radius: 4px;
     background: mediumseagreen;
     transition: background 0.3s ease;
-    height: 20px;
-    width: fit-content;
     text-align: center;
     margin-bottom: 10px;
+    height: 2em;
+    font-size: 2em;
+    margin-top: 1em;
   }
 
-  #uploadBta > a,
-  #downloadBta > a {
+  #uploadBta > a {
     text-decoration: none;
     color: white;
   }
 
-  #uploadBta:hover,
-  #downloadBta:hover {
+  #uploadBta:hover {
     background: forestgreen;
   }
 
   .addedFile {
     display: flex;
     flex-direction: column;
-    color: darkslategrey;
+    color: darkgrey;
     align-items: center;
     border-radius: 10px;
     padding: 7px 12px;
@@ -189,6 +204,7 @@
     align-items: center;
   }
 
+
   textarea {
     width: 50%;
     height: 100%;
@@ -205,7 +221,6 @@
     border-radius: 4px;
     background: cornflowerblue;
     transition: background 0.3s ease;
-    height: inherit;
     width: fit-content;
     text-align: center;
     color: white;
@@ -217,7 +232,21 @@
     cursor: pointer;
   }
 
+  #copyLinkButton {
+    background-color: mediumseagreen;
+  }
+
   .hidden {
     display: none;
   }
+}
+
+/* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
+@media (min-width:481px)  {
+
+}
+
+/* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
+@media (min-width:641px)  {
+
 }
