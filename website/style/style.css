@@ -1,5 +1,5 @@
-@import url("mobile.scss");
-@import url("laptop.scss");
+@import url("mobile.css");
+@import url("laptop.css");
 
 html {
   background: white;
