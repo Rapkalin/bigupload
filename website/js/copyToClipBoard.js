@@ -79,13 +79,38 @@ function fallbackCopyTextToClipboard(textToCopy) {
 }
 
 /**
+ * Return the current browser
+ *
+ * @returns {string}
+ */
+function browserCheck () {
+    switch (true) {
+        case agent.indexOf("edge") > -1: return "MS Edge (EdgeHtml)";
+        case agent.indexOf("edg") > -1: return "MS Edge Chromium";
+        case agent.indexOf("opr") > -1 && !!window.opr: return "opera";
+        case agent.indexOf("chrome") > -1 && !!window.chrome: return "chrome";
+        case agent.indexOf("trident") > -1: return "Internet Explorer";
+        case agent.indexOf("firefox") > -1: return "firefox";
+        case agent.indexOf("safari") > -1: return "safari";
+        default: return "other";
+    }
+}
+
+/**
  * Init the function to copy to clipboard
  *
  * @returns {Promise<void>}
  */
 const initClipboard = async () => {
     var elementCopyText = document.getElementById("downloadLink");
-    if (!navigator.clipboard) {
+    let currentBrowser = browserCheck();
+    console.info('Current detected browser is: ' + currentBrowser);
+    
+    if (
+        !navigator.clipboard ||
+        currentBrowser === 'firefox' ||
+        currentBrowser === 'safari'
+    ) {
         fallbackCopyTextToClipboard(elementCopyText.value);
         return;
     }
