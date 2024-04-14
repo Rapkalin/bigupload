@@ -3,7 +3,7 @@ name: Deploy preprod on push feature
 on:
   push:
     branches:
-      - 'feature/**'
+      - 'release/**'
 
 jobs:
   build:
