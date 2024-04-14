@@ -20,33 +20,29 @@ const permissionsCheck = async () => {
  */
 function copyToClipboard(textToCopy) {
     try {
-        navigator.permissions.query({ name: 'clipboard-read' })
-            .then(result => {
-                console.info("Clipboard-read permission result successful: ", result);
-            if (result.state === 'denied') {
-                console.error("Clipboard-read permission result denied: ", result);
-                alert("Copied didn't work. Please authorize your navigator to clipboard");
-            }
+        /*
+        If permission to read the clipboard is granted or if the user will
+        be prompted to allow it, we proceed.
+         */
+        if (result.state !== 'denied') {
+            var copyText = document.getElementById("downloadLink");
+            navigator.clipboard.writeText(textToCopy)
+                .then(text => {
+                    console.info("Text successfully copied: " + text);
 
-            /*
-            If permission to read the clipboard is granted or if the user will
-            be prompted to allow it, we proceed.
-             */
-            if (result.state !== 'denied') {
-                var copyText = document.getElementById("downloadLink");
-                navigator.clipboard.writeText(textToCopy)
-                    .then(text => {
-                        console.info("Text successfully copied: " + text);
-                    })
-                    .catch(err => {
-                        console.error('Failed to read clipboard contents: ' + err);
-                    });
-            }
-        })
+                    // If copy to clipboard worked we return true
+                    return true;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ' + err);
+                });
+        }
     } catch (e) {
         console.error('Error with clipboard-read: ' + e)
     }
 
+    // If copy to clipboard didn't work we return false
+    return false;
 }
 
 /**
@@ -69,13 +65,20 @@ function fallbackCopyTextToClipboard(textToCopy) {
 
     try {
         var successful = document.execCommand('copy');
-        var msg = successful ? 'successful' : 'unsuccessful';
-        console.log('Fallback: Copying text command was ' + msg);
+
+        if (successful) {
+            var msg = successful ? 'successful' : 'unsuccessful';
+            console.info('Fallback: Copying text command was ' + msg);
+        } else {
+            console.error('Fallback: Copying text command was ' + msg);
+        }
     } catch (err) {
         console.error('Fallback: Oops, unable to copy', err);
     }
 
     document.body.removeChild(textArea);
+    return successful;
+    // If copy to clipboard didn't work we return false
 }
 
 /**
@@ -109,31 +112,49 @@ function browserCheck () {
 }
 
 /**
+ * reBuild the copy link button to a confirm copied link button
+ */
+function buildCopiedConfirmationButton () {
+    let elementCopyText = document.getElementById("copyLinkButton");
+    console.log('elementCopyText update', elementCopyText);
+
+    elementCopyText.classList.remove("downloadClipBoard");
+    elementCopyText.classList.add("confirmClipBoard");
+    elementCopyText.removeAttribute("onclick");
+    elementCopyText.innerHTML = 'Link copied';
+}
+
+/**
  * Init the function to copy to clipboard
  *
  * @returns {Promise<void>}
  */
 const initClipboard = async () => {
+    var isTextCopied = false;
     var elementCopyText = document.getElementById("downloadLink");
     let currentBrowser = browserCheck();
     console.info('Current detected browser is: ' + currentBrowser);
-    
+
     if (
         !navigator.clipboard ||
         currentBrowser === 'firefox' ||
         currentBrowser === 'safari'
     ) {
-        fallbackCopyTextToClipboard(elementCopyText.value);
-        return;
+        isTextCopied = fallbackCopyTextToClipboard(elementCopyText.value);
+    } else {
+        await permissionsCheck()
+            .then(permissionsCheckResult => {
+                console.info("Permission check result: " + permissionsCheckResult);
+            if (permissionsCheckResult){
+                isTextCopied = copyToClipboard(elementCopyText.value)
+            } else {
+                console.error('Check clipboard permission failed!')
+                return false;
+            }
+        })
     }
 
-    await permissionsCheck()
-        .then(permissionsCheckResult => {
-            console.info("Permission check result: " + permissionsCheckResult);
-        if (permissionsCheckResult){
-            copyToClipboard(elementCopyText.value)
-        } else {
-            console.error('Check clipboard permission failed!')
-        }
-    })
+    if (isTextCopied) {
+        buildCopiedConfirmationButton();
+    }
 }

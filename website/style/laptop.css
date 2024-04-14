@@ -213,11 +213,24 @@
   }
 
   .downloadClipBoard:hover {
-    background: royalblue;
+    background: #386ac1;
     cursor: pointer;
   }
 
   .hidden {
     display: none;
+  }
+
+  .confirmClipBoard {
+    padding: 8px 24px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    background: green;
+    transition: background 0.3s ease;
+    height: inherit;
+    width: fit-content;
+    text-align: center;
+    color: white;
+    border: none;
   }
 }

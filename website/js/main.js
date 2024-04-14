@@ -85,7 +85,7 @@ var uploader = new plupload.Uploader({
 						// In case of an error, throw.
 						document.getElementById('downloadLink').innerText = longUrl;
 						console.error('Tiny URL fetch failed.');
-						console.log('Download URL is: ' + longUrl);
+						console.info('Download URL is: ' + longUrl);
 						throw new Error("Something went wrong with the TinyUrl api fetching!");
 					}
 
@@ -96,7 +96,7 @@ var uploader = new plupload.Uploader({
 					document.getElementById('downloadLink').innerText = data;
 
 					console.info('Tiny URL fetched successful.');
-					console.log('Download URL is: ' + data);
+					console.info('Download URL is: ' + data);
 				})
 				.catch((error) => {
 					// This is where you handle errors.
