@@ -25,8 +25,8 @@ function copyToClipboard(textToCopy) {
         be prompted to allow it, we proceed.
          */
         navigator.clipboard.writeText(textToCopy)
-            .then(text => {
-                console.info("Text successfully copied: " + text);
+            .then(textToCopy => {
+                console.info("Text successfully copied: " + textToCopy);
 
                 // If copy to clipboard worked we return true
                 return true;
@@ -113,12 +113,14 @@ function browserCheck () {
  */
 function buildCopiedConfirmationButton () {
     let elementCopyText = document.getElementById("copyLinkButton");
-    console.log('elementCopyText update', elementCopyText);
+    console.info('Updating copy button element');
 
     elementCopyText.classList.remove("downloadClipBoard");
     elementCopyText.classList.add("confirmClipBoard");
     elementCopyText.removeAttribute("onclick");
     elementCopyText.innerHTML = 'Link copied';
+
+    console.info('Copy button element updated');
 }
 
 /**
@@ -150,6 +152,8 @@ const initClipboard = async () => {
             }
         })
     }
+
+    console.info('Is text been copied: ' + isTextCopied);
 
     if (isTextCopied) {
         buildCopiedConfirmationButton();
