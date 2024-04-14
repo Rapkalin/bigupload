@@ -6,3 +6,6 @@ website/app/uploads/*
 .idea
 composer.lock
 *.xml
+
+website/.htaccess
+website/.htpasswd

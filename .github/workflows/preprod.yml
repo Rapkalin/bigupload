@@ -3,7 +3,7 @@ name: Deploy preprod on push feature
 on:
   push:
     branches:
-      - 'feature/**'
+      - 'release/**'
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
           args: --prefer-dist --no-interaction
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip website/app/* -x ".git/*" -x ".github/*"
+        run: zip -r release.zip website/app/* website/vendor/* -x ".git/*" -x ".github/*"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3

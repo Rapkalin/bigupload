@@ -73,6 +73,7 @@ var uploader = new plupload.Uploader({
 
 			// get the name of the file and recreate the filepath to be downloaded
 			fileName = response.result.fileName;
+
 			// var tag = document.getElementById('downloadFile'); // If we need a download button
 			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
 
@@ -83,19 +84,24 @@ var uploader = new plupload.Uploader({
 						// check for any errors.
 						// In case of an error, throw.
 						document.getElementById('downloadLink').innerText = longUrl;
-						throw new Error("Something went wrong!");
+						console.error('Tiny URL fetch failed.');
+						console.log('Download URL is: ' + longUrl);
+						throw new Error("Something went wrong with the TinyUrl api fetching!");
 					}
 
 					return response.json(); // Parse the JSON data.
 				})
 				.then((data) => {
-					// This is where you handle what to do with the response.
+					// Handling the response (data).
 					document.getElementById('downloadLink').innerText = data;
+
+					console.info('Tiny URL fetched successful.');
+					console.log('Download URL is: ' + data);
 				})
 				.catch((error) => {
 					// This is where you handle errors.
 					document.getElementById('downloadLink').innerText = longUrl;
-					console.error('something went wrong with the tinyURL: ' + error)
+					console.error('something went wrong with the tinyURL fetch: ' + error)
 				});
 
 			// Hiding upload button and making download button and link visible
