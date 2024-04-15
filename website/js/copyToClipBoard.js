@@ -19,14 +19,16 @@ const permissionsCheck = async () => {
  * @param textToCopy
  */
 function copyToClipboard(textToCopy) {
+    let result = false;
     try {
         /*
         If permission to read the clipboard is granted or if the user will
         be prompted to allow it, we proceed.
          */
-        navigator.clipboard.writeText(textToCopy)
-            .then(textToCopy => {
+        result = navigator.clipboard.writeText(textToCopy)
+            .then(logInfo => {
                 console.info("Text successfully copied: " + textToCopy);
+                console.info("LogInfo: " + logInfo);
 
                 // If copy to clipboard worked we return true
                 return true;
@@ -39,7 +41,7 @@ function copyToClipboard(textToCopy) {
     }
 
     // If copy to clipboard didn't work we return false
-    return false;
+    return result;
 }
 
 /**
@@ -48,7 +50,7 @@ function copyToClipboard(textToCopy) {
  * @param textToCopy
  */
 function fallbackCopyTextToClipboard(textToCopy) {
-    var textArea = document.createElement("textarea");
+    let textArea = document.createElement("textarea");
     textArea.value = textToCopy;
 
     // Avoid scrolling to bottom
@@ -61,10 +63,10 @@ function fallbackCopyTextToClipboard(textToCopy) {
     textArea.select();
 
     try {
-        var successful = document.execCommand('copy');
+        let successful = document.execCommand('copy');
 
         if (successful) {
-            var msg = successful ? 'successful' : 'unsuccessful';
+            let msg = successful ? 'successful' : 'unsuccessful';
             console.info('Fallback: Copying text command was ' + msg);
         } else {
             console.error('Fallback: Copying text command was ' + msg);
@@ -84,7 +86,7 @@ function fallbackCopyTextToClipboard(textToCopy) {
  * @returns {string}
  */
 function browserCheck () {
-    var browser = (function (agent) {
+    return (function (agent) {
         switch (true) {
             case agent.indexOf("edge") > -1:
                 return "MS Edge (EdgeHtml)";
@@ -104,8 +106,6 @@ function browserCheck () {
                 return "other";
         }
     })(window.navigator.userAgent.toLowerCase());
-
-    return browser;
 }
 
 /**
@@ -129,8 +129,8 @@ function buildCopiedConfirmationButton () {
  * @returns {Promise<void>}
  */
 const initClipboard = async () => {
-    var isTextCopied = false;
-    var elementCopyText = document.getElementById("downloadLink");
+    let isTextCopied = false;
+    let elementCopyText = document.getElementById("downloadLink");
     let currentBrowser = browserCheck();
     console.info('Current detected browser is: ' + currentBrowser);
 
