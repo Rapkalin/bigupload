@@ -28,7 +28,6 @@ function copyToClipboard(textToCopy) {
         result = navigator.clipboard.writeText(textToCopy)
             .then(logInfo => {
                 console.info("Text successfully copied: " + textToCopy);
-                console.info("LogInfo: " + logInfo);
 
                 // If copy to clipboard worked we return true
                 return true;
