@@ -34,7 +34,7 @@ jobs:
           args: --prefer-dist --no-interaction
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip website/app/* website/vendor/* -x ".git/*" -x ".github/*"
+        run: zip -r release.zip website/app/* website/vendor/* -x ".git/*" -x ".github/*" -x "website/app/uploads"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -89,3 +89,4 @@ jobs:
             rm ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
+            ln -nsrf ~/preprod-bigupload/shared/uploads ~/preprod-bigupload/website/app/uploads
