@@ -189,13 +189,16 @@
 }
 
 textarea {
-  width: 50%;
   height: 100%;
   line-height: 100%;
   text-align: center;
-  border: none;
   color: darkgrey;
   margin-top: 15px;
+  resize: none;
+  border: 1px solid #babcbf;
+  border-radius: 5px;
+  align-content: center;
+  padding: 0.2em 1em;
 }
 
 .downloadClipBoard {

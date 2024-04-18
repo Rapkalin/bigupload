@@ -19,7 +19,11 @@ const permissionsCheck = async () => {
  * @param textToCopy
  */
 function copyToClipboard(textToCopy) {
-    let result = false;
+    let result;
+    let textArea = document.getElementById("downloadLink");
+    textArea.focus();
+    textArea.select();
+
     try {
         /*
         If permission to read the clipboard is granted or if the user will
@@ -37,6 +41,7 @@ function copyToClipboard(textToCopy) {
             });
     } catch (e) {
         console.error('Error with clipboard-read: ' + e)
+        result = fallbackCopyTextToClipboard(textToCopy);
     }
 
     // If copy to clipboard didn't work we return false
@@ -49,33 +54,25 @@ function copyToClipboard(textToCopy) {
  * @param textToCopy
  */
 function fallbackCopyTextToClipboard(textToCopy) {
-    let textArea = document.createElement("textarea");
-    textArea.value = textToCopy;
-
-    // Avoid scrolling to bottom
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-
-    document.body.appendChild(textArea);
+    let isCopyCommandSuccessful = false;
+    let textArea = document.getElementById("downloadLink");
     textArea.focus();
     textArea.select();
 
     try {
-        let successful = document.execCommand('copy');
+        isCopyCommandSuccessful = document.execCommand('copy');
 
-        if (successful) {
-            let msg = successful ? 'successful' : 'unsuccessful';
-            console.info('Fallback: Copying text command was ' + msg);
+        if (isCopyCommandSuccessful) {
+            let confirmationMsg = isCopyCommandSuccessful ? 'successful' : 'unsuccessful';
+            console.info('Fallback: Copying text command was ' + confirmationMsg);
         } else {
-            console.error('Fallback: Copying text command was ' + msg);
+            console.error('Fallback failed: Copying text command was ' + confirmationMsg);
         }
     } catch (err) {
         console.error('Fallback: Oops, unable to copy', err);
     }
 
-    document.body.removeChild(textArea);
-    return successful;
+    return isCopyCommandSuccessful;
     // If copy to clipboard didn't work we return false
 }
 
@@ -128,28 +125,30 @@ function buildCopiedConfirmationButton () {
  * @returns {Promise<void>}
  */
 const initClipboard = async () => {
-    let isTextCopied = false;
+    let isTextCopied; // boolean
     let elementCopyText = document.getElementById("downloadLink");
     let currentBrowser = browserCheck();
-    console.info('Current detected browser is: ' + currentBrowser);
+    console.info('Checking current detected browser: ' + currentBrowser);
+    console.info('Checking navigator clipboard availability: ' + navigator.clipboard);
 
     if (
         !navigator.clipboard ||
         currentBrowser === 'firefox' ||
         currentBrowser === 'safari'
     ) {
+        console.info('Using fallbackCopyTextToClipboard')
         isTextCopied = fallbackCopyTextToClipboard(elementCopyText.value);
     } else {
-        await permissionsCheck()
-            .then(permissionsCheckResult => {
-                console.info("Permission check result: " + permissionsCheckResult);
-            if (permissionsCheckResult){
-                isTextCopied = copyToClipboard(elementCopyText.value)
-            } else {
-                console.error('Check clipboard permission failed!')
-                return false;
-            }
-        })
+        let permissionsCheckResult = await permissionsCheck();
+
+        console.info("Permission check result: " + permissionsCheckResult);
+        if (permissionsCheckResult) {
+            isTextCopied = copyToClipboard(elementCopyText.value)
+        } else {
+            console.error('Check clipboard permission failed!')
+            console.info('Using fallbackCopyTextToClipboard')
+            isTextCopied = fallbackCopyTextToClipboard(elementCopyText.value);
+        }
     }
 
     console.info('Is text been copied: ' + isTextCopied);
