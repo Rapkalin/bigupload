@@ -108,6 +108,7 @@ var uploader = new plupload.Uploader({
 			document.getElementById('uploadBta').style.display = 'none';
 			document.getElementById('downloadOrCopy').classList.remove('hidden');
 			document.getElementById('downloadOrCopy').style.display = 'flex';
+			document.getElementById('downloadLink').classList.remove('hidden');
 		},
 
 		// Handle errors

@@ -1,4 +1,4 @@
-name: Deploy preprod on push feature
+name: Deploy preprod on push release
 
 on:
   push:
