@@ -27,12 +27,12 @@
                             <p id="fileSelect">Please note that you can only upload one file at a time</p>
                             <span id="dropareaOr">or</span>
                             <a id="browsefilesBta" href="javascript:">Select your file</a>
-                            <button id="refreshButton" class="downloadClipBoard hidden" onClick="window.location.reload();">Upload a new file</button>
                         </div>
                         <div id="filelist"></div>
                         <div id="uploadBta" class="hidden">
-                            <a id="uploadfiles" href="javascript:">Upload your file</a>
+                            <a id="uploadfiles" href="javascript:">Upload</a>
                         </div>
+
                         <div id="downloadOrCopy" class="hidden">
                             <!-- <div id="downloadBta">
                                 <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
@@ -43,12 +43,14 @@
                             <textarea readonly id="downloadLink" class="hidden">Generating link...</textarea>
                             <!-- </div> -->
                         </div>
+
+                        <button id="refreshButton" class="downloadClipBoard hidden" onClick="window.location.reload();">Send a new file</button>
                     </div>
                 </div>
             </div>
 
             <div id="descriptionArea">
-                <h1 id="uploadTitle">WELCOME TO BIGUPLOAD</h1>
+                <h1 id="uploadTitle">WELCOME TO<br>BIGUPLOAD</h1>
                 <p id="subtitle">Choose the file you want to upload,<br> copy and share the download link :)</p>
             </div>
         </div>
