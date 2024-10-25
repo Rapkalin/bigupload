@@ -1,0 +1,15 @@
+/*@import "mobile.css";*/
+@import url("laptop.css");
+
+html {
+    background: white;
+}
+
+body {
+    background-image: url("images/bigupload-background.jpg");
+    background-size: cover;
+    font-family: Verdana, sans-serif;
+    font-size: 13px;
+    margin: 0;
+    height: 100vh;
+}
