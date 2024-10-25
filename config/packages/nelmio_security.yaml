@@ -18,3 +18,11 @@ nelmio_security:
         policies:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
+
+    csp:
+        enforce:
+            level1_fallback: true
+            script-src:
+                - 'self'
+                - ga.jspm.io
+                - 'data:'

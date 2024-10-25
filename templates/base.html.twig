@@ -10,7 +10,9 @@
         {% block javascripts %}
             <script type="application/javascript" src={{ asset("library/jquery/jquery.js") }}></script>
             <script type="text/javascript" src={{ asset("library/plupload/plupload.full.min.js") }}></script>
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {% block importmap %}
+                {{ importmap('app') | raw | replace({'<script': '<script nonce="' ~ csp_nonce('script') ~ '"' }) | raw }}
+            {% endblock %}
         {% endblock %}
     </head>
     <body>
