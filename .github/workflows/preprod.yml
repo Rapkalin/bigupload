@@ -34,7 +34,8 @@ jobs:
           args: --prefer-dist --no-interaction --no-scripts
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip . -x .git/\*
+        run: |
+          zip -r release.zip . -x "assets"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
