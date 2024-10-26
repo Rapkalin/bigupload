@@ -35,7 +35,7 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          zip -r release.zip . -x "assets/*" "tests/*" "*git*" "*composer*" "DOCKER_ENV" "docker_tag" "*env*"
+          zip -r release.zip . -x "./assets/*" "tests/\*" "*migrations*" "*git*" "*composer*" "DOCKER_ENV" "docker_tag" "*env*" "*phpunit.xml.dist*" "*DS_STORE*"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
