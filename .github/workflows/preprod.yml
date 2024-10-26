@@ -31,7 +31,7 @@ jobs:
         uses: php-actions/composer@v6
         with:
           dev: no
-          args: --prefer-dist --no-interaction
+          args: --prefer-dist --no-interaction --no-scripts
 
       - name: Zip artifact for deployment
         run: zip -r release.zip src/* -x ".git/*" -x ".github/*"
