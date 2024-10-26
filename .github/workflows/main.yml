@@ -39,7 +39,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app
+          name: src
           path: release.zip
 
   deploy:
@@ -61,7 +61,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: app
+          name: src
 
       - name: unzip artifact for deployment
         run: |
