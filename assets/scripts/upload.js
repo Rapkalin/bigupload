@@ -74,10 +74,10 @@ var uploader = new plupload.Uploader({
 			// get the name of the file and recreate the filepath to be downloaded
 			fileName = response.result.fileName;
 			// var tag = document.getElementById('downloadFile'); // If we need a download button
-			longUrl = window.location.origin + "/app/" + "download.php?fileName=" + fileName;
+			longUrl = window.location.origin + "/download?fileName=" + fileName;
 
 			// SHORTEN THE LONGURL FOR THE CLIPBOARD
-			fetch("app/tiny-url.php?longUrl=" + longUrl)
+			fetch("/shortenUrl?longUrl=" + longUrl)
 				.then((response) => {
 					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
 						// check for any errors.
@@ -85,7 +85,6 @@ var uploader = new plupload.Uploader({
 						document.getElementById('downloadLink').innerText = longUrl;
 						throw new Error("Something went wrong!");
 					}
-
 					return response.json(); // Parse the JSON data.
 				})
 				.then((data) => {

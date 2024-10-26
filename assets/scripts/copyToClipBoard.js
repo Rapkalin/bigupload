@@ -1,8 +1,8 @@
+document.getElementById("copyLinkButton").addEventListener("click", copyToClipboard);
 function copyToClipboard() {
     navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
-    console.log("Result", result);
         if (result.state === 'denied') {
-            alert("Woupsy! It seems that you did not authorize your navigator to clipboarb. Please check your settings");
+            alert("Woupsy! It seems that you did not authorize your navigator to clipboard. Please check your settings");
         }
 
     // If permission to read the clipboard is granted or if the user will
