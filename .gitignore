@@ -24,4 +24,7 @@
 
 ### global
 /.idea
-/.DS_Store
+*.DS_Store*
+
+### project
+uploads/

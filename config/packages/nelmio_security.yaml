@@ -18,7 +18,6 @@ nelmio_security:
         policies:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
-
     csp:
         enforce:
             level1_fallback: true
