@@ -34,7 +34,7 @@ jobs:
           args: --prefer-dist --no-interaction --no-scripts
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip . -x ".git" -x ".github" -x ".env" -x ".env.test" -x ".gitignore" -x "composer.json" -x "composer.lock" -x "phpunit.xml.dist"
+        run: zip -r release.zip . -x ".git/\*" -x ".github/\*" -x "*.env*" -x "*.gitignore*" -x "*composer.json*" -x "*composer.lock*" -x "*phpunit.xml.dist*"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
