@@ -35,7 +35,7 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          zip -r release.zip . -x "assets/*" ".git/*"
+          zip -r release.zip . -x "assets/*" "tests/*" "*git*"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
