@@ -85,7 +85,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
-            rm ~/preprod-bigupload/website/.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
+            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/.env
+            rm ~/preprod-bigupload/.htaccess
+            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
+            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
