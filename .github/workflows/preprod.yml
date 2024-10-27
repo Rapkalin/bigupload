@@ -87,10 +87,10 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website.env
+            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
             rm ~/preprod-bigupload/.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website.htpasswd
+            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
+            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
 
       - name: Clear cache, importmap and asset:compile
         uses: appleboy/ssh-action@v0.1.10
@@ -104,8 +104,8 @@ jobs:
             echo "Vérification du fichier .env"
             ls -la .env
             echo "Vérification de l’environnement"
-            phpTest bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
-            phpTest bin/console cache:clear --env=prod --no-interaction
-            phpTest bin/console importmap:install
-            phpTest bin/console asset:compile
+            php bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
+            php bin/console cache:clear --env=prod --no-interaction
+            php bin/console importmap:install
+            php bin/console asset:compile
             echo "Fin du déploiement"
