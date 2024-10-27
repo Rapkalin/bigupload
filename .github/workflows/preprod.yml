@@ -59,9 +59,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
-          script: "[ ! -d ~/preprod-bigupload/website ] || { [ -d ~/preprod-bigupload/old_website ] && rm -rf ~/preprod-bigupload/old_website/* ; } && mv -fu ~/preprod-bigupload/website/* ~/preprod-bigupload/old_website && rm -rf ~/preprod-bigupload/website/
-"
-
+          script: "[ ! -d ~/preprod-bigupload/website ] || { [ -d ~/preprod-bigupload/old_website ] && rm -rf ~/preprod-bigupload/old_website/* ; } && mv -fu ~/preprod-bigupload/website/* ~/preprod-bigupload/old_website && rm -rf ~/preprod-bigupload/website/"
       - name: checkout preprod-bigupload
         uses: actions/checkout@v3
 
@@ -98,7 +96,7 @@ jobs:
           port: 22
           script: |
             ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
-            rm -rf ~/preprod-bigupload/website/.htaccess ~/preprod-bigupload/website/.git ~/preprod-bigupload/website/.github ~/preprod-bigupload/website/phpunit.xml.dist 
+            rm -rf ~/preprod-bigupload/website/.htaccess ~/preprod-bigupload/website/.git ~/preprod-bigupload/website/.github ~/preprod-bigupload/website/phpunit.xml.dist  ~/preprod-bigupload/website/release.zip
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
 
