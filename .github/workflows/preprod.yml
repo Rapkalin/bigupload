@@ -97,7 +97,7 @@ jobs:
           port: 22
           script: |
             ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
-            rm -rf ~/preprod-bigupload/website/.htaccess ~/preprod-bigupload/website/composer.json  ~/preprod-bigupload/website/composer.lock ~/preprod-bigupload/website/.git ~/preprod-bigupload/website/.github ~/preprod-bigupload/website/migrations ~/preprod-bigupload/website/phpunit.xml.dist 
+            rm -rf ~/preprod-bigupload/website/.htaccess ~/preprod-bigupload/website/.git ~/preprod-bigupload/website/.github ~/preprod-bigupload/website/phpunit.xml.dist 
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
 
@@ -116,7 +116,7 @@ jobs:
             ls -la
             phpTest -v
             php bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
-            php bin/console cache:clear --env=prod --no-interaction
-            php bin/console importmap:install
-            php bin/console asset:compile
+            php bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
+            php bin/console importmap:install >> log_deploy.log
+            php bin/console asset:compile >> log_deploy.log
             echo "Fin du déploiement"
