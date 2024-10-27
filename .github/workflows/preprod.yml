@@ -97,7 +97,7 @@ jobs:
           port: 22
           script: |
             ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
-            rm ~/preprod-bigupload/.htaccess
+            rm -rf ~/preprod-bigupload/.htaccess ~/preprod-bigupload/composer.json  ~/preprod-bigupload/composer.lock ~/preprod-bigupload/.git ~/preprod-bigupload/.github ~/preprod-bigupload/migrations ~/preprod-bigupload/phpunit.xml.dist 
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
 
