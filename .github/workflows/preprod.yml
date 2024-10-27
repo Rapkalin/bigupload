@@ -59,7 +59,8 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
-          script: "[ ! -d ~/preprod-bigupload/website ] || mv -fu ~/preprod-bigupload/website/* ~/preprod-bigupload/old_website && rm -rf ~/preprod-bigupload/website/"
+          script: "[ ! -d ~/preprod-bigupload/website ] || { [ -d ~/preprod-bigupload/old_website ] && rm -rf ~/preprod-bigupload/old_website/* ; } && mv -fu ~/preprod-bigupload/website/* ~/preprod-bigupload/old_website && rm -rf ~/preprod-bigupload/website/
+"
 
       - name: checkout preprod-bigupload
         uses: actions/checkout@v3
