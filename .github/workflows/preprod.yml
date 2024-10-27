@@ -17,6 +17,11 @@ jobs:
       - name: checkout preprod-bigupload
         uses: actions/checkout@v3
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
       - name: Restore the Composer cache directory
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
@@ -32,7 +37,6 @@ jobs:
         with:
           dev: no
           args: --prefer-dist --no-interaction --no-scripts
-          php_version: "8.2"
 
       - name: Zip artifact for deployment
         run: |
@@ -46,18 +50,12 @@ jobs:
 
       - name: Clear cache
         run: php bin/console cache:clear
-        with:
-          php-version: "8.2"
 
       - name: Assets install
         run: php bin/console assets:install
-        with:
-          php-version: "8.2"
 
       - name: Importmap
         run: php bin/console importmap:install
-        with:
-          php-version: "8.2"
 
   deploy:
     runs-on: ubuntu-latest
