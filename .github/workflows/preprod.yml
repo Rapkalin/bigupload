@@ -111,4 +111,5 @@ jobs:
           script: |
             cd preprod-bigupload/website
             ls -la
+            php bin/console cache:clear
             php -v
