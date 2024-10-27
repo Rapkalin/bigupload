@@ -128,5 +128,5 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            "cd ~/preprod-bigupload/website"
-            "php bin/console cache:clear --env=prod --no-interaction"
+            cd ~/preprod-bigupload/website
+            php bin/console cache:clear --env=prod --no-interaction
