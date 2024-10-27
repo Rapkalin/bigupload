@@ -52,15 +52,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      #    - name: create or replace backup release
-      #      uses: appleboy/ssh-action@v0.1.10
-      #     with:
-      #        host: ${{ secrets.DEPLOY_HOST }}
-      #        username: ${{ secrets.DEPLOY_USER }}
-      #        key: ${{ secrets.DEPLOY_KEY }}
-      #        port: 22
-      #        script: "[ ! -d ~/preprod-bigupload/website ] || rm -rf ~/preprod-bigupload/old_website && mv -fu ~/preprod-bigupload/website ~/preprod-bigupload/old_website"
-
       - name: checkout preprod-bigupload
         uses: actions/checkout@v3
 
@@ -96,31 +87,12 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website/.env
-            rm ~/preprod-bigupload/website/.htaccess
+            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/.env
+            rm ~/preprod-bigupload/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
 
-      #- name: Clear cache, Assets install && Importmap
-      #  uses: appleboy/ssh-action@v0.1.10
-      #  with:
-      #    host: ${{ secrets.DEPLOY_HOST }}
-      #    username: ${{ secrets.DEPLOY_USER }}
-      #    key: ${{ secrets.DEPLOY_KEY }}
-      #    port: 22
-      #    script: |
-      #      cd preprod-bigupload/website
-      #      ls -la
-      #      php bin/console cache:clear
-      #      php -v
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.DEPLOY_KEY }}
-
-      - name: Deploy via SSH
+      - name: Clear cache, importmap and asset:compile
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -128,5 +100,12 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            cd ~/preprod-bigupload/website
-            php bin/console cache:clear --env=prod --no-interaction
+            cd ~/preprod-bigupload/
+            echo "Vérification du fichier .env"
+            ls -la .env
+            echo "Vérification de l’environnement"
+            phpTest bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
+            phpTest bin/console cache:clear --env=prod --no-interaction
+            phpTest bin/console importmap:install
+            phpTest bin/console asset:compile
+            echo "Fin du déploiement"
