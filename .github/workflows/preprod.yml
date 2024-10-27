@@ -109,5 +109,5 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            cd preprod-bigupload
-            ls -la
+            cd preprod-bigupload/website
+            php bin/console clear:cache
