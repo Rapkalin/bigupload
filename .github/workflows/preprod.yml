@@ -46,12 +46,18 @@ jobs:
 
       - name: Clear cache
         run: php bin/console cache:clear
+        with:
+          php-version: "8.2"
 
       - name: Assets install
         run: php bin/console assets:install
+        with:
+          php-version: "8.2"
 
       - name: Importmap
         run: php bin/console importmap:install
+        with:
+          php-version: "8.2"
 
   deploy:
     runs-on: ubuntu-latest
