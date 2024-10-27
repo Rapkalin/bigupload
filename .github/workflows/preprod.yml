@@ -46,10 +46,10 @@ jobs:
       - name: Clear cache
         run: php bin/console cache:clear
 
-      - name: Clear cache
+      - name: Assets install
         run: php bin/console assets:install
 
-      - name: Clear cache
+      - name: Importmap
         run: php bin/console importmap:install
 
   deploy:
