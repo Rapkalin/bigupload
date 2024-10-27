@@ -22,8 +22,8 @@ jobs:
         with:
           php-version: 8.2
 
-      - name: Restore the Composer cache directory
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      #- name: Restore the Composer cache directory
+      #  run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
         uses: actions/cache@v3
@@ -36,7 +36,7 @@ jobs:
         uses: php-actions/composer@v6
         with:
           dev: no
-          args: --prefer-dist --no-interaction --no-scripts
+          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
       - name: Zip artifact for deployment
         run: |
@@ -101,15 +101,24 @@ jobs:
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
 
-      - name: Clear cache, Assets install && Importmap
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          port: 22
-          script: |
-            cd preprod-bigupload/website
-            ls -la
-            php bin/console cache:clear
-            php -v
+      #- name: Clear cache, Assets install && Importmap
+      #  uses: appleboy/ssh-action@v0.1.10
+      #  with:
+      #    host: ${{ secrets.DEPLOY_HOST }}
+      #    username: ${{ secrets.DEPLOY_USER }}
+      #    key: ${{ secrets.DEPLOY_KEY }}
+      #    port: 22
+      #    script: |
+      #      cd preprod-bigupload/website
+      #      ls -la
+      #      php bin/console cache:clear
+      #      php -v
+
+      - name: Deploy via SSH
+        env:
+          REMOTE_DIR: "~/preprod-bigupload/"  # Répertoire sur le serveur
+          SSH_USER: ${{ secrets.DEPLOY_USER }}  # Remplace par ton utilisateur et serveur SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER "mkdir -p $REMOTE_DIR"
+          rsync -avz --delete --exclude=".env" --exclude="var/" --exclude="node_modules/" . $SSH_USER:$REMOTE_DIR
+          ssh $SSH_USER "cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction"
