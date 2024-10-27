@@ -108,4 +108,4 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
-          script: cd preprod-bigupload && php bin/console clear:cache && php bin/console assets:install && php bin/console importmap:install
+          script: cd preprod-bigupload && php bin/console clear:cache
