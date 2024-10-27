@@ -32,6 +32,7 @@ jobs:
         with:
           dev: no
           args: --prefer-dist --no-interaction --no-scripts
+          php_version: "8.2"
 
       - name: Zip artifact for deployment
         run: |
