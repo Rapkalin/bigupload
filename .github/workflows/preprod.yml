@@ -112,10 +112,9 @@ jobs:
             echo "Vérification du fichier .env"
             ls -la .env
             echo "Vérification de l’environnement"
-            ls -la
-            phpTest -v
-            php bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
-            php bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
-            php bin/console importmap:install >> log_deploy.log
-            php bin/console asset:compile >> log_deploy.log
+            php -v
+            /usr/bin/php8.2-cli bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
+            /usr/bin/php8.2-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
+            /usr/bin/php8.2-cli bin/console importmap:install >> log_deploy.log
+            /usr/bin/php8.2-cli bin/console asset:compile >> log_deploy.log
             echo "Fin du déploiement"
