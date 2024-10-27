@@ -122,13 +122,10 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.10
-        env:
-          REMOTE_DIR: "~/preprod-bigupload/website"
-          SSH_USER: "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction
+            "cd ~/preprod-bigupload/website && php bin/console cache:clear --env=prod --no-interaction"
