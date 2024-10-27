@@ -99,6 +99,7 @@ jobs:
             rm -rf ~/preprod-bigupload/website/.htaccess ~/preprod-bigupload/website/.git ~/preprod-bigupload/website/.github ~/preprod-bigupload/website/phpunit.xml.dist  ~/preprod-bigupload/website/release.zip
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website/.htpasswd
+            ln -nsrf ~/preprod-bigupload/shared/uploads ~/preprod-bigupload/website/public/uploads
 
       - name: Clear cache, importmap and asset:compile
         uses: appleboy/ssh-action@v0.1.10
@@ -112,7 +113,6 @@ jobs:
             echo "Vérification du fichier .env"
             ls -la .env
             echo "Vérification de l’environnement"
-            php -v
             /usr/bin/php8.2-cli bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
             /usr/bin/php8.2-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
             /usr/bin/php8.2-cli bin/console importmap:install >> log_deploy.log
