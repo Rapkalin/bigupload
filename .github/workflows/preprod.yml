@@ -131,4 +131,4 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ssh $SSH_USER "cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction"
+            cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction
