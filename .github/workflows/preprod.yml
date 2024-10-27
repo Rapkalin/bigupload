@@ -131,6 +131,4 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ssh -o StrictHostKeyChecking=no $username@$host "mkdir -p $REMOTE_DIR"
-            rsync -avz --delete --exclude=".env" --exclude="var/" --exclude="node_modules/" . $username@$host:$REMOTE_DIR
-            ssh $username@$host "cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction"
+            ssh $SSH_USER "cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction"
