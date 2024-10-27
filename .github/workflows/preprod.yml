@@ -125,5 +125,6 @@ jobs:
           REMOTE_DIR: "~/preprod-bigupload/website"  # Répertoire sur le serveur
           SSH_USER: "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"  # Remplace par ton utilisateur et serveur SSH
         run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER "mkdir -p $REMOTE_DIR"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }} "mkdir -p $REMOTE_DIR"
+          rsync -avz --delete --exclude=".env" --exclude="var/" --exclude="node_modules/" . $SSH_USER:$REMOTE_DIR
           ssh $SSH_USER "cd $REMOTE_DIR && php bin/console cache:clear --env=prod && php bin/console doctrine:migrations:migrate --no-interaction"
