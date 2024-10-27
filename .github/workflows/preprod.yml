@@ -35,7 +35,7 @@ jobs:
 
       - name: Zip artifact for deployment
         run: |
-          zip -r release.zip "bin" "config" "public" "src" "templates" "translations" "var" 
+          zip -r release.zip "bin" "config" "public" "src" "templates" "translations" "var" "vendor" "importmap.php" "symfony.lock"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
