@@ -87,10 +87,10 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/.env
+            ln -nsrf ~/preprod-bigupload/shared/.env ~/preprod-bigupload/website.env
             rm ~/preprod-bigupload/.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
-            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
+            ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/website.htaccess
+            ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/website.htpasswd
 
       - name: Clear cache, importmap and asset:compile
         uses: appleboy/ssh-action@v0.1.10
@@ -100,7 +100,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
           script: |
-            cd ~/preprod-bigupload/
+            cd ~/preprod-bigupload/website
             echo "Vérification du fichier .env"
             ls -la .env
             echo "Vérification de l’environnement"
