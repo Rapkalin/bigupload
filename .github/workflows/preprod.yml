@@ -101,17 +101,15 @@ jobs:
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
 
-      - name: Clear cache
+      - name: Clear cache, Assets install && Importmap
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
-          script: ls -la
-
-      - name: Assets install
-        run: php bin/console assets:install
-
-      - name: Importmap
-        run: php bin/console importmap:install
+          script: |
+            cd preprod-bigupload
+            php bin/console clear:cache
+            php bin/console assets:install
+            php bin/console importmap:install
