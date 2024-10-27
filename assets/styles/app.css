@@ -1,4 +1,4 @@
-/*@import "mobile.css";*/
+@import url("mobile.css");
 @import url("laptop.css");
 
 html {
@@ -8,6 +8,7 @@ html {
 body {
     background-image: url("images/bigupload-background.jpg");
     background-size: cover;
+    background-position: center;
     font-family: Verdana, sans-serif;
     font-size: 13px;
     margin: 0;
