@@ -102,10 +102,10 @@ jobs:
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
 
       - name: Clear cache
-        run: cd .. && php bin/console cache:clear
+        run: ls -la
 
       - name: Assets install
-        run: cd .. && php bin/console assets:install
+        run: cd .. && ls -la
 
       - name: Importmap
         run: cd .. && php bin/console importmap:install
