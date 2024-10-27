@@ -110,4 +110,5 @@ jobs:
           port: 22
           script: |
             cd preprod-bigupload/website
-            php bin/console clear:cache
+            ls -la
+            php -v
