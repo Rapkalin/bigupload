@@ -110,11 +110,6 @@ jobs:
           port: 22
           script: |
             cd ~/preprod-bigupload/website
-            echo "Vérification du fichier .env"
-            ls -la .env
-            echo "Vérification de l’environnement"
-            /usr/bin/php8.2-cli bin/console about  # Vérifie que Symfony et les extensions sont correctement installés
             /usr/bin/php8.2-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
             /usr/bin/php8.2-cli bin/console importmap:install >> log_deploy.log
             /usr/bin/php8.2-cli bin/console asset:compile >> log_deploy.log
-            echo "Fin du déploiement"
