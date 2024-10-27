@@ -108,4 +108,6 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: 22
-          script: php -v
+          script: |
+            cd preprod-bigupload
+            ls -la
