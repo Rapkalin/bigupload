@@ -48,15 +48,6 @@ jobs:
           name: src
           path: release.zip
 
-      - name: Clear cache
-        run: php bin/console cache:clear
-
-      - name: Assets install
-        run: php bin/console assets:install
-
-      - name: Importmap
-        run: php bin/console importmap:install
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -104,3 +95,12 @@ jobs:
             rm ~/preprod-bigupload/website/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htaccess ~/preprod-bigupload/.htaccess
             ln -nsrf ~/preprod-bigupload/shared/.htpasswd ~/preprod-bigupload/.htpasswd
+
+      - name: Clear cache
+        run: php bin/console cache:clear
+
+      - name: Assets install
+        run: php bin/console assets:install
+
+      - name: Importmap
+        run: php bin/console importmap:install
