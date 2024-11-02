@@ -19,6 +19,7 @@ $extraTime = ' + 7 day';
 // Local : "website/app/uploads/";
 $serverPath = __DIR__ . "/../../public/uploads/";
 
+echo " -------------- " . "\n";
 echo " PATHS TO CHECK " . "\n";
 echo "Current directory is $serverPath" . "\n";
 echo "\n" . "\n";
@@ -54,16 +55,16 @@ if (count(scandir($serverPath)) > 0) {
                     echo "\n" . "\n";
                 } else {
                     echo "Couldn't delete file: $file" . "\n";
-                    echo "\n" . "\n";
+                    echo " -------------- " . "\n" . "\n";
                 }
             } else {
                 echo "    DELETE PROCESS STOPPED    " . "\n";
-                echo "Why you ask? Well, this file is too young to die!!";
-                echo "------" . "\n" . "\n";
+                echo "Why you ask? Well, this file is too young to die!!" . "\n";
+                echo " -------------- " . "\n" . "\n";
             }
         }
     } else {
         echo "No file to delete" . "\n";
-        echo "------" . "\n" . "\n";
+        echo " -------------- " . "\n" . "\n";
     }
 }
