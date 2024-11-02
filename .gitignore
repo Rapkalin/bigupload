@@ -28,4 +28,6 @@
 
 ### project
 uploads/
-/scripts/cron/erreur_cron.log
+/scripts/cron/*
+!/scripts/cron/cron.php
+
