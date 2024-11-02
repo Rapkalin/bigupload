@@ -1,0 +1,19 @@
+#cardArea {
+    border: 1px dashed;
+    border-color: darkgrey;
+    border-radius: 10px;
+    background: #ffffffba;
+    height: 16em;
+    width: 20em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+#cardArea > p {
+    color: cornflowerblue;
+    font-weight: bold;
+    font-size: 16px;
+}

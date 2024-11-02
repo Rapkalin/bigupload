@@ -2,7 +2,7 @@ var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'browsefilesBta', // you can pass an id...
   container : document.getElementById('uploadArea'), // ... or DOM Element itself
-  drop_element : "droparea", // add a drop area using the id in the index
+  drop_element : "cardArea", // add a drop area using the id in the index
 	url : '/uploadFile',
   multi_selection : false,
   chunk_size : '50mb',
@@ -41,7 +41,7 @@ var uploader = new plupload.Uploader({
 
     QueueChanged: function (up) {
       if (up.files.length > 0) {
-        document.getElementById('droparea').id = 'dropareaOff';
+        document.getElementById('cardArea').id = 'dropareaOff';
         document.getElementById('browsefilesBta').classList.add('hidden');
         document.getElementById('dropareaOr').classList.add('hidden');
         document.getElementById('refreshButton').classList.remove('hidden');

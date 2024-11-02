@@ -1,5 +1,5 @@
 /* smartphones, iPhone, portrait 480x320 phones */
-@media (min-width:320px)  {
+/*@media (min-width:320px)  {
   body {
     background-position: inherit;
   }
@@ -117,37 +117,6 @@
     align-items: center;
   }
 
-  #browsefilesBta {
-    color: white;
-    padding: 8px 24px;
-    border-radius: 4px;
-    background: cornflowerblue;
-    transition: background 0.3s ease;
-    text-decoration: none;
-    height: 2em;
-    width: fit-content;
-    text-align: center;
-    font-size: 2em;
-  }
-
-  #browsefilesBtaOff {
-    color: white;
-    padding: 8px 24px;
-    border-radius: 4px;
-    background: darkgray;
-    transition: background 0.3s ease;
-    text-decoration: none;
-    height: 20px;
-    width: fit-content;
-    text-align: center;
-    margin-bottom: 5px;
-  }
-
-  #browsefilesBta:hover {
-    color: white;
-    background: royalblue;
-  }
-
   #uploadBta {
     height: 2em;
     width: fit-content;
@@ -239,16 +208,16 @@
   .hidden {
     display: none;
   }
-}
+}*/
 
 
 /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */
-@media (min-width:481px)  {
+/*@media (min-width:481px)  {
 
-}
+}*/
 
 /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
-@media (min-width:641px)  {
+/*@media (min-width:641px)  {
   #uploadTitle {
     font-size: 4em;
     text-align: center;
@@ -260,17 +229,17 @@
     font-size: 2.5em;
   }
 
-  #dropareaOr,  #fileSelect, #browsefilesBta {
+  #dropareaOr,  #fileSelect, .browsefilesBta {
     font-size: 1.5em !important;
   }
-}
+}*/
 
 /* tablet, landscape iPad, lo-res laptops ands desktops */
-@media (min-width:961px)  {
+/*@media (min-width:961px)  {
 
-}
+}*/
 
 /* big landscape tablets, laptops, and desktops */
-@media (min-width:1025px) {
+/*@media (min-width:1025px) {
 
-}
+}*/

@@ -1,5 +1,7 @@
 @import url("mobile.css");
 @import url("laptop.css");
+@import url("components/buttons.css");
+@import url("components/card.css");
 
 html {
     background: white;
@@ -13,4 +15,20 @@ body {
     font-size: 13px;
     margin: 0;
     height: 100vh;
+}
+
+.container {
+    color: black;
+    display: flex;
+    height: inherit;
+}
+
+.ctn-centered {
+    align-items: center;
+    justify-content: center;
+}
+
+.ctn-row-reverse {
+    align-items: center;
+    flex-direction: row-reverse;
 }

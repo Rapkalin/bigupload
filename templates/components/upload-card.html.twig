@@ -1,0 +1,45 @@
+<div id="uploadContainer">
+    <div id="uploadFrom">
+        <div id="uploadArea">
+            <div id="cardArea">
+                <p>Drop your file here</p>
+                <p id="fileSelect">Please note that you can only upload one file at a time</p>
+                <span id="dropareaOr">or</span>
+                {% include 'components/buttons/link-button.html.twig' with {
+                    'id': 'browsefilesBta',
+                    'color': 'blue',
+                    'text': 'Download your file',
+                    'href': 'javascript:;'
+                } %}
+
+                {% include 'components/buttons/classic-button.html.twig' with {
+                    'id': 'refreshButton',
+                    'extraClasses': 'downloadClipBoard hidden',
+                    'color': 'green',
+                    'text': 'Upload a new file',
+                    'onClick': 'window.location.href=window.location.href'
+                } %}
+            </div>
+            <div id="filelist"></div>
+            <div id="uploadBta" class="hidden">
+                <a id="uploadfiles" href="javascript:;">Upload your file</a>
+            </div>
+            <div id="downloadOrCopy" class="hidden">
+                <!-- <div id="downloadBta">
+                    <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
+                </div> -->
+
+                <!-- <div id="copyArea"> -->
+                {% include 'components/buttons/classic-button.html.twig' with {
+                    'id': 'copyLinkButton',
+                    'extraClasses': 'downloadClipBoard',
+                    'color': 'blue',
+                    'text': 'Copy the link'
+                } %}
+                <script type="text/javascript" src={{ asset("scripts/copyToClipboard.js") }}></script>
+                <textarea readonly id="downloadLink" class="hidden">link</textarea>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% set extra =
+    {
+        'ctnClass': 'centered'
+    }
+ %}
+
+{% block body %}
+    {% include 'components/download-card.html.twig' with { 'downloadUrl': downloadUrl } %}
+{% endblock %}
