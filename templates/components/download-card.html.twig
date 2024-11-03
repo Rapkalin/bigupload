@@ -1,8 +1,26 @@
 <div id="cardArea">
+    <div id="icon-download"></div>
+
+    <!--Ce fichier expirent dans  {{ item.expiration_time }} jours-->
+    <h1>Prêt ? Partez</h1>
+    <h2>Ce fichier expirent dans {{ item.expiration_time }}</h2>
+
+    <!-- {{ item.title }} -->
+    <p id="item-title">{{ item.title }}</p>
+
+    <div id="metadata">
+        <!-- {{ item.size }} -->
+        <p id="item-size">{{ item.size }}</p>
+
+        <!-- {{ item.extension }} -->
+        <p id="item-extension">{{ item.extension }}</p>
+    </div>
+
+    <!-- {{ item.download_url }} -->
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'browsefilesBta',
         'color': 'green',
         'text': 'Download',
-        'href': downloadUrl
+        'href': item.download_url
     } %}
 </div>
