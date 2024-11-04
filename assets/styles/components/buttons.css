@@ -1,17 +1,17 @@
 @media (min-width:320px) {
-    #browsefilesBta {
+    #browse-files-btn {
         display: flex;
         align-items: center;
         transition: background 0.3s ease;
         color: whitesmoke;
         text-decoration: none;
         font-size: 1.5em;
-        padding: 8px 35px;
+        padding: 9px 45px;
         border-radius: 8px;
         height: 25px;
     }
 
-    #browsefilesBtaOff {
+    #browse-files-btn-off {
         color: white;
         padding: 8px 24px;
         border-radius: 4px;
@@ -43,7 +43,7 @@
         cursor: pointer;
     }
 
-    #browsefilesBta {
+    #browse-files-btn {
         display: flex;
         align-items: center;
         transition: background 0.3s ease;
@@ -55,7 +55,7 @@
         height: 25px;
     }
 
-    #browsefilesBtaOff {
+    #browse-files-btn-off {
         color: white;
         padding: 8px 24px;
         border-radius: 4px;

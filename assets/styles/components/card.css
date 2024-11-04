@@ -1,6 +1,5 @@
-#cardArea {
-    border: 1px dashed;
-    border-color: darkgrey;
+#card-area {
+    border: 1px dashed darkgrey;
     border-radius: 10px;
     background: #ffffffba;
     height: auto;
@@ -9,17 +8,36 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 20px 0;
 }
 
-#cardArea > p {
-    color: cornflowerblue;
-    font-weight: bold;
-    font-size: 16px;
+#card-area-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+    width: inherit;
 }
 
-#cardArea > h1, #cardArea > h2 {
+#card-area-content> p {
     text-align: center;
+    font-size: 1.3em;
+    margin: 0;
+}
+
+#card-area-content > h1, #card-area-content > h2 {
+    text-align: center;
+    margin: 0;
+}
+
+#card-area-content > h1 {
+}
+
+#card-area-content > h2 {
+    font-weight: normal;
+    font-size: 1em;
+    color: grey;
 }
 
 #icon-download:before {
@@ -38,4 +56,21 @@
 
 #metadata > p {
     padding: 0 5px;
+    margin: 0;
+    color: grey;
 }
+
+#item-info {
+    background-color: whitesmoke;
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    padding: 13px 0;
+    margin-top: 40px;
+    align-items: center;
+}
+
+#item-title {
+    margin: 0;
+}
+
