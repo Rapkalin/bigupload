@@ -1,10 +1,10 @@
-<div id="uploadContainer">
-    <div id="uploadFrom">
-        <div id="uploadArea">
+<div id="upload-container">
+    <div id="upload-from">
+        <div id="upload-area">
             <div id="card-area">
                 <p>Drop your file here</p>
-                <p id="fileSelect">Please note that you can only upload one file at a time</p>
-                <span id="dropareaOr">or</span>
+                <p id="file-select">Please note that you can only upload one file at a time</p>
+                <span id="drop-area-or">or</span>
                 {% include 'components/buttons/link-button.html.twig' with {
                     'id': 'browse-files-btn',
                     'color': 'blue',
@@ -21,11 +21,11 @@
                 } %}
             </div>
             <div id="filelist"></div>
-            <div id="uploadBta" class="hidden">
+            <div id="upload-btn" class="hidden">
                 <a id="uploadfiles" href="javascript:;">Upload your file</a>
             </div>
-            <div id="downloadOrCopy" class="hidden">
-                <!-- <div id="downloadBta">
+            <div id="download-or-copy" class="hidden">
+                <!-- <div id="download-btn">
                     <a id="downloadFile" href="app/download.php" target="_blank">Download your files</a>
                 </div> -->
 

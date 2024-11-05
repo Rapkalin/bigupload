@@ -13,14 +13,14 @@
     justify-content: center;
   }
 
-  #fileSelect {
+  #file-select {
     color: #4c4c4c !important;
     font-size: 2em !important;
     font-weight: lighter !important;
     text-align: center !important;
   }
 
-  #uploadFrom {
+  #upload-from {
     background: #ffffffb0;
     border-radius: 10px;
     box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
@@ -33,20 +33,20 @@
     padding: 30px 15px 30px 15px;
   }
 
-  #uploadContainer {
+  #upload-container {
     display: flex;
     justify-content: center;
     height: auto;
     width: 50em;
   }
 
-  #uploadArea {
+  #upload-area {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  #uploadArea > div > button {
+  #upload-area > div > button {
     height: 2em;
     font-size: 2em;
     margin-top: 1em;
@@ -61,7 +61,7 @@
     padding: 10px;
   }
 
-  #descriptionArea {
+  #description-area {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -71,18 +71,18 @@
     padding-right: 2em;
   }
 
-  #uploadTitle {
+  #upload-title {
     font-size: 8em;
     text-align: center;
   }
 
-  #dropareaOff {
+  #drop-area-off {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  #dropareaOff > p {
+  #drop-area-off > p {
     text-align: center;
     font-weight: bold;
     font-size: 4em;
@@ -97,7 +97,7 @@
     padding-right: 2em;
   }
 
-  #dropareaOr {
+  #drop-area-or {
     margin-bottom: 10px;
     color: #4c4c4c;
     font-size: 2em;
@@ -117,14 +117,14 @@
     align-items: center;
   }
 
-  #uploadBta {
+  #upload-btn {
     height: 2em;
     width: fit-content;
     font-size: 2em;
   }
 
 
-  #uploadBta {
+  #upload-btn {
     padding: 8px 24px;
     border-radius: 4px;
     background: mediumseagreen;
@@ -136,16 +136,16 @@
     margin-top: 1em;
   }
 
-  #uploadBta > a {
+  #upload-btn > a {
     text-decoration: none;
     color: white;
   }
 
-  #uploadBta:hover {
+  #upload-btn:hover {
     background: forestgreen;
   }
 
-  .addedFile {
+  .added-file {
     display: flex;
     flex-direction: column;
     color: darkgrey;
@@ -158,7 +158,7 @@
     margin-bottom: 6px;
   }
 
-  .btaBG {
+  .btn-bg {
     background-color: #c6c5c5;
     position: absolute;
     height: 100%;
@@ -168,7 +168,7 @@
     left: 0;
   }
 
-  #downloadOrCopy {
+  #download-or-copy {
     flex-direction: column;
     align-items: center;
   }
@@ -218,7 +218,7 @@
 
 /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */
 /*@media (min-width:641px)  {
-  #uploadTitle {
+  #upload-title {
     font-size: 4em;
     text-align: center;
   }
@@ -229,7 +229,7 @@
     font-size: 2.5em;
   }
 
-  #dropareaOr,  #fileSelect, .browsefilesBta {
+  #drop-area-or,  #file-select, .browsefilesBta {
     font-size: 1.5em !important;
   }
 }*/

@@ -1,14 +1,14 @@
 /* hi-res laptops and desktops */
 @media (min-width:1281px) {
 
-  #fileSelect {
+  #file-select {
     color: #4c4c4c !important;
     font-size: 1em !important;
     font-weight: lighter !important;
     text-align: center !important;
   }
 
-  #uploadFrom {
+  #upload-from {
     background: #ffffffb0;;
     border-radius: 10px;
     box-shadow: 0 0 12px 0 rgba(0,0,0,.1), 0 10px 30px 0 rgba(0,0,0,.2);
@@ -21,26 +21,26 @@
     padding: 30px 15px 30px 15px;
   }
 
-  #uploadContainer {
+  #upload-container {
     width: 50%;
     display: flex;
     justify-content: center;
   }
 
-  #uploadArea {
+  #upload-area {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  #uploadArea > div > button, #uploadBta {
+  #upload-area > div > button, #upload-btn {
     height: 3em;
     font-size: 1em;
     margin-top: 1em;
     align-items: center;
   }
 
-  #descriptionArea {
+  #description-area {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -49,18 +49,18 @@
     padding-right: 2em;
   }
 
-  #uploadTitle {
+  #upload-title {
     font-size: -webkit-xxx-large;
     text-align: center;
   }
 
-  #dropareaOff {
+  #drop-area-off {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  #dropareaOff > p {
+  #drop-area-off > p {
     text-align: center;
     font-weight: bold;
     font-size: 2em;
@@ -73,15 +73,15 @@
     font-weight: 700;
   }
 
-  #dropareaOr {
+  #drop-area-or {
     margin-bottom: 10px;
     color: #4c4c4c;
     font-size: 13px;
     text-align: center;
   }
 
-  #uploadBta,
-  #downloadBta {
+  #upload-btn,
+  #download-btn {
     padding: 8px 24px;
     border-radius: 4px;
     background: mediumseagreen;
@@ -92,18 +92,18 @@
     margin-bottom: 10px;
   }
 
-  #uploadBta > a,
-  #downloadBta > a {
+  #upload-btn > a,
+  #download-btn > a {
     text-decoration: none;
     color: white;
   }
 
-  #uploadBta:hover,
-  #downloadBta:hover {
+  #upload-btn:hover,
+  #download-btn:hover {
     background: forestgreen;
   }
 
-  .addedFile {
+  .added-file {
     display: flex;
     flex-direction: column;
     color: darkslategrey;
@@ -116,7 +116,7 @@
     margin-bottom: 6px;
   }
 
-  .btaBG {
+  .btn-bg {
     background-color: #c6c5c5;
     position: absolute;
     height: 100%;
@@ -126,7 +126,7 @@
     left: 0;
   }
 
-  #downloadOrCopy {
+  #download-or-copy {
     flex-direction: column;
     align-items: center;
   }

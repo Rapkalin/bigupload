@@ -1,7 +1,7 @@
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'browse-files-btn', // you can pass an id...
-  container : document.getElementById('uploadArea'), // ... or DOM Element itself
+  container : document.getElementById('upload-area'), // ... or DOM Element itself
   drop_element : "card-area", // add a drop area using the id in the index
 	url : '/uploadFile',
   multi_selection : false,
@@ -25,7 +25,7 @@ var uploader = new plupload.Uploader({
 		FilesAdded: function (up, files) {
         plupload.each(files, function (file) {
             // console.log("1- Fileadded", file);
-            document.getElementById('filelist').innerHTML += '<div class="addedFile" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><progress id="progressBar-'+ file.id +'" value="0" max="100"></progress><div class="btaBG"></div></div>';
+            document.getElementById('filelist').innerHTML += '<div class="added-file" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><progress id="progressBar-'+ file.id +'" value="0" max="100"></progress><div class="btn-bg"></div></div>';
         });
 
 		},
@@ -41,13 +41,13 @@ var uploader = new plupload.Uploader({
 
     QueueChanged: function (up) {
       if (up.files.length > 0) {
-        document.getElementById('card-area').id = 'dropareaOff';
+        document.getElementById('card-area').id = 'drop-area-off';
         document.getElementById('browse-files-btn').classList.add('hidden');
-        document.getElementById('dropareaOr').classList.add('hidden');
+        document.getElementById('drop-area-or').classList.add('hidden');
         document.getElementById('refreshButton').classList.remove('hidden');
-        document.getElementById('uploadBta').classList.remove('hidden');
-        document.getElementById('uploadBta').style.display = 'flex';
-        document.getElementById('uploadBta').style.alignItems = 'center';
+        document.getElementById('upload-btn').classList.remove('hidden');
+        document.getElementById('upload-btn').style.display = 'flex';
+        document.getElementById('upload-btn').style.alignItems = 'center';
       }
     },
 
@@ -57,7 +57,7 @@ var uploader = new plupload.Uploader({
 			document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 			document.getElementById("progressBar-"+file.id).value = file.percent;
 			// $('#'+file.id).find('.progressBar').value = file.percent;
-			$('#'+file.id).find('.addedFile').css('color', 'white');
+			$('#'+file.id).find('.added-file').css('color', 'white');
 		},
 
 		// Display info when each part/chunk is uploaded
@@ -98,9 +98,9 @@ var uploader = new plupload.Uploader({
 				});
 
 			// Hiding upload button and making download button and link visible
-			document.getElementById('uploadBta').style.display = 'none';
-			document.getElementById('downloadOrCopy').classList.remove('hidden');
-			document.getElementById('downloadOrCopy').style.display = 'flex';
+			document.getElementById('upload-btn').style.display = 'none';
+			document.getElementById('download-or-copy').classList.remove('hidden');
+			document.getElementById('download-or-copy').style.display = 'flex';
 		},
 
 		// Handle errors
