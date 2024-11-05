@@ -66,8 +66,12 @@ class UploadController extends BaseController
         $this->rebuildFile();
         $this->checkIfRenameFile();
 
+        // Save the file in database
+        dd('$this', $this);
+        //
+
         // Return Success JSON-RPC response to FileUploaded event in main.js
-        return new Response('{"jsonrpc" : "2.0", "result" : { "fileName": "' . $this->fileName . '" }, "id" : "id"}');
+        return new Response('{"jsonrpc" : "2.0", "result" : { "fileName": "' . $this->fileName . '" }, "id" : "id"}', 201);
     }
 
     private function createTargetDir(): void

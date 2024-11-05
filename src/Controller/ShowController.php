@@ -12,10 +12,10 @@ class ShowController extends BaseController
     public function index(Request $request): Response
     {
         $item = [
-            'download_url' => 'https://google.com',
             'title' => 'Ceci est le titre du fichier',
+            'download_url' => 'https://google.com',
             'expiration_date' => '12 janvier 2000',
-            'expiration_time' => '3 jours',
+            'expiration_time' => '3 jours', // calcul
             'size' => '18ko',
             'extension' => 'pdf',
         ];
