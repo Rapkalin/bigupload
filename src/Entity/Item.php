@@ -29,6 +29,21 @@ class Item
     #[ORM\Column(length: 255)]
     private ?string $extension = null;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $created_at = null;
+
+    public function setItem (array $data): Item {
+        $item = new Item();
+        $item->setTitle($data['title']);
+        $item->setDownloadUrl($data['download_url']);
+        $item->setExtension($data['extension']);
+        $item->setSize($data['size']);
+        $item->setCreatedAt($data['created_at']);
+        $item->setExpirationDate($data['expiration_date']);
+
+        return $item;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +105,18 @@ class Item
     public function setExtension(string $extension): static
     {
         $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    {
+        $this->created_at = $created_at;
 
         return $this;
     }

@@ -24,8 +24,11 @@ header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+use App\Entity\Item;
+use App\Repository\ItemRepository;
 use App\Services\CommonsService;
-use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UploadController extends BaseController
@@ -39,10 +42,13 @@ class UploadController extends BaseController
     private string $fileName;
     private int $chunk;
     private int $chunks;
+    private ItemRepository $itemRepository;
+    private EntityManagerInterface $entityManager;
+    private CommonsService $commonsService;
 
 
     #[Route('/uploadFile', name: 'file.upload')]
-    public function upload (): Response
+    public function upload (): JsonResponse
     {
         /*
         // Support CORS
@@ -66,12 +72,45 @@ class UploadController extends BaseController
         $this->rebuildFile();
         $this->checkIfRenameFile();
 
+
         // Save the file in database
         dd('$this', $this);
-        //
 
-        // Return Success JSON-RPC response to FileUploaded event in main.js
-        return new Response('{"jsonrpc" : "2.0", "result" : { "fileName": "' . $this->fileName . '" }, "id" : "id"}', 201);
+        if($this->saveItem()) {
+            // Return Success JSON-RPC response to FileUploaded event in main.js
+            return new JsonResponse([
+                'result' => [
+                    "fileName" => "' . $this->fileName . '",
+                    "id" => "id"
+                ]
+            ] , 201);
+        } else {
+            return new JsonResponse('{"error" : "fileName": "' . $this->fileName . ' was not created.",}', 500);
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function saveItem ()
+    {
+        $created_at = $this->commonsService->getFileCreatedAt($this->fileName);
+        $item = (new Item())->setItem([
+            'title' => $this->fileName,
+            'download_url' => $this->filePath,
+            'extension' => $this->commonsService->getFileExtension($this->fileName),
+            'size' => $this->commonsService->getFileSize($this->fileName),
+            'created_at' => $created_at,
+            'expiration_date' => $this->commonsService->getFileSizeExpirationDate($this->fileName, $created_at)
+        ]);
+
+        if ($item) {
+            $this->entityManager->persist($item);
+            $this->entityManager->flush();
+            return true;
+        } else {
+            throw new \Exception('Item not created');
+        }
     }
 
     private function createTargetDir(): void
