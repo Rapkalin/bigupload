@@ -32,16 +32,16 @@ final class FileService
      */
     public function getFileCreatedAt(string $filepath): ?string
     {
-        $created_at = filectime($filepath);
+        $created_at = date('m/d/Y H:i:s', filectime($filepath));
         return (new \DateTimeImmutable($created_at))->format('Y-m-d H:i:s');
     }
 
     /**
      * @param string $filepath
-     * @param int $created_at
+     * @param string $created_at
      * @return string|null Retrieve the captured extension or null if no extension has been found
      */
-    public function getFileSizeExpirationDate(string $filepath, int $created_at): ?string
+    public function getFileSizeExpirationDate(string $filepath, string $created_at): ?string
     {
         // Todo: calcul expiration date
         return filectime($filepath);

@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 if (!function_exists('formatJsonResponseData')) {
     function formatJsonResponseData(
@@ -14,10 +15,13 @@ if (!function_exists('formatJsonResponseData')) {
         $data = [
             'status' => $status,
             'details' => [
-                'context' => $context,
                 'message' => $message
             ]
         ];
+
+        if ($_ENV['APP_ENV'] !== 'prod') {
+            $data['details']['context'] = $context;
+        }
 
         if ($extraData) {
             $data = array_merge($data['details'], $extraData);

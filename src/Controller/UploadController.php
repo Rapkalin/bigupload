@@ -82,22 +82,24 @@ class UploadController extends BaseController
 
         $this->rebuildFile();
         $this->checkIfRenameFile();
+        $response = $this->saveItem();
 
         // Save the file in database
-        if($response = $this->saveItem()) {
+        if($response->isSuccessful()) {
+            $data = json_decode($response->getContent(), true);
             // Return Success JSON-RPC response to FileUploaded event in main.js
             return formatJsonResponseData(
                 'success',
                 'upload',
-                "' . $this->fileName . ' was successfully uploaded and created.",
+                "{$this->fileName} was successfully uploaded and created.",
                 201,
-                ["id" => $response['id']],
+                ["id" => $data['details']['id']],
             );
         } else {
             return formatJsonResponseData(
                 'error',
-                'upload',
-                "' . $this->fileName . ' was not created.",
+                __METHOD__,
+                "{$this->fileName} was not created.",
                 500
             );
         }
@@ -112,17 +114,14 @@ class UploadController extends BaseController
     private function saveItem (): true|JsonResponse
     {
         $data = $this->buildItemData();
-        dump('$data', $data);
-
         if ($data) {
             $item = (new Item())->setItem([$data]);
-            dump('$item', $item);
             $this->entityManager->persist($item);
             $this->entityManager->flush();
             return formatJsonResponseData(
                 'success',
-                'saveItem',
-                "' . $this->fileName . ' was successfully created.",
+                __METHOD__,
+                "{$this->fileName} was successfully created.",
                 201,
                 ["id" => $item->getId()],
             );
@@ -130,8 +129,8 @@ class UploadController extends BaseController
             unlink($this->filePath);
             return formatJsonResponseData(
                 'error',
-                'saveItem',
-                "' . $this->fileName . ' was not created.",
+                __METHOD__,
+                "{$this->fileName} was not created.",
                 500
             );
         }
@@ -142,14 +141,14 @@ class UploadController extends BaseController
      */
     private function buildItemData(): false|array
     {
-        $created_at = $this->fileService->getFileCreatedAt($this->fileName);
+        $created_at = $this->fileService->getFileCreatedAt($this->filePath);
         $allowedData = [
             'title' => $this->fileName,
             'download_url' => $this->filePath,
             'extension' => $this->fileService->getFileExtension($this->fileName),
-            'size' => $this->fileService->getFileSize($this->fileName),
+            'size' => $this->fileService->getFileSize($this->filePath),
             'created_at' => $created_at,
-            'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->fileName, $created_at)
+            'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->filePath, $created_at)
         ];
 
         foreach ($allowedData as $data) {
@@ -230,7 +229,7 @@ class UploadController extends BaseController
         if (!$out = @fopen("{$this->filePath}.part", $this->chunks ? "ab" : "wb")) {
             return formatJsonResponseData(
                 'error',
-                'rebuildFile',
+                __METHOD__,
                 "Failed to open output stream.",
                 102
             );
@@ -240,7 +239,7 @@ class UploadController extends BaseController
             if ($_FILES["file"]["error"] || !is_uploaded_file($_FILES["file"]["tmp_name"])) {
                 return formatJsonResponseData(
                     'error',
-                    'rebuildFile',
+                    __METHOD__,
                     "Failed to move uploaded file.",
                     103
                 );
@@ -250,7 +249,7 @@ class UploadController extends BaseController
             if (!$in = @fopen($_FILES["file"]["tmp_name"], "rb")) {
                 return formatJsonResponseData(
                     'error',
-                    'rebuildFile',
+                    __METHOD__,
                     "Failed to open input stream and append it to temp file.",
                     101
                 );
@@ -259,7 +258,7 @@ class UploadController extends BaseController
             if (!$in = @fopen("php://input", "rb")) {
                 return formatJsonResponseData(
                     'error',
-                    'rebuildFile',
+                    __METHOD__,
                     "Failed to open input stream.",
                     101
                 );
