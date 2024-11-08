@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 final class CommonsService
 {
     protected array $colors = [
@@ -85,5 +87,26 @@ final class CommonsService
         return filectime($filepath);
     }
 
+    public function formatJsonResponseData(
+        string $status,
+        string $context,
+        string $message,
+        int $httpStatusCode,
+        array $extraData = []
+    ): JsonResponse
+    {
+        $data = [
+            'status' => $status,
+            'details' => [
+                'context' => $context,
+                'message' => $message
+            ]
+        ];
 
+        if ($extraData) {
+            $data = array_merge($data['details'], $extraData);
+        }
+
+        return new JsonResponse($data , $httpStatusCode);
+    }
 }
