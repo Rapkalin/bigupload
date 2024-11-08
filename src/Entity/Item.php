@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\ItemRepository;
+use DateMalformedStringException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
+#[ORM\Table(name: 'items')]
 class Item
 {
     #[ORM\Id]
@@ -78,9 +80,9 @@ class Item
         return $this->expiration_date;
     }
 
-    public function setExpirationDate(\DateTimeImmutable $expiration_date): static
+    public function setExpirationDate(string $expiration_date): static
     {
-        $this->expiration_date = $expiration_date;
+        $this->expiration_date = new \DateTimeImmutable($expiration_date);
 
         return $this;
     }
@@ -114,9 +116,12 @@ class Item
         return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function setCreatedAt(string $created_at): static
     {
-        $this->created_at = $created_at;
+        $this->created_at = new \DateTimeImmutable($created_at);
 
         return $this;
     }

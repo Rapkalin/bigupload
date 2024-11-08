@@ -72,7 +72,7 @@ var uploader = new plupload.Uploader({
 			var response = jQuery.parseJSON(info.response);
 
 			// get the name of the file and recreate the filepath to be downloaded
-			fileName = response.result.fileName;
+			fileName = response.fileName;
 			// var tag = document.getElementById('downloadFile'); // If we need a download button
 			longUrl = window.location.origin + "/download?fileName=" + fileName;
 

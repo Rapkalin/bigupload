@@ -82,18 +82,23 @@ class UploadController extends BaseController
 
         $this->rebuildFile();
         $this->checkIfRenameFile();
+
         $response = $this->saveItem();
 
         // Save the file in database
         if($response->isSuccessful()) {
             $data = json_decode($response->getContent(), true);
+
             // Return Success JSON-RPC response to FileUploaded event in main.js
             return formatJsonResponseData(
                 'success',
                 'upload',
                 "{$this->fileName} was successfully uploaded and created.",
                 201,
-                ["id" => $data['details']['id']],
+                [
+                    "id" => $data['id'],
+                    "filename" => $this->fileName
+                ],
             );
         } else {
             return formatJsonResponseData(
@@ -115,7 +120,7 @@ class UploadController extends BaseController
     {
         $data = $this->buildItemData();
         if ($data) {
-            $item = (new Item())->setItem([$data]);
+            $item = (new Item())->setItem($data);
             $this->entityManager->persist($item);
             $this->entityManager->flush();
             return formatJsonResponseData(
@@ -151,11 +156,11 @@ class UploadController extends BaseController
             'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->filePath, $created_at)
         ];
 
-        foreach ($allowedData as $data) {
+       /*foreach ($allowedData as $data) {
             if (!$data) {
                 return false;
             }
-        }
+        }*/
 
         return $allowedData;
     }
@@ -222,7 +227,7 @@ class UploadController extends BaseController
         return true;
     }
 
-    private function rebuildFile(): true|JsonResponse
+    private function rebuildFile()
     {
         // Open temp file and rebuild the file
         // create the finalfile ($filePath.part) that will be written with the chunk files
@@ -272,8 +277,6 @@ class UploadController extends BaseController
 
         fclose($out);
         fclose($in);
-
-        return true;
     }
 
     private function checkIfRenameFile(): void

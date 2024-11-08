@@ -2,13 +2,22 @@
 
 namespace App\Services;
 
-final class FileService
+use AllowDynamicProperties;
+use App\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
+
+#[AllowDynamicProperties] final class FileService
 {
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->uploadPath = $kernel->getProjectDir() . '/public/';
+    }
+
     /**
      * @param $filename
      * @return string|null Retrieve the captured extension or null if no extension has been found
      */
-    public function getFileExtension($filename): ?string
+    public function getFileExtension(string $filename): ?string
     {
         if (preg_match('/\.([a-zA-Z0-9]+)$/', $filename, $matches)) {
             return $matches[1];
@@ -22,7 +31,7 @@ final class FileService
      */
     public function getFileSize(string $filepath): ?string
     {
-        return filesize($filepath);
+        return filesize($this->uploadPath . $filepath);
     }
 
     /**
@@ -44,6 +53,6 @@ final class FileService
     public function getFileSizeExpirationDate(string $filepath, string $created_at): ?string
     {
         // Todo: calcul expiration date
-        return filectime($filepath);
+        return  $created_at;
     }
 }

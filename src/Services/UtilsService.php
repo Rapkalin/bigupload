@@ -1,7 +1,6 @@
 <?php
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
 
 if (!function_exists('formatJsonResponseData')) {
     function formatJsonResponseData(
