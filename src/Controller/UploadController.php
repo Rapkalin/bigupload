@@ -25,9 +25,10 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 use App\Entity\Item;
-use App\Repository\ItemRepository;
-use App\Services\CommonsService;
+use App\Services\FileService;
+use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -42,11 +43,21 @@ class UploadController extends BaseController
     private string $fileName;
     private int $chunk;
     private int $chunks;
-    private ItemRepository $itemRepository;
     private EntityManagerInterface $entityManager;
-    private CommonsService $commonsService;
+    private FileService $fileService;
 
 
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        FileService $fileService
+    ) {
+        $this->entityManager = $entityManager;
+        $this->fileService = $fileService;
+    }
+
+    /**
+     * @throws Exception
+     */
     #[Route('/uploadFile', name: 'file.upload')]
     public function upload (): JsonResponse
     {
@@ -72,50 +83,86 @@ class UploadController extends BaseController
         $this->rebuildFile();
         $this->checkIfRenameFile();
 
-
         // Save the file in database
-        dd('$this', $this);
-
-        if($this->saveItem()) {
+        if($response = $this->saveItem()) {
             // Return Success JSON-RPC response to FileUploaded event in main.js
-            return new JsonResponse([
-                'result' => [
-                    "fileName" => "' . $this->fileName . '",
-                    "id" => "id"
-                ]
-            ] , 201);
+            return formatJsonResponseData(
+                'success',
+                'upload',
+                "' . $this->fileName . ' was successfully uploaded and created.",
+                201,
+                ["id" => $response['id']],
+            );
         } else {
-            return new JsonResponse('{"error" : "fileName": "' . $this->fileName . ' was not created.",}', 500);
+            return formatJsonResponseData(
+                'error',
+                'upload',
+                "' . $this->fileName . ' was not created.",
+                500
+            );
         }
     }
 
     /**
-     * @throws \Exception
+     * If item is successfully saved we return a 201 JSON response
+     * Else the item isn't saved in DB we delete the created file and return a 500 error
+     *
+     * @throws Exception
      */
-    private function saveItem ()
+    private function saveItem (): true|JsonResponse
     {
-        $created_at = $this->commonsService->getFileCreatedAt($this->fileName);
-        $item = (new Item())->setItem([
-            'title' => $this->fileName,
-            'download_url' => $this->filePath,
-            'extension' => $this->commonsService->getFileExtension($this->fileName),
-            'size' => $this->commonsService->getFileSize($this->fileName),
-            'created_at' => $created_at,
-            'expiration_date' => $this->commonsService->getFileSizeExpirationDate($this->fileName, $created_at)
-        ]);
+        $data = $this->buildItemData();
+        dump('$data', $data);
 
-        if ($item) {
+        if ($data) {
+            $item = (new Item())->setItem([$data]);
+            dump('$item', $item);
             $this->entityManager->persist($item);
             $this->entityManager->flush();
-            return true;
+            return formatJsonResponseData(
+                'success',
+                'saveItem',
+                "' . $this->fileName . ' was successfully created.",
+                201,
+                ["id" => $item->getId()],
+            );
         } else {
-            throw new \Exception('Item not created');
+            unlink($this->filePath);
+            return formatJsonResponseData(
+                'error',
+                'saveItem',
+                "' . $this->fileName . ' was not created.",
+                500
+            );
         }
+    }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    private function buildItemData(): false|array
+    {
+        $created_at = $this->fileService->getFileCreatedAt($this->fileName);
+        $allowedData = [
+            'title' => $this->fileName,
+            'download_url' => $this->filePath,
+            'extension' => $this->fileService->getFileExtension($this->fileName),
+            'size' => $this->fileService->getFileSize($this->fileName),
+            'created_at' => $created_at,
+            'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->fileName, $created_at)
+        ];
+
+        foreach ($allowedData as $data) {
+            if (!$data) {
+                return false;
+            }
+        }
+
+        return $allowedData;
     }
 
     private function createTargetDir(): void
     {
-        // Create target dir
         if (!file_exists($this->targetDir) && !mkdir($this->targetDir) && !is_dir($this->targetDir)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->targetDir));
         }
@@ -123,7 +170,6 @@ class UploadController extends BaseController
 
     private function setFilePath(): void
     {
-        // Get a file name
         if (isset($_REQUEST["name"])) {
             $this->fileName = $_REQUEST["name"];
         } elseif (!empty($_FILES)) {
@@ -132,7 +178,6 @@ class UploadController extends BaseController
             $this->fileName = uniqid("file_", TRUE);
         }
 
-        // Create path to file
         $this->filePath = $this->targetDir . DIRECTORY_SEPARATOR . $this->fileName;
     }
 
@@ -143,10 +188,15 @@ class UploadController extends BaseController
         $this->chunks = isset($_REQUEST["chunks"]) ? (int) $_REQUEST["chunks"] : 0;
     }
 
-    private function removeOldTempFiles(): void
+    private function removeOldTempFiles(): true|JsonResponse
     {
         if (!is_dir($this->targetDir) || !$dir = opendir($this->targetDir)) {
-            die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
+            return formatJsonResponseData(
+                'error',
+                'removeOldTempFiles',
+                "Failed to open temp directory.",
+                100
+            );
         }
 
         $file = readdir($dir);
@@ -169,28 +219,50 @@ class UploadController extends BaseController
 
             closedir($dir);
         }
+
+        return true;
     }
 
-    private function rebuildFile(): void
+    private function rebuildFile(): true|JsonResponse
     {
         // Open temp file and rebuild the file
         // create the finalfile ($filePath.part) that will be written with the chunk files
         if (!$out = @fopen("{$this->filePath}.part", $this->chunks ? "ab" : "wb")) {
-            die('{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}');
+            return formatJsonResponseData(
+                'error',
+                'rebuildFile',
+                "Failed to open output stream.",
+                102
+            );
         }
 
         if (!empty($_FILES)) {
             if ($_FILES["file"]["error"] || !is_uploaded_file($_FILES["file"]["tmp_name"])) {
-                die('{"jsonrpc" : "2.0", "error" : {"code": 103, "message": "Failed to move uploaded file."}, "id" : "id"}');
+                return formatJsonResponseData(
+                    'error',
+                    'rebuildFile',
+                    "Failed to move uploaded file.",
+                    103
+                );
             }
 
             // Read binary input stream and append it to temp file
             if (!$in = @fopen($_FILES["file"]["tmp_name"], "rb")) {
-                die('{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}');
+                return formatJsonResponseData(
+                    'error',
+                    'rebuildFile',
+                    "Failed to open input stream and append it to temp file.",
+                    101
+                );
             }
         } else {
             if (!$in = @fopen("php://input", "rb")) {
-                die('{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}');
+                return formatJsonResponseData(
+                    'error',
+                    'rebuildFile',
+                    "Failed to open input stream.",
+                    101
+                );
             }
         }
 
@@ -201,6 +273,8 @@ class UploadController extends BaseController
 
         fclose($out);
         fclose($in);
+
+        return true;
     }
 
     private function checkIfRenameFile(): void

@@ -2,48 +2,8 @@
 
 namespace App\Services;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-
-final class CommonsService
+final class FileService
 {
-    protected array $colors = [
-        'black' => "\033[30m",
-        'red' => "\033[31m",
-        'green' => "\033[32m",
-        'yellow' => "\033[33m",
-        'blue' => "\033[34m",
-        'cyan' => "\033[36m",
-        'white' => "\033[39m",
-    ];
-
-    /**
-     * @param string $color Available colors are:
-     * ['black','red','green','yellow','blue','cyan','white']
-     *
-     * @param string $message
-     * @param bool $end
-     * @return string
-     *
-     */
-    public function formatMessage(
-        string $color,
-        string $message,
-        bool $end = false
-    ): string
-    {
-        $formattedMessage = $this->colors[$color] . $message . $this->colors['white'] . ( $end ? "" : PHP_EOL);
-        if ($end) {
-            $formattedMessage .= $this->addLine();
-        }
-
-        return $formattedMessage;
-    }
-
-    private function addLine(): string
-    {
-        return PHP_EOL . PHP_EOL . "----------------" . PHP_EOL . PHP_EOL;
-    }
-
     /**
      * @param $filename
      * @return string|null Retrieve the captured extension or null if no extension has been found
@@ -85,28 +45,5 @@ final class CommonsService
     {
         // Todo: calcul expiration date
         return filectime($filepath);
-    }
-
-    public function formatJsonResponseData(
-        string $status,
-        string $context,
-        string $message,
-        int $httpStatusCode,
-        array $extraData = []
-    ): JsonResponse
-    {
-        $data = [
-            'status' => $status,
-            'details' => [
-                'context' => $context,
-                'message' => $message
-            ]
-        ];
-
-        if ($extraData) {
-            $data = array_merge($data['details'], $extraData);
-        }
-
-        return new JsonResponse($data , $httpStatusCode);
     }
 }
