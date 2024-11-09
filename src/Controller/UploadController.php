@@ -30,6 +30,8 @@ use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UploadController extends BaseController
@@ -45,69 +47,110 @@ class UploadController extends BaseController
     private int $chunks;
     private EntityManagerInterface $entityManager;
     private FileService $fileService;
+    private string $uploadPath;
 
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        FileService $fileService
+        FileService $fileService,
+        KernelInterface $kernel,
     ) {
         $this->entityManager = $entityManager;
         $this->fileService = $fileService;
+        $this->uploadPath = $kernel->getProjectDir() . '/public/uploads/';
     }
 
     /**
+     * Return Success JSON-RPC response to FileUploaded event in upload.js
+     *
      * @throws Exception
      */
-    #[Route('/uploadFile', name: 'file.upload')]
-    public function upload (): JsonResponse
+    #[Route('/buildFile', name: 'file.build')]
+    public function buildFile ()
     {
-        /*
-        // Support CORS
-        header("Access-Control-Allow-Origin: *");
-        // other CORS headers if any...
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            exit; // finish preflight CORS requests here
-        }
-        */
+        try {
 
-        // 5 minutes execution time
-        @set_time_limit(5 * 60);
-        $this->createTargetDir();
-        $this->setFilePath();
-        $this->setChunk();
 
-        if ($this->cleanupTargetDir) {
-            $this->removeOldTempFiles();
-        }
+            /*
+            // Support CORS
+            header("Access-Control-Allow-Origin: *");
+            // other CORS headers if any...
+            if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+                exit; // finish preflight CORS requests here
+            }
+            */
 
-        $this->rebuildFile();
-        $this->checkIfRenameFile();
+            // 5 minutes execution time
+            @set_time_limit(5 * 60);
+            $this->createTargetDir();
+            $this->setFilePath();
+            $this->setChunk();
 
-        $response = $this->saveItem();
+            if ($this->cleanupTargetDir) {
+                $this->removeOldTempFiles();
+            }
 
-        // Save the file in database
-        if($response->isSuccessful()) {
-            $data = json_decode($response->getContent(), true);
+            $this->rebuildFile();
+            $this->checkIfRenameFile();
 
-            // Return Success JSON-RPC response to FileUploaded event in main.js
             return formatJsonResponseData(
                 'success',
-                'upload',
-                "{$this->fileName} was successfully uploaded and created.",
+                __METHOD__,
+                "{$this->fileName} was successfully uploaded.",
                 201,
-                [
-                    "id" => $data['id'],
-                    "filename" => $this->fileName
-                ],
+                extraData: ["filename" => $this->fileName],
             );
-        } else {
+        } catch (Exception $e) {
             return formatJsonResponseData(
                 'error',
                 __METHOD__,
-                "{$this->fileName} was not created.",
-                500
+                "{$this->fileName} was not uploaded.",
+                500,
+                "Error: {$e->getMessage()}",
             );
         }
+    }
+
+    #[Route('/handleFile', name: 'file.handle')]
+    public function handleFile(Request $request): JsonResponse
+    {
+        $this->fileName = strip_tags($request->query->get('fileName'));
+        $this->filePath = $this->uploadPath . $this->fileName;
+
+        if (file_exists($this->filePath)) {
+            try {
+                $response = $this->saveItem();
+                if ($response->isSuccessful()) {
+                    $data = json_decode($response->getContent(), true);
+                    return formatJsonResponseData(
+                        'success',
+                        __METHOD__,
+                        "{$this->fileName} was successfully created.",
+                        201,
+                        extraData: [
+                            "id" => $data['id'],
+                            "filename" => $this->fileName
+                        ],
+                    );
+                }
+            } catch (Exception $e) {
+                return formatJsonResponseData(
+                    'error',
+                    __METHOD__,
+                    "{$this->fileName} was not created.",
+                    500,
+                    "Error: {$e->getMessage()}"
+                );
+            }
+        }
+
+        return formatJsonResponseData(
+            'error',
+            __METHOD__,
+            "Something went wrong, please contact an administrator.",
+            500,
+            "The file might not exists."
+        );
     }
 
     /**
@@ -118,8 +161,8 @@ class UploadController extends BaseController
      */
     private function saveItem (): true|JsonResponse
     {
-        $data = $this->buildItemData();
-        if ($data) {
+        try {
+            $data = $this->buildItemData();
             $item = (new Item())->setItem($data);
             $this->entityManager->persist($item);
             $this->entityManager->flush();
@@ -130,14 +173,9 @@ class UploadController extends BaseController
                 201,
                 ["id" => $item->getId()],
             );
-        } else {
+        } catch (Exception $e) {
             unlink($this->filePath);
-            return formatJsonResponseData(
-                'error',
-                __METHOD__,
-                "{$this->fileName} was not created.",
-                500
-            );
+            throw new Exception($e->getMessage(), 500);
         }
     }
 
@@ -147,22 +185,18 @@ class UploadController extends BaseController
     private function buildItemData(): false|array
     {
         $created_at = $this->fileService->getFileCreatedAt($this->filePath);
+        $file_size = $this->fileService->getFileSize($this->filePath);
+        // $this->fileService->buildDownloadUrl($this->fileName, $file_size)
         $allowedData = [
             'title' => $this->fileName,
             'download_url' => $this->filePath,
             'extension' => $this->fileService->getFileExtension($this->fileName),
-            'size' => $this->fileService->getFileSize($this->filePath),
+            'size' => $file_size,
             'created_at' => $created_at,
             'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->filePath, $created_at)
         ];
 
-       /*foreach ($allowedData as $data) {
-            if (!$data) {
-                return false;
-            }
-        }*/
-
-        return $allowedData;
+       return $allowedData;
     }
 
     private function createTargetDir(): void

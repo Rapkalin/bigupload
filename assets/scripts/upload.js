@@ -3,9 +3,9 @@ var uploader = new plupload.Uploader({
   browse_button : 'browse-files-btn', // you can pass an id...
   container : document.getElementById('upload-area'), // ... or DOM Element itself
   drop_element : "card-area", // add a drop area using the id in the index
-	url : '/uploadFile',
+	url : '/buildFile',
   multi_selection : false,
-  chunk_size : '50mb',
+  chunk_size : '10mb',
   filters: {
     mime_types: [
       { title: "Image files", extensions: "jpg,jpeg,png,gif" },
@@ -32,7 +32,7 @@ var uploader = new plupload.Uploader({
 
 		PostInit: function () {
 			// Open the window to select and upload the files
-			document.getElementById('uploadfiles').onclick = function () {
+			document.getElementById('upload-files').onclick = function () {
 				// console.log("2- Post init before start");
 				uploader.start();
 				return false;
@@ -68,40 +68,24 @@ var uploader = new plupload.Uploader({
 
 		// Display in console when file (when not chunked) are uploaded
 		FileUploaded: function (up, file, info) {
-			// console.log("4- File uploaded", file);
-			var response = jQuery.parseJSON(info.response);
-
-			// get the name of the file and recreate the filepath to be downloaded
-			fileName = response.fileName;
-			// var tag = document.getElementById('downloadFile'); // If we need a download button
-			longUrl = window.location.origin + "/download?fileName=" + fileName;
-
-			// SHORTEN THE LONGURL FOR THE CLIPBOARD
-			fetch("/shortenUrl?longUrl=" + longUrl)
-				.then((response) => {
-					if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
-						// check for any errors.
-						// In case of an error, throw.
-						document.getElementById('downloadLink').innerText = longUrl;
-						throw new Error("Something went wrong!");
-					}
-					return response.json(); // Parse the JSON data.
-				})
-				.then((data) => {
-					// This is where you handle what to do with the response.
-					document.getElementById('downloadLink').innerText = data;
-				})
-				.catch((error) => {
-					// This is where you handle errors.
-					document.getElementById('downloadLink').innerText = longUrl;
-					console.error('something went wrong with the tinyURL: ' + error)
-				});
-
-			// Hiding upload button and making download button and link visible
-			document.getElementById('upload-btn').style.display = 'none';
-			document.getElementById('download-or-copy').classList.remove('hidden');
-			document.getElementById('download-or-copy').style.display = 'flex';
-		},
+            // console.log("4- File uploaded", file);
+            var response = jQuery.parseJSON(info.response);
+            fetchHandleFile(file)
+                .then((response) => {
+                    if(!response.ok){ // Before parsing (i.e. decoding) the JSON data,
+                        // check for any errors.
+                        // In case of an error, throw.
+                        // document.getElementById('downloadLink').innerText = longUrl;
+                        console.log('RESPONSE EROOR:::::', response);
+                        throw new Error("Something went wrong!");
+                    }
+                    console.log('RESPONSE INSIDE:::::', response);
+                })
+                .catch((error) => {
+                    // This is where you handle errors.
+                    console.error('something went wrong with the Handling: ' + error)
+                });
+        },
 
 		// Handle errors
 		Error: function (up, err) {
@@ -110,5 +94,11 @@ var uploader = new plupload.Uploader({
 
 	}
 });
+
+async function fetchHandleFile(file) {
+    var responseHandle = await fetch("/handleFile?fileName=" + file.name);
+    console.log('RESPONSE HANDLE:::::', responseHandle);
+    return await responseHandle.json(); // Parse the JSON data.
+}
 
 uploader.init();

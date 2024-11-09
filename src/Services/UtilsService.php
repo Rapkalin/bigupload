@@ -8,6 +8,7 @@ if (!function_exists('formatJsonResponseData')) {
         string $context,
         string $message,
         int $httpStatusCode,
+        string $errorMessage = '',
         array $extraData = []
     ): JsonResponse
     {
@@ -20,6 +21,10 @@ if (!function_exists('formatJsonResponseData')) {
 
         if ($_ENV['APP_ENV'] !== 'prod') {
             $data['details']['context'] = $context;
+
+            if ($errorMessage) {
+                $data['details']['error'] = $errorMessage;
+            }
         }
 
         if ($extraData) {
@@ -66,4 +71,5 @@ if (!function_exists('formatJsonResponseData')) {
     {
         return PHP_EOL . PHP_EOL . "----------------" . PHP_EOL . PHP_EOL;
     }
+
 }

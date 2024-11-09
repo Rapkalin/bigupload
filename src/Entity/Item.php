@@ -6,6 +6,7 @@ use App\Repository\ItemRepository;
 use DateMalformedStringException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 #[ORM\Table(name: 'items')]
@@ -34,7 +35,16 @@ class Item
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $created_at = null;
 
+    /**
+     * @throws DateMalformedStringException
+     */
     public function setItem (array $data): Item {
+        foreach ($data as $key => $field) {
+             if (!$field) {
+                throw new Exception("Missing $key field.");
+             }
+        }
+
         $item = new Item();
         $item->setTitle($data['title']);
         $item->setDownloadUrl($data['download_url']);
