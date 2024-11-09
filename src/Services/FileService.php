@@ -3,17 +3,23 @@
 namespace App\Services;
 
 use AllowDynamicProperties;
-use App\Kernel;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AllowDynamicProperties] final class FileService
 {
-    public function __construct(KernelInterface $kernel)
+    private LoggerInterface $logger;
+    private string $uploadPath;
+
+    public function __construct(
+        KernelInterface $kernel,
+        LoggerInterface $logger,
+    )
     {
         $this->uploadPath = $kernel->getProjectDir() . '/public/';
+        $this->logger = $logger;
     }
 
     /**
@@ -34,7 +40,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
      */
     public function getFileSize(string $filepath): ?string
     {
-        return filesize($this->uploadPath . $filepath);
+        return (int) filesize($filepath);
     }
 
     /**
@@ -53,16 +59,17 @@ use Symfony\Component\HttpKernel\KernelInterface;
      * @param string $created_at
      * @return string|null Retrieve the captured extension or null if no extension has been found
      */
-    public function getFileSizeExpirationDate(string $filepath, string $created_at): ?string
+    public function getFileSizeExpirationDate(string $created_at): ?string
     {
         // Todo: calcul expiration date
-        return  $created_at;
+        $extraTime = ('+ 7 days');
+        return  date("F d Y H:i:s.", strtotime($created_at . $extraTime));
     }
 
     /**
      * @throws Exception
      */
-    public function getTinyUrl(string $url): Response
+    public function getTinyUrl(string $url): string
     {
         $apiUrl = 'https://tinyurl.com/api-create.php?url=' . strip_tags($url);
 
@@ -91,7 +98,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
             /* Process $content here */
             curl_close($curl);
-            return new Response(json_encode($newUrl));
+
+            return $newUrl;
 
         } catch (\Exception $e) {
             throw new Exception('something went wrong: ', $e);
@@ -101,17 +109,20 @@ use Symfony\Component\HttpKernel\KernelInterface;
     /**
      * @throws Exception
      */
-    public function buildDownloadUrl(string $fileName, string $fileSize): string
+    public function buildDownloadUrl(string $fileName): string
     {
-        $url = $this->download($fileName, $fileSize);
-        dump('buildDownloadUrl', $this->getTinyUrl($url));
-        die();
-        return $this->getTinyUrl($url);
+        $url =  $this->getDomaineUrl() . "/uploads/" . $fileName;
+        try {
+            return $this->getTinyUrl($url);
+        } catch (\Exception $e) {
+            $this->logger->error("FileService::buildDownloadUrl Error: {$e->getMessage()}");
+            return $url;
+        }
     }
 
-    public function download(string $fileName, string $fileSize): Response
+    public function download(string $fileName, int $fileSize): Response
     {
-        $path = $this->uploadPath . "/uploads/" . $fileName;
+        $path = $this->uploadPath . "uploads/" . $fileName;
         $fp = fopen($path, "rb");
         $content = fread($fp, $fileSize);
         fclose($fp);
@@ -120,6 +131,18 @@ use Symfony\Component\HttpKernel\KernelInterface;
         header("Content-type: application/octet-stream");
         header("Content-disposition: attachment; filename=".$fileName.";" );
         return new Response($content);
+    }
+
+    private function getDomaineUrl()
+    {
+        switch ($_ENV['APP_ENV']) {
+            case 'preprod':
+                return $_ENV['APP_DOMAINE_PREPROD'];
+            case 'prod':
+                return $_ENV['APP_DOMAINE_PROD'];
+            default:
+                return $_ENV['APP_DOMAINE_LOCAL'];
+        }
     }
 
 }

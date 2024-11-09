@@ -30,7 +30,6 @@ use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -69,8 +68,6 @@ class UploadController extends BaseController
     public function buildFile ()
     {
         try {
-
-
             /*
             // Support CORS
             header("Access-Control-Allow-Origin: *");
@@ -91,15 +88,17 @@ class UploadController extends BaseController
             }
 
             $this->rebuildFile();
-            $this->checkIfRenameFile();
+            $response = $this->checkIfRenameAndSaveFile();
 
-            return formatJsonResponseData(
-                'success',
-                __METHOD__,
-                "{$this->fileName} was successfully uploaded.",
-                201,
-                extraData: ["filename" => $this->fileName],
-            );
+            if ($response) {
+                return formatJsonResponseData(
+                    'success',
+                    __METHOD__,
+                    "{$this->fileName} was successfully uploaded and created.",
+                    201,
+                    extraData: ["filename" => $this->fileName],
+                );
+            }
         } catch (Exception $e) {
             return formatJsonResponseData(
                 'error',
@@ -109,94 +108,74 @@ class UploadController extends BaseController
                 "Error: {$e->getMessage()}",
             );
         }
-    }
-
-    #[Route('/handleFile', name: 'file.handle')]
-    public function handleFile(Request $request): JsonResponse
-    {
-        $this->fileName = strip_tags($request->query->get('fileName'));
-        $this->filePath = $this->uploadPath . $this->fileName;
-
-        if (file_exists($this->filePath)) {
-            try {
-                $response = $this->saveItem();
-                if ($response->isSuccessful()) {
-                    $data = json_decode($response->getContent(), true);
-                    return formatJsonResponseData(
-                        'success',
-                        __METHOD__,
-                        "{$this->fileName} was successfully created.",
-                        201,
-                        extraData: [
-                            "id" => $data['id'],
-                            "filename" => $this->fileName
-                        ],
-                    );
-                }
-            } catch (Exception $e) {
-                return formatJsonResponseData(
-                    'error',
-                    __METHOD__,
-                    "{$this->fileName} was not created.",
-                    500,
-                    "Error: {$e->getMessage()}"
-                );
-            }
-        }
 
         return formatJsonResponseData(
-            'error',
+            'success',
             __METHOD__,
-            "Something went wrong, please contact an administrator.",
-            500,
-            "The file might not exists."
+            "Chunk from {$this->fileName} was successfully uploaded.",
+            201,
+            extraData: ["filename" => $this->fileName],
         );
     }
 
+    private function clearFile(string $filePath): void
+    {
+        $part = file_exists($this->filePath . '.part') ? '.part' : '';
+        if(
+            file_exists($this->filePath) ||
+            file_exists($this->filePath . 'part')
+        ) {
+            unlink($filePath) . $part;
+        }
+    }
+
     /**
-     * If item is successfully saved we return a 201 JSON response
+     * If item is successfully saved we return trye
      * Else the item isn't saved in DB we delete the created file and return a 500 error
      *
      * @throws Exception
      */
-    private function saveItem (): true|JsonResponse
+    private function handleFile (): bool
     {
-        try {
-            $data = $this->buildItemData();
-            $item = (new Item())->setItem($data);
-            $this->entityManager->persist($item);
-            $this->entityManager->flush();
-            return formatJsonResponseData(
-                'success',
-                __METHOD__,
-                "{$this->fileName} was successfully created.",
-                201,
-                ["id" => $item->getId()],
-            );
-        } catch (Exception $e) {
-            unlink($this->filePath);
-            throw new Exception($e->getMessage(), 500);
-        }
+        $retry = 0;
+        do {
+            if(file_exists($this->filePath)) {
+                try {
+                    $data = $this->buildItemData();
+                    $item = (new Item())->setItem($data);
+                    $this->entityManager->persist($item);
+                    $this->entityManager->flush();
+                    return true;
+                } catch (Exception $e) {
+                    $this->clearFile($this->filePath);
+                    throw new Exception($e->getMessage(), 500);
+                }
+            }
+
+            $retry++;
+        }  while (
+            !file_exists($this->filePath) &&
+            $retry < 5
+        );
+
+        throw new Exception("File might not exist", 500);
     }
 
     /**
      * @throws DateMalformedStringException
+     * @throws Exception
      */
     private function buildItemData(): false|array
     {
         $created_at = $this->fileService->getFileCreatedAt($this->filePath);
-        $file_size = $this->fileService->getFileSize($this->filePath);
-        // $this->fileService->buildDownloadUrl($this->fileName, $file_size)
-        $allowedData = [
+        return [
             'title' => $this->fileName,
-            'download_url' => $this->filePath,
+            'download_url' => $this->fileService->buildDownloadUrl($this->fileName),
             'extension' => $this->fileService->getFileExtension($this->fileName),
-            'size' => $file_size,
+            'size' => $this->fileService->getFileSize($this->filePath),
             'created_at' => $created_at,
-            'expiration_date' => $this->fileService->getFileSizeExpirationDate($this->filePath, $created_at)
+            'expiration_date' => $this->fileService->getFileSizeExpirationDate($created_at)
         ];
-
-       return $allowedData;
     }
 
     private function createTargetDir(): void
@@ -313,12 +292,16 @@ class UploadController extends BaseController
         fclose($in);
     }
 
-    private function checkIfRenameFile(): void
+    /**
+     * @throws Exception
+     */
+    private function checkIfRenameAndSaveFile()
     {
         // Check if file has been uploaded
         if (!$this->chunks || $this->chunk === $this->chunks - 1) {
             // Strip the temp .part suffix off
             rename("{$this->filePath}.part", $this->filePath);
+            return $this->handleFile();
         }
     }
 }
