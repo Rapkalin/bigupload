@@ -1,17 +1,12 @@
 {% extends 'base.html.twig' %}
-{% set extra = {
-    'ctnClass': 'row-reverse'
-} %}
 
 {% block title %}BIGUPLOAD{% endblock %}
-
 {% block body %}
-    {% include 'components/upload-card.html.twig' %}
+    {% include 'components/card.html.twig' with {
+        'template': 'upload'
+    } %}
 
-    <div id="description-area">
-        <h1 id="upload-title">WELCOME TO BIGUPLOAD</h1>
-        <p id="subtitle">Choose the file you want to upload, copy and share the download link :)</p>
-    </div>
+    {% include 'blocks/left-side.html.twig' %}
 
     <script type="text/javascript" src={{ asset("scripts/upload.js") }}></script>
     <script type="text/javascript" src={{ asset("scripts/copyToClipBoard.js") }}></script>

@@ -1,0 +1,14 @@
+#upload-title {
+    font-size: -webkit-xxx-large;
+    text-align: center;
+    color: whitesmoke;
+}
+
+#description-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    padding-left: 2em;
+    padding-right: 2em;
+}

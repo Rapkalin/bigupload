@@ -1,10 +1,11 @@
 {% extends 'base.html.twig' %}
-{% set extra =
-    {
-        'ctnClass': 'centered'
-    }
- %}
 
+{% block title %}BIGUPLOAD{% endblock %}
 {% block body %}
-    {% include 'components/download-card.html.twig' with { 'item': item } %}
+    {% include 'components/card.html.twig' with {
+        'template': 'download',
+        'item': item
+    } %}
+
+    {% include 'blocks/left-side.html.twig' %}
 {% endblock %}

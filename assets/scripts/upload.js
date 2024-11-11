@@ -1,8 +1,8 @@
 var uploader = new plupload.Uploader({
   runtimes : 'html5',
   browse_button : 'browse-files-btn', // you can pass an id...
-  container : document.getElementById('upload-area'), // ... or DOM Element itself
-  drop_element : "card-area", // add a drop area using the id in the index
+  container : document.getElementById('card-area'), // ... or DOM Element itself
+  drop_element : "card-area-drop", // add a drop area using the id in the index
 	url : '/handleFile',
   multi_selection : false,
   chunk_size : '10mb',
@@ -41,13 +41,13 @@ var uploader = new plupload.Uploader({
 
     QueueChanged: function (up) {
       if (up.files.length > 0) {
-        document.getElementById('card-area').id = 'drop-area-off';
-        document.getElementById('browse-files-btn').classList.add('hidden');
-        document.getElementById('drop-area-or').classList.add('hidden');
-        document.getElementById('refreshButton').classList.remove('hidden');
-        document.getElementById('upload-btn').classList.remove('hidden');
-        document.getElementById('upload-btn').style.display = 'flex';
-        document.getElementById('upload-btn').style.alignItems = 'center';
+        document.getElementById('card-area-drop').className = 'hidden';
+        document.getElementById('browse-files-btn').style.display = 'none';
+        document.getElementById('card-area-subtitle').style.display = 'none';
+        document.getElementById('drop-area-or').style.display = 'none';
+        document.getElementById('card-area-upload').classList.remove('hidden');
+        document.getElementById('upload-files').style.display = 'flex';
+        document.getElementById('upload-files').style.alignItems = 'center';
       }
     },
 
@@ -65,7 +65,8 @@ var uploader = new plupload.Uploader({
       document.getElementById('downloadLink').innerText = response.download_url;
 
       // Hiding upload button and making download button and link visible
-      document.getElementById('upload-btn').style.display = 'none';
+      document.getElementById('upload-files').style.display = 'none';
+      document.getElementById('refreshButton').classList.remove('hidden');
       document.getElementById('download-or-copy').classList.remove('hidden');
       document.getElementById('download-or-copy').style.display = 'flex';
 
