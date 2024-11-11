@@ -29,7 +29,7 @@ class DownloadController extends AbstractController
         $filename = $fileService->getTitleNoExtension($item->getTitle()) . "." . strtoupper($item->getExtension());
         header("Content-length: ". $item->getSize());
         header("Content-type: application/octet-stream");
-        header("Content-disposition: attachment; filename=\"$filename\"");
+        header("Content-disposition: attachment; filename=\"$filename\";");
         return new Response($content);
     }
 }
