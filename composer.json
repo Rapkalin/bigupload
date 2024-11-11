@@ -62,7 +62,9 @@
         "psr-4": {
             "App\\": "src/"
         },
-        "files": ["src/Services/UtilsService.php"]
+        "files": [
+            "src/Services/utilsService.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
