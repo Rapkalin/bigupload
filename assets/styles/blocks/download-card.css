@@ -47,3 +47,20 @@
 #item-title {
     margin: 0;
 }
+
+#refreshButton {
+    text-decoration: underline;
+    font-weight: bold;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+#downloadLink {
+    margin-bottom: 15px;
+    width: 200px;
+    height: 25px;
+    text-align: center;
+    border-radius: 10px;
+    border: none;
+    background: #f2efef;
+}

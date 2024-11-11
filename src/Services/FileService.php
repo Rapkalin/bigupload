@@ -34,6 +34,14 @@ use Symfony\Component\HttpKernel\KernelInterface;
         return null;
     }
 
+    public function getTitleNoExtension(string $filename): ?string
+    {
+        if (preg_match('/^(.*?)(?:\.[a-zA-Z0-9]+)?$/', $filename, $matches)) {
+            return $matches[1];
+        }
+        return null;
+    }
+
     /**
      * @param string $filepath
      * @return string|null Retrieve the captured extension or null if no extension has been found

@@ -48,12 +48,12 @@
     font-size: 8em;
 }
 
-#card-area-title, #card-area-drop > h2 {
+.card-area-title, #card-area-drop > h2 {
     color: #4c4c4c !important;
     text-align: center !important;
 }
 
-#card-area-title {
+.card-area-title {
     font-size: 1.8em !important;
 }
 
@@ -102,5 +102,5 @@ textarea {
 }
 
 #filelist {
-    margin: 40px 0;
+    margin: 20px 0;
 }

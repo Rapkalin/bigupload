@@ -62,14 +62,15 @@ var uploader = new plupload.Uploader({
 
     FileUploaded: function (uploader, file, result) {
       let response = jQuery.parseJSON(result.response);
-      document.getElementById('downloadLink').innerText = response.download_url;
+      document.getElementById('downloadLink').value = response.download_url;
 
       // Hiding upload button and making download button and link visible
+      document.getElementById('card-area-title-upload').innerText = 'Your link is ready ;)';
       document.getElementById('upload-files').style.display = 'none';
+      document.getElementById('downloadLink').classList.remove('hidden');
       document.getElementById('refreshButton').classList.remove('hidden');
       document.getElementById('download-or-copy').classList.remove('hidden');
       document.getElementById('download-or-copy').style.display = 'flex';
-
     },
 
     // See other available event like ChunkUploaded / FileUploaded in plupload.dev.js file
