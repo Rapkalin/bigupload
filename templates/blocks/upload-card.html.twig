@@ -1,0 +1,39 @@
+<div id="card-area-drop">
+    <i class="fa-solid fa-circle-plus"></i>
+    <h1 class="card-area-title" id="card-area-title-drop">Drop your file here</h1>
+    <span id="drop-area-or">or</span>
+    {% include 'components/buttons/link-button.html.twig' with {
+        'id': 'browse-files-btn',
+        'color': 'blue',
+        'text': 'Choose your file',
+        'href': 'javascript:;'
+    } %}
+    <h2 id="card-area-subtitle">Please note that you can only upload one file at a time</h2>
+</div>
+
+<div id="card-area-upload" class="hidden">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+    <h1 class="card-area-title" id="card-area-title-upload">Click the button to start the upload</h1>
+
+    <div id="filelist"></div>
+
+    {% include 'components/buttons/link-button.html.twig' with {
+        'id': 'upload-files',
+        'color': 'blue',
+        'text': 'Upload your file',
+        'href': 'javascript:;'
+    } %}
+
+    <input readonly id="downloadLink" class="hidden">
+    <div id="download-or-copy" class="hidden">
+        {% include 'components/buttons/classic-button.html.twig' with {
+            'id': 'copyLinkButton',
+            'extraClasses': 'downloadClipBoard',
+            'color': 'blue',
+            'text': 'Copy your link'
+        } %}
+        <script type="text/javascript" src={{ asset("scripts/copyToClipboard.js") }}></script>
+    </div>
+
+    <a id="refreshButton" class="downloadClipBoard hidden" onclick="window.location.href=window.location.href">Upload a new file</a>
+</div>

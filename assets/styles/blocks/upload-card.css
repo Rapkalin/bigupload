@@ -1,0 +1,106 @@
+#card-area-drop, #card-area-upload {
+    width: 23em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#card-area-upload {
+    padding: 25px 5px;
+}
+
+#card-area-drop {
+    padding: 20px 0;
+}
+
+#drop-area-or {
+    margin-bottom: 10px;
+    color: #4c4c4c;
+    font-size: 13px;
+    text-align: center;
+}
+
+#drop-area-off {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#drop-area-off > p {
+    text-align: center;
+    font-weight: bold;
+    font-size: 2em;
+    color: #6e6e6e;
+}
+
+.fa-solid, .fas {
+    font-weight: 900;
+    color: darkgrey;
+    margin-bottom: 15px;
+}
+
+.fa-cloud-arrow-up, .fa-cloud-arrow-down {
+    font-size: 7em;
+}
+
+.fa-circle-plus {
+    font-size: 8em;
+}
+
+.card-area-title, #card-area-drop > h2 {
+    color: #4c4c4c !important;
+    text-align: center !important;
+}
+
+.card-area-title {
+    font-size: 1.8em !important;
+}
+
+#card-area-drop > h2 {
+    font-size: 1em !important;
+    font-weight: lighter !important;
+    margin: 26px 15px;
+}
+
+.added-file {
+    display: flex;
+    flex-direction: column;
+    color: darkslategrey;
+    align-items: center;
+    border-radius: 10px;
+    padding: 7px 12px;
+    margin-top: 6px;
+    height: auto;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.btn-bg {
+    background-color: #c6c5c5;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: -2;
+    top: 0;
+    left: 0;
+}
+
+#download-or-copy {
+    flex-direction: column;
+    align-items: center;
+}
+
+textarea {
+    width: 50%;
+    height: 100%;
+    line-height: 100%;
+    text-align: center;
+    border: none;
+    color: darkgrey;
+    margin-top: 15px;
+}
+
+#filelist {
+    margin: 20px 0;
+}

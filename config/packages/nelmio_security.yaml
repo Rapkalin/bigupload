@@ -19,6 +19,9 @@ nelmio_security:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
     csp:
+        hosts:
+            - 'bigupload'
+            - '127.0.0.1'
         enforce:
             level1_fallback: true
             script-src:

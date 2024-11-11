@@ -1,0 +1,7 @@
+<button
+    id="{{ id }}"
+    class="btn-bglpd btn-bglpd-classic btn-bckg-{{ color }} {{ extraClasses is defined ? extraClasses : '' }}"
+    {{ onClick is defined ? 'onClick=' ~ onClick : '' }}
+>
+    {{ text }}
+</button>

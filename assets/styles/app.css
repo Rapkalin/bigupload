@@ -1,5 +1,8 @@
-@import url("mobile.css");
-@import url("laptop.css");
+@import url("components/buttons.css");
+@import url("components/card.css");
+@import url("blocks/left-side.css");
+@import url("blocks/upload-card.css");
+@import url("blocks/download-card.css");
 
 html {
     background: white;
@@ -14,3 +17,31 @@ body {
     margin: 0;
     height: 100vh;
 }
+
+.container {
+    color: black;
+    display: flex;
+    height: inherit;
+}
+
+.ctn-centered {
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.ctn-row-reverse {
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+@media (max-width:960px) {
+    .ctn-row-reverse {
+        flex-direction: column-reverse;
+        justify-content: center;
+    }
+}
+

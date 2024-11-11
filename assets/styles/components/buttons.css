@@ -1,0 +1,91 @@
+.btn-bglpd {
+    display: flex;
+    font-family: system-ui;
+    text-decoration: none;
+    color: whitesmoke;
+    font-size: 1.2em;
+    align-items: center;
+    transition: background 0.3s ease;
+    border-radius: 8px;
+    border-style: none;
+    cursor: pointer;
+}
+
+.btn-bglpd-link {
+    height: 25px;
+    padding: 8px 35px;
+}
+
+.btn-bglpd-classic {
+    height: 40px;
+    padding: 8px 30px;
+}
+
+.btn-bckg-blue {
+    background: cornflowerblue;
+}
+
+.btn-bckg-blue:hover {
+    background: royalblue;
+}
+
+.btn-bckg-green {
+    background: forestgreen;
+}
+
+.btn-bckg-green:hover {
+    background: darkgreen;
+}
+
+.btn-bckg-darkgrey {
+    background: darkgrey;
+}
+
+.btn-bckg-darkgrey:hover {
+    background: grey;
+}
+
+@media (min-width:320px) {
+    #browse-files-btn-off {
+        color: white;
+        padding: 8px 24px;
+        border-radius: 4px;
+        background: darkgray;
+        transition: background 0.3s ease;
+        text-decoration: none;
+        height: 20px;
+        width: fit-content;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+}
+
+/* hi-res laptops and desktops: min 1281 */
+/* tablet, landscape iPad, lo-res laptops ands desktops: min 961 */
+@media (min-width:961px) {
+    #browse-files-btn {
+        display: flex;
+        align-items: center;
+        transition: background 0.3s ease;
+        color: whitesmoke;
+        text-decoration: none;
+        font-size: 1.2em;
+        padding: 8px 35px;
+        border-radius: 8px;
+        height: 25px;
+    }
+
+    #browse-files-btn-off {
+        color: white;
+        padding: 8px 24px;
+        border-radius: 4px;
+        background: darkgray;
+        transition: background 0.3s ease;
+        text-decoration: none;
+        height: 20px;
+        width: fit-content;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+}
+

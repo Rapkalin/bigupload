@@ -1,0 +1,24 @@
+<div id="card-area-drop">
+    <i class="fa-solid fa-cloud-arrow-down"></i>
+    <div id="card-area-content">
+        <h1 class="card-area-title" id="card-area-title-download">Prêt ? Partez</h1>
+        <h2>Ce fichier expire dans {{ item.expiration_time }}</h2>
+
+        <div id="item-info">
+            <p id="item-title">{{ item.title }}</p>
+
+            <div id="metadata">
+                <p id="item-size">{{ item.size }}</p>
+                <p>-</p>
+                <p id="item-extension">{{ item.extension }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/buttons/link-button.html.twig' with {
+        'id': 'browse-files-btn',
+        'color': 'blue',
+        'text': 'Download',
+        'href': item.download_file_url
+    } %}
+</div>

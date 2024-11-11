@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\ItemRepository;
+use App\Services\FileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,23 +12,24 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class DownloadController extends AbstractController
 {
-    #[Route('/download', name: 'file.download')]
-    public function download(Request $request, KernelInterface $kernel): Response
+    #[Route('/downloadFile/{showId}', name: 'file.download', methods: ['GET'])]
+    public function download(
+        Request $request,
+        KernelInterface $kernel,
+        ItemRepository $itemRepository,
+        FileService $fileService
+    ): Response
     {
-        $fileName = $request->query->get('fileName');
-
-        // $fileName = $_GET['fileName'];
+        $item = $itemRepository->findOneBy(['show_id' => $request->attributes->get('showId')]);
         $publicDir = $kernel->getProjectDir() . '/public';
-        $path = $publicDir . "/uploads/" . $fileName;
-
-        $size = filesize($path);
+        $path = $publicDir . "/uploads/" . $item->getTitle();
         $fp = fopen($path, "rb");
-        $content = fread($fp, $size);
+        $content = fread($fp, $item->getSize());
         fclose($fp);
-
-        header("Content-length: ". $size);
+        $filename = $fileService->getTitleNoExtension($item->getTitle()) . "." . strtoupper($item->getExtension());
+        header("Content-length: ". $item->getSize());
         header("Content-type: application/octet-stream");
-        header("Content-disposition: attachment; filename=".$fileName.";" );
+        header("Content-disposition: attachment; filename=\"$filename\";");
         return new Response($content);
     }
 }
