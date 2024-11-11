@@ -61,7 +61,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
      */
     public function getFileSizeExpirationDate(string $created_at): ?string
     {
-        // Todo: calcul expiration date
         $extraTime = ('+ 7 days');
         return  date("F d Y H:i:s.", strtotime($created_at . $extraTime));
     }
@@ -109,9 +108,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
     /**
      * @throws Exception
      */
-    public function buildDownloadUrl(string $fileName): string
+    public function buildDownloadUrl(string $showId): string
     {
-        $url =  $this->getDomaineUrl() . "/uploads/" . $fileName;
+        $url =  getDomaineUrl() . DIRECTORY_SEPARATOR . "download/" .$showId;
         try {
             return $this->getTinyUrl($url);
         } catch (\Exception $e) {
@@ -120,29 +119,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
         }
     }
 
-    public function download(string $fileName, int $fileSize): Response
+    public function getFileDownloadPageUrl(): string
     {
-        $path = $this->uploadPath . "uploads/" . $fileName;
-        $fp = fopen($path, "rb");
-        $content = fread($fp, $fileSize);
-        fclose($fp);
-
-        header("Content-length: ". $fileSize);
-        header("Content-type: application/octet-stream");
-        header("Content-disposition: attachment; filename=".$fileName.";" );
-        return new Response($content);
-    }
-
-    private function getDomaineUrl()
-    {
-        switch ($_ENV['APP_ENV']) {
-            case 'preprod':
-                return $_ENV['APP_DOMAINE_PREPROD'];
-            case 'prod':
-                return $_ENV['APP_DOMAINE_PROD'];
-            default:
-                return $_ENV['APP_DOMAINE_LOCAL'];
-        }
+        return str_replace('.','a', uniqid('bgpld-', true));
     }
 
 }

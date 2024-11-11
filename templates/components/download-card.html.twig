@@ -19,11 +19,11 @@
         </div>
     </div>
 
-    <!-- {{ item.download_url }} -->
+    <!-- item.download_url -->
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'browse-files-btn',
         'color': 'blue',
         'text': 'Download',
-        'href': item.download_url
+        'href': item.download_file_url
     } %}
 </div>

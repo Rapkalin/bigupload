@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'browse-files-btn', // you can pass an id...
   container : document.getElementById('upload-area'), // ... or DOM Element itself
   drop_element : "card-area", // add a drop area using the id in the index
-	url : '/buildFile',
+	url : '/handleFile',
   multi_selection : false,
   chunk_size : '10mb',
   filters: {
@@ -58,6 +58,17 @@ var uploader = new plupload.Uploader({
         document.getElementById("progressBar-"+file.id).value = file.percent;
         // $('#'+file.id).find('.progressBar').value = file.percent;
         $('#'+file.id).find('.added-file').css('color', 'white');
+    },
+
+    FileUploaded: function (uploader, file, result) {
+      let response = jQuery.parseJSON(result.response);
+      document.getElementById('downloadLink').innerText = response.download_url;
+
+      // Hiding upload button and making download button and link visible
+      document.getElementById('upload-btn').style.display = 'none';
+      document.getElementById('download-or-copy').classList.remove('hidden');
+      document.getElementById('download-or-copy').style.display = 'flex';
+
     },
 
     // See other available event like ChunkUploaded / FileUploaded in plupload.dev.js file

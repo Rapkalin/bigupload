@@ -3,13 +3,16 @@
 namespace App\Controller;
 
 /**
- * upload.php
  *
+ * File content based on
  * Copyright 2013, Moxiecode Systems AB
  * Released under GPL License.
  *
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
+ *
+ * And upgraded by
+ * Rapkalin: https://github.com/Rapkalin
  */
 
 #!! IMPORTANT:
@@ -26,14 +29,13 @@ header("Pragma: no-cache");
 
 use App\Entity\Item;
 use App\Services\FileService;
-use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-class UploadController extends BaseController
+class ItemController extends BaseController
 {
     // Settings
     // $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
@@ -46,17 +48,16 @@ class UploadController extends BaseController
     private int $chunks;
     private EntityManagerInterface $entityManager;
     private FileService $fileService;
-    private string $uploadPath;
-
+    private string $uploadDir;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         FileService $fileService,
-        KernelInterface $kernel,
+        KernelInterface $kernel
     ) {
         $this->entityManager = $entityManager;
         $this->fileService = $fileService;
-        $this->uploadPath = $kernel->getProjectDir() . '/public/uploads/';
+        $this->uploadDir = $kernel->getProjectDir() . '/public/' . $this->targetDir;
     }
 
     /**
@@ -64,8 +65,8 @@ class UploadController extends BaseController
      *
      * @throws Exception
      */
-    #[Route('/buildFile', name: 'file.build')]
-    public function buildFile ()
+    #[Route('/handleFile', name: 'file.handle')]
+    public function handleFile (): JsonResponse
     {
         try {
             /*
@@ -79,24 +80,36 @@ class UploadController extends BaseController
 
             // 5 minutes execution time
             @set_time_limit(5 * 60);
+            $this->setFileName();
             $this->createTargetDir();
-            $this->setFilePath();
             $this->setChunk();
 
+            if (!$this->isAllowedToProceed()) {
+                return formatJsonResponseData(
+                    'error',
+                    __METHOD__,
+                    "Not allowed to proceed.",
+                    403,
+                );
+            }
+
+            $this->setFilePath();
             if ($this->cleanupTargetDir) {
                 $this->removeOldTempFiles();
             }
-
             $this->rebuildFile();
-            $response = $this->checkIfRenameAndSaveFile();
+            $downloadUrl = $this->checkIfRenameAndSaveFile();
 
-            if ($response) {
+            if ($downloadUrl) {
                 return formatJsonResponseData(
                     'success',
                     __METHOD__,
                     "{$this->fileName} was successfully uploaded and created.",
                     201,
-                    extraData: ["filename" => $this->fileName],
+                    extraData: [
+                        "filename" => $this->fileName,
+                        "download_url" => $downloadUrl
+                    ],
                 );
             }
         } catch (Exception $e) {
@@ -118,6 +131,17 @@ class UploadController extends BaseController
         );
     }
 
+    private function isAllowedToProceed(): bool
+    {
+        if (
+            $this->chunk >= 1 &&
+            !file_exists($this->targetDir . DIRECTORY_SEPARATOR . $this->fileName . '.part')
+        ) {
+            return false;
+        }
+        return true;
+    }
+
     private function clearFile(string $filePath): void
     {
         $part = file_exists($this->filePath . '.part') ? '.part' : '';
@@ -135,7 +159,7 @@ class UploadController extends BaseController
      *
      * @throws Exception
      */
-    private function handleFile (): bool
+    private function saveFile () : string
     {
         $retry = 0;
         do {
@@ -145,7 +169,7 @@ class UploadController extends BaseController
                     $item = (new Item())->setItem($data);
                     $this->entityManager->persist($item);
                     $this->entityManager->flush();
-                    return true;
+                    return $item->getDownloadPageUrl();
                 } catch (Exception $e) {
                     $this->clearFile($this->filePath);
                     throw new Exception($e->getMessage(), 500);
@@ -161,24 +185,29 @@ class UploadController extends BaseController
         throw new Exception("File might not exist", 500);
     }
 
+
     /**
      * @throws DateMalformedStringException
      * @throws Exception
      */
     private function buildItemData(): false|array
     {
-        $created_at = $this->fileService->getFileCreatedAt($this->filePath);
+        $createdAt = $this->fileService->getFileCreatedAt($this->filePath);
+        $showId = $this->fileService->getFileDownloadPageUrl();
+
         return [
             'title' => $this->fileName,
-            'download_url' => $this->fileService->buildDownloadUrl($this->fileName),
+            'download_page_url' => $this->fileService->buildDownloadUrl($showId),
+            'download_file_url' => getDomaineUrl() . DIRECTORY_SEPARATOR . "downloadFile/$showId",
             'extension' => $this->fileService->getFileExtension($this->fileName),
             'size' => $this->fileService->getFileSize($this->filePath),
-            'created_at' => $created_at,
-            'expiration_date' => $this->fileService->getFileSizeExpirationDate($created_at)
+            'created_at' => $createdAt,
+            'expiration_date' => $this->fileService->getFileSizeExpirationDate($createdAt),
+            'show_id' => $showId
         ];
     }
 
-    private function createTargetDir(): void
+    private function createTargetDir():  void
     {
         if (!file_exists($this->targetDir) && !mkdir($this->targetDir) && !is_dir($this->targetDir)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->targetDir));
@@ -187,6 +216,12 @@ class UploadController extends BaseController
 
     private function setFilePath(): void
     {
+        $this->setFileName();
+        $this->filePath = $this->targetDir . DIRECTORY_SEPARATOR . $this->fileName;
+    }
+
+    private function setFileName(): void
+    {
         if (isset($_REQUEST["name"])) {
             $this->fileName = $_REQUEST["name"];
         } elseif (!empty($_FILES)) {
@@ -194,8 +229,6 @@ class UploadController extends BaseController
         } else {
             $this->fileName = uniqid("file_", TRUE);
         }
-
-        $this->filePath = $this->targetDir . DIRECTORY_SEPARATOR . $this->fileName;
     }
 
     private function setChunk(): void
@@ -301,7 +334,7 @@ class UploadController extends BaseController
         if (!$this->chunks || $this->chunk === $this->chunks - 1) {
             // Strip the temp .part suffix off
             rename("{$this->filePath}.part", $this->filePath);
-            return $this->handleFile();
+            return $this->saveFile();
         }
     }
 }
