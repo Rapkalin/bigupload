@@ -76,6 +76,8 @@ if (!function_exists('formatJsonResponseData')) {
 
 if (!function_exists('bgpld_strftime')) {
     /**
+     * Ref: https://gist.github.com/bohwaz/42fc223031e2b2dd2585aab159a20f30
+     *
      * Locale-formatted strftime using \IntlDateFormatter (PHP 8.1 compatible)
      * This provides a cross-platform alternative to strftime() for when it will be removed from PHP.
      * Note that output can be slightly different between libc sprintf and this function as it is using ICU.
@@ -88,9 +90,11 @@ if (!function_exists('bgpld_strftime')) {
      * \setlocale('fr_FR.UTF-8', LC_TIME);
      * echo \strftime('%A %e %B %Y %X', strtotime('2021-09-28 00:00:00'));
      *
-     * @param  string $format Date format
-     * @param  integer|string|DateTime $timestamp Timestamp
+     * @param string $format Date format
+     * @param null $timestamp Timestamp
+     * @param string|null $locale
      * @return string
+     * @throws DateInvalidTimeZoneException
      * @author BohwaZ <https://bohwaz.net/>
      */
     function bgpld_strftime(string $format, $timestamp = null, ?string $locale = null): string
@@ -259,11 +263,18 @@ if (!function_exists('bgpld_strftime')) {
 
 if(!function_exists("formatBytes"))
 {
+    /**
+     * Ref: https://www.php.net/manual/fr/function.filesize.php
+     *
+     * @param $bytes
+     * @param $decimals
+     * @return string
+     */
     function formatBytes($bytes, $decimals = 2): string
     {
-        $sz = 'BKMGTP';
         $factor = floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+        if ($factor > 0) $sz = 'KMGT';
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor - 1] . 'B';
     }
 }
 
