@@ -118,7 +118,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
      */
     public function buildDownloadUrl(string $showId): string
     {
-        $url =  getDomaineUrl() . DIRECTORY_SEPARATOR . "download/" .$showId;
+        $url =  getDomaineUrl() . DIRECTORY_SEPARATOR . "download/" . $showId;
         try {
             return $this->getTinyUrl($url);
         } catch (\Exception $e) {

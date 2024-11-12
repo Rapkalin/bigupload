@@ -11,7 +11,7 @@
 }
 
 #card-area-drop {
-    padding: 20px 0;
+    padding: 35px 0;
 }
 
 #drop-area-or {
@@ -34,7 +34,7 @@
     color: #6e6e6e;
 }
 
-.fa-solid, .fas {
+.fa-solid, .fa-light, .fas {
     font-weight: 900;
     color: darkgrey;
     margin-bottom: 15px;
@@ -44,8 +44,8 @@
     font-size: 7em;
 }
 
-.fa-circle-plus {
-    font-size: 8em;
+.fa-dolly, .fa-paper-plane {
+    font-size: 6em;
 }
 
 .card-area-title, #card-area-drop > h2 {
