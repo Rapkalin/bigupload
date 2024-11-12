@@ -1,22 +1,48 @@
 document.getElementById("copyLinkButton").addEventListener("click", copyToClipboard);
 function copyToClipboard() {
-    navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
-        if (result.state === 'denied') {
-            alert("Woupsy! It seems that you did not authorize your navigator to clipboard. Please check your settings");
+    window.Clipboard = (function(window, document, navigator) {
+        let textArea,
+            copy;
+
+        function isOS() {
+            return navigator.userAgent.match(/ipad|iphone/i);
         }
 
-    // If permission to read the clipboard is granted or if the user will
-    // be prompted to allow it, we proceed.
-        if (result.state === 'granted' || result.state === 'prompt') {
-            var copyText = document.getElementById("downloadLink");
-            navigator.clipboard.writeText(copyText.value)
-                .then(text => {
-                    console.log("writeBoard: ", text);
-                })
-                .catch(err => {
-                    console.error('Failed to read clipboard contents: ', err);
-                    alert("Seems like there is an unexpected error: " + err);
-                });
+        function createTextArea(text) {
+            textArea = document.createElement('textArea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
         }
-    })
+
+        function selectText() {
+            let range,
+                selection;
+
+            if (isOS()) {
+                range = document.createRange();
+                range.selectNodeContents(textArea);
+                selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                textArea.setSelectionRange(0, 999999);
+            } else {
+                textArea.select();
+            }
+        }
+
+        function copyToClipboardText() {
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+
+        let text = document.getElementById("downloadLink");
+        console.log('text:::: ', text.value);
+        createTextArea(text.value);
+        selectText();
+        copyToClipboardText();
+
+        return {
+            copy: text.value
+        };
+    })(window, document, navigator);
 }
