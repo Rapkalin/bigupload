@@ -49,6 +49,19 @@ class ItemController extends BaseController
     private EntityManagerInterface $entityManager;
     private FileService $fileService;
     private string $uploadDir;
+    private array $allowedFileExtensions = [
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'mp4',
+        'mov',
+        'pdf',
+        'mp3',
+        'vtt',
+        'srt',
+        'zip'
+    ];
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -328,13 +341,18 @@ class ItemController extends BaseController
     /**
      * @throws Exception
      */
-    private function checkIfRenameAndSaveFile()
+    private function checkIfRenameAndSaveFile(): bool|string
     {
         // Check if file has been uploaded
         if (!$this->chunks || $this->chunk === $this->chunks - 1) {
             // Strip the temp .part suffix off
             rename("{$this->filePath}.part", $this->filePath);
-            return $this->saveFile();
+            if (in_array($this->fileService->getFileExtension($this->filePath), $this->allowedFileExtensions)) {
+                return $this->saveFile();
+            }
+
+            return false;
         }
+        return true;
     }
 }
