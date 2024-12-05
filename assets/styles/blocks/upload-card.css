@@ -48,7 +48,7 @@
     font-size: 6em;
 }
 
-.card-area-title, #card-area-drop > h2 {
+.card-area-title, #card-area-subtitle {
     color: #4c4c4c !important;
     text-align: center !important;
 }
@@ -57,10 +57,11 @@
     font-size: 1.8em !important;
 }
 
-#card-area-drop > h2 {
+
+#card-area-subtitle > h2 {
     font-size: 1em !important;
     font-weight: lighter !important;
-    margin: 26px 15px;
+    margin: 20px 15px;
 }
 
 .added-file {

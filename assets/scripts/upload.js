@@ -3,7 +3,7 @@ var uploader = new plupload.Uploader({
   browse_button : 'browse-files-btn', // you can pass an id...
   container : document.getElementById('card-area'), // ... or DOM Element itself
   drop_element : "card-area-drop", // add a drop area using the id in the index
-	url : '/handleFile',
+  url : '/handleFile',
   multi_selection : false,
   chunk_size : '10mb',
   filters: {
@@ -17,26 +17,25 @@ var uploader = new plupload.Uploader({
     ],
     prevent_duplicates: true
   },
-	multipart : false,
-	max_retries: 3,
+  multipart : false,
+  max_retries: 3,
 
   init: {
     // Display the files in the following div
     FilesAdded: function (up, files) {
-    plupload.each(files, function (file) {
-        // console.log("1- Fileadded", file);
-        document.getElementById('filelist').innerHTML += '<div class="added-file" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><progress id="progressBar-'+ file.id +'" value="0" max="100"></progress><div class="btn-bg"></div></div>';
-    });
-
+      plupload.each(files, function (file) {
+          // console.log("1- Fileadded", file);
+          document.getElementById('filelist').innerHTML += '<div class="added-file" id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b><progress id="progressBar-'+ file.id +'" value="0" max="100"></progress><div class="btn-bg"></div></div>';
+      });
     },
 
     PostInit: function () {
-        // Open the window to select and upload the files
-        document.getElementById('upload-files').onclick = function () {
-            // console.log("2- Post init before start");
-            uploader.start();
-            return false;
-        };
+      // Open the window to select and upload the files
+      document.getElementById('upload-files').onclick = function () {
+        // console.log("2- Post init before start");
+        uploader.start();
+        return false;
+      };
     },
 
     QueueChanged: function (up) {
@@ -53,11 +52,11 @@ var uploader = new plupload.Uploader({
 
     // Display progress in console and DOM
     UploadProgress: function (up, file) {
-        // console.log("Upload progress", file);
-        document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-        document.getElementById("progressBar-"+file.id).value = file.percent;
-        // $('#'+file.id).find('.progressBar').value = file.percent;
-        $('#'+file.id).find('.added-file').css('color', 'white');
+      // console.log("Upload progress", file);
+      document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+      document.getElementById("progressBar-"+file.id).value = file.percent;
+      // $('#'+file.id).find('.progressBar').value = file.percent;
+      $('#'+file.id).find('.added-file').css('color', 'white');
     },
 
     FileUploaded: function (uploader, file, result) {
@@ -76,7 +75,7 @@ var uploader = new plupload.Uploader({
     // See other available event like ChunkUploaded / FileUploaded in plupload.dev.js file
     // Handle errors
     Error: function (up, err) {
-        document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
+      document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
     }
 
   }

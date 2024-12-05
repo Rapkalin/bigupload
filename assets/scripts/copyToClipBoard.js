@@ -35,6 +35,7 @@ function copyToClipboard() {
             document.body.removeChild(textArea);
         }
 
+
         let text = document.getElementById("downloadLink");
         console.log('text:::: ', text.value);
         createTextArea(text.value);

@@ -9,6 +9,119 @@
     border-radius: 8px;
     border-style: none;
     cursor: pointer;
+    position:relative;
+}
+
+.btn-bglpd:active {
+    transform: scale(0.96);
+}
+
+.btn-bglpd::before,
+.btn-bglpd::after
+{
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    width: 150%;
+    background-repeat: no-repeat;
+}
+
+.btn-bglpd.animate::before {
+    top: -70%;
+    background-image: radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, cornflowerblue 15%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, cornflowerblue 15%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%);
+    background-size: 20% 40%,
+    15% 40%,
+    18% 30%,
+    10% 40%,
+    18% 30%,
+    10% 30%;
+    background-position: 15% 40%,
+    35% 90%,
+    45% 40%,
+    60% 30%,
+    70% 90%,
+    75% 80%;
+    animation: topBubbles 0.4s ease-in-out forwards;
+}
+
+@keyframes topBubbles {
+    50% {
+        background-position: 15% 50%,
+        35% 30%,
+        50% 25%,
+        65% 35%,
+        75% 35%,
+        80% 50%;
+    }
+    100% {
+        background-position: 15% 60%,
+        35% 50%,
+        60% 10%,
+        65% 40%,
+        75% 25%,
+        80% 40%;
+        background-size: 0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%;
+    }
+}
+
+.btn-bglpd.animate::after {
+    bottom: -70%;
+    background-image: radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, cornflowerblue 15%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, cornflowerblue 20%, transparent 20%),
+    radial-gradient(circle, transparent 10%, cornflowerblue 15%, transparent 20%);
+    background-size: 20% 40%,
+    15% 40%,
+    18% 30%,
+    10% 40%,
+    18% 30%,
+    18% 30%;
+    background-position: 10% 20%,
+    25% 10%,
+    30% 10%,
+    55% 10%,
+    70% 10%,
+    85% 10%;
+    animation: bottomBubbles 0.4s ease-in-out forwards;
+}
+
+@keyframes bottomBubbles {
+    50% {
+        background-position: 12% 30%,
+        30% 60%,
+        40% 60%,
+        55% 60%,
+        70% 70%,
+        85% 60%;
+    }
+    100% {
+        background-position: 15% 40%,
+        30% 65%,
+        45% 70%,
+        60% 70%,
+        70% 80%,
+        85% 65%;
+        background-size: 0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%,
+        0% 0%;
+    }
 }
 
 .btn-bglpd-link {
