@@ -21,11 +21,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
-          extensions: ext-zip
-
-      - name: Install ZIP extension
-        run: install php8.2-zip
-
+          extensions: zip # Installation de l'extension ZIP
+          coverage: none
+          
       - name: Restore the Composer cache directory
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
