@@ -137,7 +137,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
     public function moveFileToDirectory(
         string $showId,
-        string $filePath, 
+        string $filePath,
         string $fileName,
         string $uploadDir
     ): false|string
