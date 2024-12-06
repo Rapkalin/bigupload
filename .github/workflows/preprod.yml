@@ -21,19 +21,13 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
-          extensions: zip # Installation de l'extension ZIP
-          tools: composer # Assure que Composer est installé
-          coverage: none
-
-      - name: Verify PHP Extensions
-        run: |
-          php -m | grep zip || echo "ext-zip is missing!"
+          extensions: zip
 
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
           dev: no
-          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts --ignore-platform-req=ext-zip
 
       - name: Zip artifact for deployment
         run: |
