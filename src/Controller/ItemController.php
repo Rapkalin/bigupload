@@ -32,6 +32,7 @@ use App\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -44,6 +45,7 @@ class ItemController extends BaseController
     private int $maxFileAge = 5 * 3600; // Temp file age in seconds
     private string $filePath;
     private string $fileName;
+    private string $zipName;
     private int $chunk;
     private int $chunks;
     private EntityManagerInterface $entityManager;
@@ -172,13 +174,13 @@ class ItemController extends BaseController
      *
      * @throws Exception
      */
-    private function saveFile () : string
+    private function saveFile (string $showId) : string
     {
         $retry = 0;
         do {
-            if(file_exists($this->filePath)) {
+            if(file_exists($this->uploadDir . DIRECTORY_SEPARATOR . $showId . '.zip')) {
                 try {
-                    $data = $this->buildItemData();
+                    $data = $this->buildItemData($showId);
                     $item = (new Item())->setItem($data);
                     $this->entityManager->persist($item);
                     $this->entityManager->flush();
@@ -203,13 +205,13 @@ class ItemController extends BaseController
      * @throws DateMalformedStringException
      * @throws Exception
      */
-    private function buildItemData(): false|array
+    private function buildItemData(string $showId): false|array
     {
         $createdAt = $this->fileService->getFileCreatedAt($this->filePath);
-        $showId = $this->fileService->getFileDownloadPageUrl();
 
         return [
             'title' => $this->fileName,
+            'zip_name' => $this->zipName,
             'download_page_url' => $this->fileService->buildDownloadUrl($showId),
             'download_file_url' => getDomaineUrl() . DIRECTORY_SEPARATOR . "downloadFile/$showId",
             'extension' => $this->fileService->getFileExtension($this->fileName),
@@ -348,7 +350,14 @@ class ItemController extends BaseController
             // Strip the temp .part suffix off
             rename("{$this->filePath}.part", $this->filePath);
             if (in_array($this->fileService->getFileExtension($this->filePath), $this->allowedFileExtensions)) {
-                return $this->saveFile();
+                $showId = $this->fileService->getFileDownloadPageUrl();
+                $zipPath = $this->fileService->moveFileToDirectory($showId, $this->filePath, $this->fileName, $this->uploadDir);
+                if ($zipPath) {
+                    $this->fileService->directoryToZip($showId, $this->uploadDir);
+                    $this->filePath = $zipPath;
+                    $this->zipName = $showId . '.zip';
+                    return $this->saveFile($showId);
+                }
             }
 
             return false;

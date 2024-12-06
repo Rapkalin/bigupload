@@ -4,22 +4,25 @@ namespace App\Services;
 
 use AllowDynamicProperties;
 use Exception;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AllowDynamicProperties] final class FileService
 {
     private LoggerInterface $logger;
+    private ZipService $zipService;
     private string $uploadPath;
 
     public function __construct(
         KernelInterface $kernel,
         LoggerInterface $logger,
+        ZipService $zipService,
     )
     {
         $this->uploadPath = $kernel->getProjectDir() . '/public/';
         $this->logger = $logger;
+        $this->zipService = $zipService;
     }
 
     /**
@@ -130,6 +133,55 @@ use Symfony\Component\HttpKernel\KernelInterface;
     public function getFileDownloadPageUrl(): string
     {
         return str_replace('.','a', uniqid('bgpld-', true));
+    }
+
+    public function moveFileToDirectory(
+        string $showId,
+        string $filePath, 
+        string $fileName,
+        string $uploadDir
+    ): false|string
+    {
+        $destinationPath = $uploadDir . DIRECTORY_SEPARATOR . $showId . DIRECTORY_SEPARATOR . $fileName;
+        $zipName = $uploadDir . DIRECTORY_SEPARATOR . $showId . '.zip';
+        if (!file_exists($zipName)) {
+            mkdir($uploadDir . DIRECTORY_SEPARATOR . $showId, 0755, true);
+            rename($filePath, $destinationPath);
+            return $zipName;
+        }
+        return false;
+    }
+
+    public function directoryToZip(string $showId, string $uploadDir): bool
+    {
+        $dirPath = $uploadDir . DIRECTORY_SEPARATOR . $showId;
+        $success = $this->zipService->zipDirectory($dirPath, $uploadDir . DIRECTORY_SEPARATOR . $showId . '.zip');
+
+        if ($success) {
+            $this->deleteDir($dirPath . DIRECTORY_SEPARATOR);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function deleteDir(string $dirPath): void
+    {
+        if (! is_dir($dirPath)) {
+            throw new InvalidArgumentException("$dirPath must be a directory");
+        }
+        if (!str_ends_with($dirPath, '/')) {
+            $dirPath .= '/';
+        }
+        $files = glob($dirPath . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                $this->deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dirPath);
     }
 
 }
