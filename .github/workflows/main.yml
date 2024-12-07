@@ -36,7 +36,7 @@ jobs:
         uses: php-actions/composer@v6
         with:
           dev: no
-          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts --ignore-platform-req=ext-zip
 
       - name: Zip artifact for deployment
         run: |
