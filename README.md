@@ -87,11 +87,11 @@ php bin/console importmap:install
 - [Evol] Downloaded files are placed into folders and then zipped => DONE
 - [Evol] [Security] All files/folders are created with restricted permissions => DONE
 - [Evol] Add a file size limit of 15GB => DONE
-- [Evol] Remove the setTimeout on button animation => DONE
 - [Evol] Add a favicon => DONE
 - [Evol] Cron => Add deletion of removed files from the database (BDD)
 - [Evol] Add a front-end counter for the number of uploaded files
 - [Evol] Improve display performance (loading issue with JavaScript?)
+- [Evol] Add logs during uploads when not in prod => DONE
 
 ### 5.2- Backlog
 - [Evol] UX/UI corrections: update "bigupload" text, tweak the download page, etc.
