@@ -41,6 +41,9 @@ class Item
     #[ORM\Column(length: 255)]
     private ?string $show_id = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $zip_name = null;
+
     /**
      * @throws DateMalformedStringException
      * @throws Exception
@@ -54,6 +57,7 @@ class Item
 
         $item = new Item();
         $item->setTitle($data['title']);
+        $item->setZipName($data['zip_name']);
         $item->setDownloadPageUrl($data['download_page_url']);
         $item->setDownloadFileUrl($data['download_file_url']);
         $item->setExtension($data['extension']);
@@ -179,5 +183,17 @@ class Item
         $interval = $now->diff($expiration_date);
         $pluralOrSing = $interval->d > 1 ? 'jours' : 'jour';
         return $interval->format('%d ' . $pluralOrSing);
+    }
+
+    public function getZipName(): ?string
+    {
+        return $this->zip_name;
+    }
+
+    public function setZipName(string $zip_name): static
+    {
+        $this->zip_name = $zip_name;
+
+        return $this;
     }
 }
