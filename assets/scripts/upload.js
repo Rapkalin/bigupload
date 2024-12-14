@@ -6,6 +6,7 @@ var uploader = new plupload.Uploader({
   url : '/handleFile',
   multi_selection : false,
   chunk_size : '10mb',
+  max_file_size: '15gb',
   filters: {
     mime_types: [
       { title: "Image files", extensions: "jpg,jpeg,png,gif" },
