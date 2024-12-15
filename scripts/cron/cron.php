@@ -1,17 +1,11 @@
 <?php
 
 // Setup the following cron to remove the files on you server once a day
-// CRON       PATH TO PHP                                  PATH TO SCRIPT                                               PATH TO LOG
-// 0 0 * * * /Applications/MAMP/bin/php/php8.1.13/bin/php /Users/r.kalinowski/Sites/bigupload/scripts/cron/cron.php >> /Users/r.kalinowski/Sites/bigupload/scripts/cron/erreur_cron.log
+// CRON       PATH TO PHP                                  PATH TO SCRIPT                                               PATH TO LOG                                     Prefix the file log name with the current date
+// 0 * * * * /Applications/MAMP/bin/php/php8.1.13/bin/php /Users/r.kalinowski/Sites/bigupload/scripts/cron/cron.php >> /Users/r.kalinowski/Sites/bigupload/scripts/cron/$(date +\%Y-\%m-\%d)_debug_cron.log
 // if log error only 2>&1: https://stackoverflow.com/questions/818255/what-does-21-mean
 
 $serverPath = __DIR__ . "/../../public/uploads/";
-
-echo " -------------- " . "\n";
-echo " PATHS TO CHECK " . "\n";
-echo "Current directory is $serverPath" . "\n";
-echo "\n" . "\n";
-
 if (count(scandir($serverPath)) > 0) { // check if there are files in the upload directory
     $arrayFiles = listFilesToDelete($serverPath); // Check if there are files to be deleted in the directory
     if (count($arrayFiles)) {
