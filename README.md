@@ -8,7 +8,7 @@
 * [Project Installation](#installation)
 * [Back-end installation](#back-installation)
 * [Front-end installation](#front-installation)
-* [Backlog](#backlog)
+* [Changelog and coming releases](#changelog)
 
 #### Description
 This project has been created for a search and development purpose.
@@ -87,18 +87,68 @@ php bin/console asset-map:compile
 php bin/console importmap:install
 ```
 
-## <a name="backlog"></a> 5/ BACKLOG
-### 5.1- Next tag to come => Tag 1.2.0
+## <a name="changelog"></a> 5/ CHANGELOG && COMING RELEASES
+### 5.1 - Change log
+#### Tag 1.1.3 (current) / 2024.12.08
+- [Evol] Add a small animation when clicking on the "copy the link" button
+
+#### Tag 1.1.2 / 2024.11.12
+- [Bug] Android => Downloaded file not working
+- [Bug] iPhone => "Copy the link" button  not working
+
+#### Tag 1.1.1 / 2024.11.12
+- [Bug] Minor bug fixes
+
+#### Tag 1.1.0 / 2024.11.12
+- [Evol] Add database + create entities && migrations
+- [Evol] Refacto css
+- [Evol] Move current templates structure to a componant oriented project 
+- [Evol] Rename DownloadController to ItemController + refacto
+
+#### Tag 1.0.2 / 2024.11.02
+- [Evol] Cron refacto for debug log
+
+#### Tag 1.0.1 / 2024.10.31
+- [Evol] Add Cron to clean server with old files
+
+#### Tag 1.0.0 / 2024.10.27
+- [Evol] Project structure migration from PHP native to Symfony 7
+
+#### Tag 0.0.6 / 2024.04.18
+- [Evol] Minor display updates
+
+#### Tag 0.0.5.1 / 2024.04.18
+- [Evol] Update Github actions
+
+#### Tag 0.0.5 / 2024.04.18
+- [Evol] Minor Javascript refacto 
+
+#### Tag 0.0.4 / 2024.04.17
+- [Evol] Responsive CSS refacto
+
+#### Tag 0.0.3.1 / 2024.04.15
+- [Evol] Add reload page for new file upload
+
+#### Tag 0.0.3 / 2024.04.15
+- [Evol] Refacto copy the link button
+
+#### Tag 0.0.2 / 2024.04.15
+- [Evol] Add copy the link button
+
+#### Tag 0.0.1 / 2023.09.23
+- [Evol] First tag && Add github actiond
+
+### 5.2- Next release to come => Tag 1.2.0
 - [Evol] Downloaded files are placed into folders and then zipped => DONE
 - [Evol] [Security] All files/folders are created with restricted permissions => DONE
 - [Evol] Add a file size limit of 15GB => DONE
 - [Evol] Add a favicon => DONE
-- [Evol] Cron => Add deletion of removed files from the database (BDD)
+- [Evol] Cron => Add deletion of removed files from the database (BDD) => DONE
 - [Evol] Add a front-end counter for the number of uploaded files
 - [Evol] Improve display performance (loading issue with JavaScript?)
 - [Evol] Add logs during uploads when not in prod => DONE
 
-### 5.2- Backlog
+### 5.3- Backlog
 - [Evol] UX/UI corrections: update "bigupload" text, tweak the download page, etc.
 - [Evol] Improve the "Upload a new file" process => change the button after clicking?
 - [Evol] Add unit tests
