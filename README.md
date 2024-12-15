@@ -69,6 +69,11 @@ APP_DOMAINE_PREPROD=https://preprod.example.com
 APP_DOMAINE_PROD=https://example.com
 
 DATABASE_URL="mysql://username:password@127.0.0.1:3306/databaseName?serverVersion=8.0.32&charset=utf8mb4"
+
+DB_HOST=host_example
+DB_NAME=name_example
+DB_USERNAME=username_example
+DB_PASSWORD=password_example
 ```
 
 ## <a name="front-installation"></a>4/ FRONT-END INSTALL / BUILD
