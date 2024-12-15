@@ -5,6 +5,8 @@
 // 0 * * * * /Applications/MAMP/bin/php/php8.1.13/bin/php /Users/r.kalinowski/Sites/bigupload/scripts/cron/cron.php >> /Users/r.kalinowski/Sites/bigupload/scripts/cron/$(date +\%Y-\%m-\%d)_debug_cron.log
 // if log error only 2>&1: https://stackoverflow.com/questions/818255/what-does-21-mean
 
+connectDatabase();
+
 $serverPath = __DIR__ . "/../../public/uploads/";
 if (count(scandir($serverPath)) > 0) { // check if there are files in the upload directory
     $arrayFiles = listFilesToDelete($serverPath); // Check if there are files to be deleted in the directory
@@ -65,4 +67,13 @@ function deleteFile(string $file, string $serverPath) : void
         echo "Couldn't delete file: $file" . "\n";
         echo " -------------- " . "\n" . "\n";
     }
+}
+
+function connectDatabase() : void
+{
+    $pdo = new PDO("mysql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'], $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD']);
+    $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+
+    $unbufferedResult = $pdo->query("SELECT title FROM items WHERE title=`dox_test_lourd.pdf`");
+    // dd('DB test', $unbufferedResult);
 }
