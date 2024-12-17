@@ -5,7 +5,7 @@ var uploader = new plupload.Uploader({
   drop_element : "card-area-drop", // add a drop area using the id in the index
   url : '/handleFile',
   multi_selection : false,
-  chunk_size : '10mb',
+  chunk_size : '250mb',
   max_file_size: '15gb',
   filters: {
     mime_types: [
