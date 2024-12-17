@@ -2,11 +2,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container container-error404" >
-        <div class="message-error404">
+    <div class="container container-error" >
+        <div class="message-error">
             <i class="fa-solid fa-circle-chevron-down"></i>
             <h1 class="title-error">File not found</h1>
-            <p id="text-error404">{{ exception.message |raw }}</p>
+            <p class="text-error">{{ exception.message |raw }}</p>
             {% include 'components/buttons/link-button.html.twig' with {
                 'id': 'error-404-btn',
                 'color': 'blue',

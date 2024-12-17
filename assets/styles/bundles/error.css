@@ -1,10 +1,10 @@
-.container-error404 {
+.container-error {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.message-error404 {
+.message-error {
     background-color: #ffffffcf;
     display: flex;
     flex-direction: column;
@@ -19,11 +19,11 @@
     color: #8d0000;
 }
 
-#title-error404 {
+.title-error {
     margin-top: 30px;
 }
 
-#text-error404 {
+.text-error {
     text-align: center;
     padding-bottom: 30px;
 }
