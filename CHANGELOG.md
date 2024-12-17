@@ -1,6 +1,14 @@
 ## <a name="changelog"></a> CHANGELOG && COMING RELEASES
-### 1.1 - Change log
-#### Tag 1.2.0 (current) / 2024.12.17
+
+* [1.1 - Changelog history](#changelog)
+* [1.2 - Next release to come](#next-release)
+* [1.3 - backlog](#backlog)
+
+### <a name="changelog"></a> >>> 1.1 - Change log
+#### Tag 1.2.1 (current) / 2024.12.17
+- [Changelog] Update Changelog
+
+#### Tag 1.2.0 / 2024.12.17
 - [Evol] Add folders
 - [Evol] [Security] Add file creation with restricted permissions
 - [Evol] Add a file size limit of 15GB
@@ -63,17 +71,13 @@
 #### Tag 0.0.1 / 2023.09.23
 - [Evol] First tag && Add github actiond
 
-### 1.2- Next release to come => Tag 1.2.0
-- [Evol] Downloaded files are placed into folders and then zipped => DONE
-- [Evol] [Security] All files/folders are created with restricted permissions => DONE
-- [Evol] Add a file size limit of 15GB => DONE
-- [Evol] Add a favicon => DONE
-- [Evol] Cron => Add deletion of removed files from the database (BDD) => DONE
-- [Evol] Add a front-end counter for the number of uploaded files
-- [Evol] Improve display performance (loading issue with JavaScript?)
-- [Evol] Add logs during uploads when not in prod => DONE
+### <a name="next-release"></a> >>> 1.2- Next release to come
+#### => Tag 1.2.2
+- [Bug] Fix heavy+ file download
+- [Evol] Review UI for uploaded file counter
+- [Evol] Improve homepage display performances
 
-### 1.3- Backlog
+### <a name="backlog"></a> >>> 1.3- Backlog
 - [Evol] UX/UI corrections: update "bigupload" text, tweak the download page, etc.
 - [Evol] Improve the "Upload a new file" process => change the button after clicking?
 - [Evol] Add unit tests
