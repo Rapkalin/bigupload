@@ -1,0 +1,18 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container container-error404" >
+        <div class="message-error404">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+            <h1 class="title-error">File not found</h1>
+            <p id="text-error404">{{ exception.message |raw }}</p>
+            {% include 'components/buttons/link-button.html.twig' with {
+                'id': 'error-404-btn',
+                'color': 'blue',
+                'text': 'Upload a new file',
+                'href': path('home.indexd')
+            } %}
+        </div>
+    </div>
+{% endblock %}

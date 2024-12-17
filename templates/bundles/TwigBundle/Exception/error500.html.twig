@@ -1,0 +1,16 @@
+{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1 class="title-error">Page not found 500</h1>
+    <p>
+        The requested page couldn't be located. <br>
+        Checkout for any URL misspelling or
+        {% include 'components/buttons/link-button.html.twig' with {
+            'id': 'error-404-btn',
+            'color': 'blue',
+            'text': 'Upload a new file',
+            'href': path('home.index')
+        } %}
+    </p>
+{% endblock %}
