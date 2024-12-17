@@ -32,7 +32,6 @@ use App\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -184,6 +183,7 @@ class ItemController extends BaseController
                     $item = (new Item())->setItem($data);
                     $this->entityManager->persist($item);
                     $this->entityManager->flush();
+                    $this->entityManager->getConnection()->executeQuery('UPDATE count_downloads SET uploaded_files = uploaded_files + 1 WHERE id = ?', [1]);
                     return $item->getDownloadPageUrl();
                 } catch (Exception $e) {
                     $this->clearFile($this->filePath);
