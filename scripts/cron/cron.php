@@ -7,69 +7,97 @@
 
 include(__DIR__ . '/../../vendor/autoload.php');
 use Symfony\Component\Dotenv\Dotenv;
-loadDotEnv();
 
 $serverPath = __DIR__ . "/../../public/uploads/";
 if (count(scandir($serverPath)) > 0) { // check if there are files in the upload directory
     $arrayFiles = listFilesToDelete($serverPath); // Check if there are files to be deleted in the directory
-    if (count($arrayFiles) && $pdo = connectDatabase()) {
-        foreach($arrayFiles as $file) {
-            if (fileCanBeDeleted($file, $serverPath)) {
-                deleteFile($file, $serverPath, $pdo);
-            } else {
-                echo "    DELETE PROCESS STOPPED    " . "\n";
-                echo "Why you ask? Well, this file is too young to die!!" . "\n";
-                echo " -------------- " . "\n" . "\n";
-            }
-        }
-
-        return true;
-    }
-
+    loadDotEnv();
+    cleanServerDirectory($serverPath, $arrayFiles);
+} else {
     echo "No file to delete" . "\n";
     echo " -------------- " . "\n" . "\n";
 }
 
+function cleanServerDirectory(string $serverPath, array $arrayFiles) : void
+{
+    foreach($arrayFiles as $file) {
+        if (!removeNonZipFile($file, $serverPath)) {
+            // If file hasn't been remove before we can check if it needs to be removed now
+            removeOldFile($file, $serverPath);
+        }
+    }
+}
+
+function removeNonZipFile(string $fileName, string $serverPath) : bool
+{
+    echo "CHECKING IF FILE IS ZIP -> Filename: " . $fileName . "\n";
+    if (
+        !isFileZip($fileName, $serverPath) &&
+        isFileOldEnough($fileName, $serverPath)
+    ) {
+        echo "Deleting non .zip file -> Filename: " . $fileName . "\n"  . "\n";
+        unlink($serverPath . $fileName);
+        return true;
+    }
+
+    return false;
+}
+
+function removeOldFile(string $fileName, string $serverPath) : void
+{
+    if ($pdo = connectDatabase()) {
+        if (fileCanBeDeleted($fileName, $serverPath)) {
+            deleteFile($fileName, $serverPath, $pdo);
+        } else {
+            echo "File not deleted: " . $fileName . "\n"  . "\n";
+        }
+    }
+}
+
+function isFileZip(string $fileName, string $serverPath) : bool
+{
+    return preg_match("~\.zip$~i", $serverPath . $fileName);
+}
+
+function isFileOldEnough(string $fileName, string $serverPath) : bool
+{
+    $fileCreationTime = filemtime($serverPath . $fileName);
+    return $fileCreationTime && (time() - $fileCreationTime) > 3600;
+}
+
 function fileCanBeDeleted(string $file, string $serverPath) : bool
 {
-//    $extraTime = ' + 6 day'; // How long we let a file on the server +1 current day
-    $extraTime = ' + 1 minute'; // How long we let a file on the server +1 current day
+    $extraTime = ' + 6 day'; // How long we let a file on the server +1 current day
+    // $extraTime = ' + 1 minute'; // for test purpose
     $filePath = $serverPath . $file;
     $fileCreatedAt = date("F d Y H:i:s.", filectime($filePath));
     $fileCreatedAtExtraTime = date("F d Y H:i:s.", strtotime($fileCreatedAt . $extraTime));
     $todayDate = date("F d Y H:i:s.");
 
-    echo "    CHECKING IF FILE IS OLD ENOUGH TO BE DELETED    " . "\n";
-    echo "File uploaded date: " . $fileCreatedAt . " for file: $file" ."\n";
+    echo "CHECKING IF FILE IS OLD -> Filename " . $file . "\n";
+    echo "File uploaded date: " . $fileCreatedAt ."\n";
     echo "Today date is: " . $todayDate . "\n";
-    echo "\n" . "\n";
-
     return $fileCreatedAtExtraTime <= $todayDate;
 }
 
 function listFilesToDelete(string $serverPath) : array
 {
-    echo "    CHECK FOR FILES TO DELETE    " . "\n" . "\n";
-    echo "Analysing directory... $serverPath" . "\n";
+    echo "\n" . "ANALYSING DIRECTORY... $serverPath" . "\n";
     $filesToDelete = array_diff(scandir($serverPath), array('.', '..'));
-    echo  count($filesToDelete) . " files found." . "\n";
-    echo "\n" . "\n";
-
+    echo  count($filesToDelete) . " files found." . "\n" . "\n";
     return $filesToDelete;
 }
 
 function deleteFile(string $file, string $serverPath, PDO $pdo) : void
 {
-    echo "     DELETING IN PROGRESS     " . "\n";
+    echo "DELETING IN PROGRESS" . "\n";
     echo "Deleting: " . $file . "\n" . "\n";
     if (unlink($serverPath . $file)) {
         deleteFileFromDatabase($pdo, $file);
-        echo "\n";
-        echo "File deleted: $file!" . "\n";
+        echo "\n" . "File deleted: $file!" . "\n";
         echo "\n" . "\n";
     } else {
         echo "Couldn't delete file: $file" . "\n";
-        echo " -------------- " . "\n" . "\n";
     }
 }
 
@@ -89,7 +117,7 @@ function loadDotEnv() : void
 {
     try {
         $dotenv = new Dotenv();
-        $dotenv->load(__DIR__.'/../../.env');
+        $dotenv->load(__DIR__ . '/../../.env');
     } catch (Exception $e) {
         echo 'loadDotEnv ERROR: ' . $e->getMessage() . PHP_EOL;
     }
