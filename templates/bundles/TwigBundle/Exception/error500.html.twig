@@ -2,15 +2,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1 class="title-error">Page not found 500</h1>
-    <p>
-        The requested page couldn't be located. <br>
-        Checkout for any URL misspelling or
-        {% include 'components/buttons/link-button.html.twig' with {
-            'id': 'error-404-btn',
-            'color': 'blue',
-            'text': 'Upload a new file',
-            'href': path('home.index')
-        } %}
-    </p>
+    <div class="container container-error" >
+        <div class="message-error">
+            <h1 class="title-error">Error</h1>
+            <p class="text-error">
+                The requested page couldn't be located. <br>
+                Checkout for any URL misspelling <br>
+                or
+            </p>
+            {% include 'components/buttons/link-button.html.twig' with {
+                'id': 'error-404-btn',
+                'color': 'blue',
+                'text': 'Upload a new file',
+                'href': path('home.index')
+            } %}
+        </div>
+    </div>
 {% endblock %}
