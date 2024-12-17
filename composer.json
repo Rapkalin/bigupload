@@ -9,6 +9,8 @@
         "ext-curl": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-pdo": "*",
+        "ext-zip": "*",
         "components/jquery": "^3.6",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.13",
@@ -48,9 +50,7 @@
         "symfony/web-link": "7.0.*",
         "symfony/yaml": "7.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "ext-zip": "*",
-      "ext-pdo": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

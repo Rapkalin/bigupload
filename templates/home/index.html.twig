@@ -2,12 +2,15 @@
 
 {% block title %}BIGUPLOAD{% endblock %}
 {% block body %}
-    {% include 'components/card.html.twig' with {
-        'template': 'upload'
-    } %}
+    <div class="container ctn-row-reverse">
+        {% include 'components/card.html.twig' with {
+                'template': 'upload'
+            }
+        %}
 
-    {% include 'blocks/left-side.html.twig' %}
+        {% include 'blocks/left-side.html.twig' %}
 
-    <script type="text/javascript" src={{ asset("scripts/upload.js") }}></script>
-    <script type="text/javascript" src={{ asset("scripts/copyToClipBoard.js") }}></script>
+        <script type="text/javascript" src={{ asset("scripts/upload.js") }}></script>
+        <script type="text/javascript" src={{ asset("scripts/copyToClipBoard.js") }}></script>
+    </div>
 {% endblock %}

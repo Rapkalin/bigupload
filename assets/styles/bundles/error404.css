@@ -1,0 +1,29 @@
+.container-error404 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message-error404 {
+    background-color: #ffffffcf;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
+    border-radius: 10px;
+}
+
+.fa-circle-chevron-down {
+    font-size: 6em;
+    color: #8d0000;
+}
+
+#title-error404 {
+    margin-top: 30px;
+}
+
+#text-error404 {
+    text-align: center;
+    padding-bottom: 30px;
+}

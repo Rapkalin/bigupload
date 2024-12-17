@@ -2,10 +2,14 @@
 
 {% block title %}BIGUPLOAD{% endblock %}
 {% block body %}
+<div class="container ctn-row-reverse">
     {% include 'components/card.html.twig' with {
-        'template': 'download',
-        'item': item
-    } %}
+            'template': 'download',
+            'item': item
+        }
+    %}
 
     {% include 'blocks/left-side.html.twig' %}
+</div>
+
 {% endblock %}
