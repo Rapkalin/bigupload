@@ -1,39 +1,45 @@
 <?php
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Psr\Log\LoggerInterface;
 
 if (!function_exists('formatJsonResponseData')) {
     function formatJsonResponseData(
-        string $status,
-        string $context,
-        string $message,
-        int $httpStatusCode,
-        string $errorMessage = '',
-        array $extraData = []
+        array           $data,
+        int             $httpStatusCode,
+        array           $extraData = [],
     ): JsonResponse
     {
-        $data = [
-            'status' => $status,
-            'details' => [
-                'message' => $message
-            ]
-        ];
-
-        if ($_ENV['APP_ENV'] !== 'prod') {
-            $data['details']['context'] = $context;
-
-            if ($errorMessage) {
-                $data['details']['error'] = $errorMessage;
-            }
-        }
-
         if ($extraData) {
-            $data = array_merge($data['details'], $extraData);
+           $data['extraData'] =  $extraData;
         }
 
-        return new JsonResponse($data , $httpStatusCode);
+        return new JsonResponse($data, $httpStatusCode);
     }
+}
 
+if (!function_exists('formatDebug')) {
+    /**
+     * log path is var/log/{logger}.log
+     *
+     * @param LoggerInterface $logger
+     * @param string $level debug, notice, info, warning, error, alert, critical
+     * @param string $message
+     * @param array $data
+     * @return void
+     */
+    function formatDebug(
+        LoggerInterface $logger,
+        string $level,
+        string $message,
+        array $data
+    ): void
+    {
+        $logger->{$level}($message, $data);
+    }
+}
+
+if (!function_exists('formatMessage')) {
     /**
      * @param string $color Available colors are:
      * ['black','red','green','yellow','blue','cyan','white']
@@ -43,7 +49,7 @@ if (!function_exists('formatJsonResponseData')) {
      * @return string
      *
      */
-     function formatMessage(
+    function formatMessage(
         string $color,
         string $message,
         bool $end = false
@@ -66,12 +72,13 @@ if (!function_exists('formatJsonResponseData')) {
 
         return $formattedMessage;
     }
+}
 
+if (!function_exists('addLine')) {
     function addLine(): string
     {
         return PHP_EOL . PHP_EOL . "----------------" . PHP_EOL . PHP_EOL;
     }
-
 }
 
 if (!function_exists('bgpld_strftime')) {

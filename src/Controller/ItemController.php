@@ -25,12 +25,12 @@ header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
 
 use App\Entity\Item;
 use App\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,10 +45,12 @@ class ItemController extends BaseController
     private string $filePath;
     private string $fileName;
     private string $zipName;
+    private string $zipPath;
     private int $chunk;
     private int $chunks;
     private EntityManagerInterface $entityManager;
     private FileService $fileService;
+    private LoggerInterface $uploadLogger;
     private string $uploadDir;
     private array $allowedFileExtensions = [
         'jpg',
@@ -67,11 +69,13 @@ class ItemController extends BaseController
     public function __construct(
         EntityManagerInterface $entityManager,
         FileService $fileService,
-        KernelInterface $kernel
+        KernelInterface $kernel,
+        LoggerInterface $uploadLogger
     ) {
         $this->entityManager = $entityManager;
         $this->fileService = $fileService;
         $this->uploadDir = $kernel->getProjectDir() . '/public/' . $this->targetDir;
+        $this->uploadLogger = $uploadLogger;
     }
 
     /**
@@ -93,17 +97,23 @@ class ItemController extends BaseController
             */
 
             // 5 minutes execution time
-            @set_time_limit(5 * 60);
+            set_time_limit(5 * 60);
             $this->setFileName();
             $this->createTargetDir();
             $this->setChunk();
 
             if (!$this->isAllowedToProceed()) {
-                return formatJsonResponseData(
-                    'error',
-                    __METHOD__,
-                    "Not allowed to proceed.",
-                    403,
+                formatDebug($this->uploadLogger, 'debug', 'Proceed Error' , [
+                    'status' => 'error',
+                    'context' => __METHOD__,
+                    'code' => 403,
+                ]);
+
+                return formatJsonResponseData([
+                        'status' => 'error',
+                        'message' => "{$this->fileName} is not allowed to proceed."
+                    ],
+                    403
                 );
             }
 
@@ -111,14 +121,15 @@ class ItemController extends BaseController
             if ($this->cleanupTargetDir) {
                 $this->removeOldTempFiles();
             }
+
             $this->rebuildFile();
-            $downloadUrl = $this->checkIfRenameAndSaveFile();
+            $downloadUrl = $this->renameAndSaveFile();
 
             if ($downloadUrl) {
-                return formatJsonResponseData(
-                    'success',
-                    __METHOD__,
-                    "{$this->fileName} was successfully uploaded and created.",
+                return formatJsonResponseData([
+                        'status' => 'success',
+                        'message' => "{$this->fileName} has been created."
+                    ],
                     201,
                     extraData: [
                         "filename" => $this->fileName,
@@ -127,19 +138,26 @@ class ItemController extends BaseController
                 );
             }
         } catch (Exception $e) {
-            return formatJsonResponseData(
-                'error',
-                __METHOD__,
-                "{$this->fileName} was not uploaded.",
-                500,
-                "Error: {$e->getMessage()}",
+            formatDebug($this->uploadLogger, 'debug', 'Success' , [
+                'status' => 'error',
+                'context' => __METHOD__,
+                'error' => $e->getMessage(),
+                'code' => 500,
+            ]);
+
+            return formatJsonResponseData([
+                    'status' => 'error',
+                    'message' => "{$this->fileName} was not uploaded.",
+                    'error' => 'See debug file for debug'
+                ],
+                500
             );
         }
 
-        return formatJsonResponseData(
-            'success',
-            __METHOD__,
-            "Chunk from {$this->fileName} was successfully uploaded.",
+        return formatJsonResponseData([
+                'status' => 'success',
+                'message' => "{$this->fileName} chunk successfully was uploaded.",
+            ],
             201,
             extraData: ["filename" => $this->fileName],
         );
@@ -187,7 +205,7 @@ class ItemController extends BaseController
                     return $item->getDownloadPageUrl();
                 } catch (Exception $e) {
                     $this->clearFile($this->filePath);
-                    throw new Exception($e->getMessage(), 500);
+                    throw new Exception("Error while saving file: {$e->getMessage()}", 500);
                 }
             }
 
@@ -215,7 +233,7 @@ class ItemController extends BaseController
             'download_page_url' => $this->fileService->buildDownloadUrl($showId),
             'download_file_url' => getDomaineUrl() . DIRECTORY_SEPARATOR . "downloadFile/$showId",
             'extension' => $this->fileService->getFileExtension($this->fileName),
-            'size' => $this->fileService->getFileSize($this->filePath),
+            'size' => $this->fileService->getFileSize($this->zipPath),
             'created_at' => $createdAt,
             'expiration_date' => $this->fileService->getFileSizeExpirationDate($createdAt),
             'show_id' => $showId
@@ -256,11 +274,11 @@ class ItemController extends BaseController
     private function removeOldTempFiles(): true|JsonResponse
     {
         if (!is_dir($this->targetDir) || !$dir = opendir($this->targetDir)) {
-            return formatJsonResponseData(
-                'error',
-                'removeOldTempFiles',
-                "Failed to open temp directory.",
-                100
+            return formatJsonResponseData([
+                    'status' => 'error',
+                    'message' => "Failed to open temp directory.",
+                ],
+            100
             );
         }
 
@@ -293,39 +311,67 @@ class ItemController extends BaseController
         // Open temp file and rebuild the file
         // create the finalfile ($filePath.part) that will be written with the chunk files
         if (!$out = @fopen("{$this->filePath}.part", $this->chunks ? "ab" : "wb")) {
-            return formatJsonResponseData(
-                'error',
-                __METHOD__,
-                "Failed to open output stream.",
+            formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
+                'status' => 'error',
+                'context' => __METHOD__,
+                'error' => "Failed to open output stream.",
+                'code' => 102,
+            ]);
+
+            return formatJsonResponseData([
+                    'status' => 'error',
+                    'message' => "Failed to open output stream.",
+                ],
                 102
             );
         }
 
         if (!empty($_FILES)) {
             if ($_FILES["file"]["error"] || !is_uploaded_file($_FILES["file"]["tmp_name"])) {
-                return formatJsonResponseData(
-                    'error',
-                    __METHOD__,
-                    "Failed to move uploaded file.",
+                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
+                    'status' => 'error',
+                    'context' => __METHOD__,
+                    'error' => "Failed to move uploaded file.",
+                    'code' => 103,
+                ]);
+
+                return formatJsonResponseData([
+                        'status' => 'error',
+                        'message' => "Failed to move uploaded file.",
+                    ],
                     103
                 );
             }
 
             // Read binary input stream and append it to temp file
             if (!$in = @fopen($_FILES["file"]["tmp_name"], "rb")) {
-                return formatJsonResponseData(
-                    'error',
-                    __METHOD__,
-                    "Failed to open input stream and append it to temp file.",
+                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
+                    'status' => 'error',
+                    'context' => __METHOD__,
+                    'error' => "Failed to open input stream and append it to temp file.",
+                    'code' => 101,
+                ]);
+
+                return formatJsonResponseData([
+                        'status' => 'error',
+                        'message' => "Failed to open input stream and append it to temp file.",
+                    ],
                     101
                 );
             }
         } else {
             if (!$in = @fopen("php://input", "rb")) {
-                return formatJsonResponseData(
-                    'error',
-                    __METHOD__,
-                    "Failed to open input stream.",
+                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
+                    'status' => 'error',
+                    'context' => __METHOD__,
+                    'error' => "Failed to open input stream.",
+                    'code' => 101,
+                ]);
+
+                return formatJsonResponseData([
+                        'status' => 'error',
+                        'message' => "Failed to open input stream.",
+                    ],
                     101
                 );
             }
@@ -343,7 +389,7 @@ class ItemController extends BaseController
     /**
      * @throws Exception
      */
-    private function checkIfRenameAndSaveFile(): bool|string
+    private function renameAndSaveFile(): bool|string
     {
         // Check if file has been uploaded
         if (!$this->chunks || $this->chunk === $this->chunks - 1) {
@@ -351,12 +397,23 @@ class ItemController extends BaseController
             rename("{$this->filePath}.part", $this->filePath);
             if (in_array($this->fileService->getFileExtension($this->filePath), $this->allowedFileExtensions)) {
                 $showId = $this->fileService->getFileDownloadPageUrl();
-                $zipPath = $this->fileService->moveFileToDirectory($showId, $this->filePath, $this->fileName, $this->uploadDir);
-                if ($zipPath) {
-                    $this->fileService->directoryToZip($showId, $this->uploadDir);
-                    $this->filePath = $zipPath;
-                    $this->zipName = $showId . '.zip';
-                    return $this->saveFile($showId);
+                try {
+                    $zipPath = $this->fileService->moveFileToDirectory($showId, $this->filePath, $this->fileName, $this->uploadDir);
+                    if ($zipPath) {
+                        $this->fileService->directoryToZip($showId, $this->uploadDir);
+                        $this->filePath = $zipPath;
+                        $this->zipName = $showId . '.zip';
+                        $this->zipPath = $zipPath;
+                        return $this->saveFile($showId);
+                    }
+                } catch (\Exception $e) {
+                    formatDebug($this->uploadLogger, 'debug', 'ZIP ERROR' , [
+                        'status' => 'error',
+                        'message' => "Something went wrong while trying to zip: {$this->fileName}.",
+                        'context' => __METHOD__,
+                        'error' => $e->getMessage(),
+                        'code' => 500,
+                    ]);
                 }
             }
 
