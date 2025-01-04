@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends BaseController
 {
 
+    private Connection $connection;
+
     public function __construct(Connection $connection) {
         $this->connection = $connection;
     }
