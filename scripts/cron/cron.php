@@ -64,13 +64,24 @@ function removeOldFile(string $fileName, string $serverPath) : void
 
 function isFileZip(string $fileName, string $serverPath) : bool
 {
-    return preg_match("~\.zip$~i", $serverPath . $fileName);
+    $result = preg_match("~\.zip$~i", $serverPath . $fileName);
+    echo 'File is ' . ($result ? '' : 'not ') . 'a zip file' . PHP_EOL;
+    return $result;
 }
 
+/**
+ * Check if the file has been created more than 1 hour ago (3600 seconds)
+ *
+ * @param string $fileName
+ * @param string $serverPath
+ * @return bool
+ */
 function isFileOldEnough(string $fileName, string $serverPath) : bool
 {
     $fileCreationTime = filemtime($serverPath . $fileName);
-    return $fileCreationTime && (time() - $fileCreationTime) < 3600;
+    $result = $fileCreationTime && (time() - $fileCreationTime) > 3600;
+    echo 'File has been created ' . ($result ? 'more' : 'less') . ' than 1 hour ago' . PHP_EOL;
+    return $result;
 }
 
 function fileCanBeDeleted(string $file, string $serverPath) : bool
@@ -85,7 +96,10 @@ function fileCanBeDeleted(string $file, string $serverPath) : bool
     echo "CHECKING IF FILE IS OLD -> Filename " . $file . "\n";
     echo "File uploaded date: " . $fileCreatedAt ."\n";
     echo "Today date is: " . $todayDate . "\n";
-    return $fileCreatedAtExtraTime <= $todayDate;
+
+    $result = $fileCreatedAtExtraTime <= $todayDate;
+    echo 'File is ' . ($result ? '' : 'not ') . 'old enough to be deleted' . PHP_EOL;
+    return $result;
 }
 
 function listFilesToDelete(string $serverPath) : array
