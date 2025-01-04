@@ -30,7 +30,7 @@ function cleanServerDirectory(string $serverPath, array $arrayFiles) : void
 
 function removeNonZipFile(string $fileName, string $serverPath) : bool
 {
-    echo "CHECKING IF FILE IS ZIP -> Filename: " . $fileName . "\n";
+    echo "CHECKING IF FILE IS ZIP -> File path: " . $serverPath . $fileName . "\n";
     if (
         !isFileZip($fileName, $serverPath) &&
         isFileOldEnough($fileName, $serverPath)
@@ -70,7 +70,7 @@ function isFileZip(string $fileName, string $serverPath) : bool
 function isFileOldEnough(string $fileName, string $serverPath) : bool
 {
     $fileCreationTime = filemtime($serverPath . $fileName);
-    return $fileCreationTime && (time() - $fileCreationTime) > 3600;
+    return $fileCreationTime && (time() - $fileCreationTime) < 3600;
 }
 
 function fileCanBeDeleted(string $file, string $serverPath) : bool
@@ -133,6 +133,10 @@ function loadDotEnv() : void
 
 function deleteFileFromDatabase(PDO $pdo, $file) : void
 {
-    $unbufferedResult = $pdo->prepare('DELETE FROM items WHERE zip_name = ?');
-    $unbufferedResult->execute([$file]);
+    try {
+        $unbufferedResult = $pdo->prepare('DELETE FROM items WHERE zip_name = ?');
+        $unbufferedResult->execute([$file]);
+    } catch (\Exception $e) {
+        echo 'deleteFileFromDatabase ERROR: ' . $e->getMessage() . PHP_EOL;
+    }
 }
