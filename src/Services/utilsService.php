@@ -309,12 +309,12 @@ if (!function_exists("deleteDir")) {
         if (!str_ends_with($dirPath, '/')) {
             $dirPath .= '/';
         }
-        $files = glob($dirPath . '*', GLOB_MARK);
+        $files = array_diff(scandir($dirPath), array('.','..'));
         foreach ($files as $file) {
-            if (is_dir($file)) {
-                deleteDir($file);
+            if (is_dir($dirPath. $file)) {
+                deleteDir($dirPath. $file);
             } else {
-                unlink($file);
+                unlink($dirPath. $file);
             }
         }
         rmdir($dirPath);
