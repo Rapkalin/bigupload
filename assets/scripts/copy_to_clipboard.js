@@ -1,5 +1,5 @@
-document.getElementById("copyLinkButton").addEventListener("click", copyToClipboard);
-function copyToClipboard() {
+document.getElementById("animatedButton").addEventListener("click", copy_to_clipboard);
+function copy_to_clipboard() {
     window.Clipboard = (function(window, document, navigator) {
         let textArea,
             copy;
