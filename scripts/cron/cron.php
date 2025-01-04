@@ -35,8 +35,16 @@ function removeNonZipFile(string $fileName, string $serverPath) : bool
         !isFileZip($fileName, $serverPath) &&
         isFileOldEnough($fileName, $serverPath)
     ) {
-        echo "Deleting non .zip file -> Filename: " . $fileName . "\n"  . "\n";
-        unlink($serverPath . $fileName);
+        echo "Deleting non .zip file -> Filename: " . $fileName . "\n";
+        if (is_dir($serverPath . $fileName)) {
+            echo "$fileName is a directory. Deleting it... \n\n";
+            deleteDir($serverPath . $fileName);
+            echo "Directory deleted: $fileName\n\n";
+        } else {
+            echo "$fileName is a file. Deleting it... \n\n";
+            unlink($serverPath . $fileName);
+            echo "File deleted: $fileName\n\n";
+        }
         return true;
     }
 
