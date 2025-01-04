@@ -5,7 +5,10 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### Tag 1.3.0 (current) / 2025.01.03
+#### Tag 1.3.1 (current) / 2025.01.04
+- [Bug] Cron fix old directory not deleted
+
+#### Tag 1.3.0 / 2025.01.03
 - [Changelog] Update Changelog
 - [Bug] Fix Zip large file not working > 2Go
 - [Bug] Fix download large file not working > 2Go
@@ -80,7 +83,7 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.3.1
+#### => Tag 1.3.2
 - [Evol] Review UI for uploaded file counter
 - [Evol] Review UI for upload progress bar
 
