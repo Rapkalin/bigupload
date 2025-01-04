@@ -56,27 +56,39 @@ var uploader = new plupload.Uploader({
       // console.log("Upload progress", file);
       document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
       document.getElementById("progressBar-"+file.id).value = file.percent;
+      document.getElementById('upload-files').style.display = 'none';
+      document.getElementById('card-area-title-upload').innerText = 'Please wait while we upload your file :)';
+
+      if (file.percent === 100) {
+        // add text: wait while we create the zip file
+        document.getElementById('file-processing').classList.remove('hidden');
+        document.getElementById('file-processing').style.display = 'block';
+      }
       // $('#'+file.id).find('.progressBar').value = file.percent;
       $('#'+file.id).find('.added-file').css('color', 'white');
     },
 
-    FileUploaded: function (uploader, file, result) {
+    FileUploaded: function (uploader, file, result)
+    {
       let response = jQuery.parseJSON(result.response);
-      document.getElementById('downloadLink').value = response.download_url;
+      document.getElementById('downloadLink').value = response.extraData.download_url;
 
       // Hiding upload button and making download button and link visible
-      document.getElementById('card-area-title-upload').innerText = 'Your link is ready ;)';
+      document.getElementById('card-area-title-upload').innerText = 'Your file is ready ;)';
       document.getElementById('upload-files').style.display = 'none';
       document.getElementById('downloadLink').classList.remove('hidden');
       document.getElementById('refreshButton').classList.remove('hidden');
       document.getElementById('download-or-copy').classList.remove('hidden');
       document.getElementById('download-or-copy').style.display = 'flex';
+      document.getElementById('file-processing').style.display = 'none';
     },
 
     // See other available event like ChunkUploaded / FileUploaded in plupload.dev.js file
     // Handle errors
     Error: function (up, err) {
-      document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
+      console.info("\nError #" + err);
+      console.alert(["\nError #", err.response.details.message]);
+      // document.getElementById('console').appendChild(document.createTextNode("\nError #" + err.code + ": " + err.message));
     }
 
   }

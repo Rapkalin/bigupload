@@ -21,6 +21,11 @@
 
     <div id="filelist"></div>
 
+    <div id="file-processing" class="hidden">
+        You file is almost ready!<br>
+        This step can take a few seconds... :)
+    </div>
+
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'upload-files',
         'color': 'blue',
@@ -40,6 +45,6 @@
         <script type="text/javascript" src={{ asset("scripts/copyToClipboard.js") }}></script>
     </div>
 
-    <a id="refreshButton" class="downloadClipBoard hidden" onclick="window.location.href=window.location.href">Create a new upload</a>
+    <a id="refreshButton" class="downloadClipBoard hidden" onclick="window.location.href=window.location.href">Upload a new file</a>
 </div>
 

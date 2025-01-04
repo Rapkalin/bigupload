@@ -37,7 +37,7 @@ function copyToClipboard() {
 
 
         let text = document.getElementById("downloadLink");
-        console.log('text:::: ', text.value);
+        console.log('Download URL: ', text.value);
         createTextArea(text.value);
         selectText();
         copyToClipboardText();

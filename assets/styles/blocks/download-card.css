@@ -64,3 +64,9 @@
     border: none;
     background: #f2efef;
 }
+
+#file-processing {
+    display: none;
+    text-align: center;
+    padding-bottom: 15px;
+}
