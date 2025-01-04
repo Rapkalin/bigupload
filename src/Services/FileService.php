@@ -6,21 +6,17 @@ use AllowDynamicProperties;
 use Exception;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AllowDynamicProperties] final class FileService
 {
     private LoggerInterface $logger;
     private ZipService $zipService;
-    private string $uploadPath;
 
     public function __construct(
-        KernelInterface $kernel,
         LoggerInterface $logger,
         ZipService $zipService,
     )
     {
-        $this->uploadPath = $kernel->getProjectDir() . '/public/';
         $this->logger = $logger;
         $this->zipService = $zipService;
     }
@@ -152,17 +148,25 @@ use Symfony\Component\HttpKernel\KernelInterface;
         return false;
     }
 
+    /**
+     * @throws Exception
+     */
     public function directoryToZip(string $showId, string $uploadDir): bool
     {
-        $dirPath = $uploadDir . DIRECTORY_SEPARATOR . $showId;
-        $success = $this->zipService->zipDirectory($dirPath, $uploadDir . DIRECTORY_SEPARATOR . $showId . '.zip');
+        $dirPath = $uploadDir . DIRECTORY_SEPARATOR . $showId . DIRECTORY_SEPARATOR;
 
-        if ($success) {
-            $this->deleteDir($dirPath . DIRECTORY_SEPARATOR);
-            return true;
+        if (!is_dir($dirPath)) {
+            throw new \InvalidArgumentException("Source '$dirPath' is not a valid directory");
         }
 
-        return false;
+        $zipName =  $showId . '.zip';
+        $success = $this->zipService->zipDirectory($uploadDir, $zipName, $showId);
+        if ($success) {
+            $this->deleteDir($dirPath);
+            return 1;
+        }
+
+        return 0;
     }
 
     private function deleteDir(string $dirPath): void
