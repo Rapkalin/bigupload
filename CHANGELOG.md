@@ -5,12 +5,20 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### Tag 1.2.1 (current) / 2024.12.17
+#### Tag 1.3.0 (current) / 2025.01.03
+- [Changelog] Update Changelog
+- [Bug] Fix Zip large file not working > 2Go
+- [Bug] Fix download large file not working > 2Go
+- [Evol] Add Debug logging logic in dev & prod mode
+- [Evol] Improve the UI of the "Upload file" step
+- [Evol] Improve homepage display performances
+
+#### Tag 1.2.1 / 2024.12.17
 - [Changelog] Update Changelog
 
 #### Tag 1.2.0 / 2024.12.17
 - [Evol] Add folders
-- [Evol] [Security] Add file creation with restricted permissions
+- [Security] Add file creation with restricted permissions
 - [Evol] Add a file size limit of 15GB
 - [Evol] Add a favicon
 - [Evol] Cron => Add deletion of files in the database that were removed
@@ -72,16 +80,14 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.2.2
-- [Bug] Fix heavy+ file download
+#### => Tag 1.3.1
 - [Evol] Review UI for uploaded file counter
-- [Evol] Improve homepage display performances
+- [Evol] Review UI for upload progress bar
 
 ### <a name="backlog"></a> >>> 1.3- Backlog
-- [Evol] UX/UI corrections: update "bigupload" text, tweak the download page, etc.
-- [Evol] Improve the "Upload a new file" process => change the button after clicking?
+- [Evol] UX/UI changes to pages => HomePage, Upload, Download
 - [Evol] Add unit tests
 - [Evol] Add observability for debugging production errors => create a dedicated mailbox
 - [Evol] Add SEO / Tagging plan / Size attributes / schema.org
 - [Evol] Enable uploading multiple files simultaneously
-- [Evol] UX/UI changes to pages => HomePage, Upload, Download
+- [Evol] Add error message in case something goes wrong (500 then 403)
