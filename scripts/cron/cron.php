@@ -37,11 +37,11 @@ function removeNonZipFile(string $fileName, string $serverPath) : bool
     ) {
         echo "Deleting non .zip file -> Filename: " . $fileName . "\n";
         if (is_dir($serverPath . $fileName)) {
-            echo "$fileName is a directory. Deleting it... \n\n";
+            echo "$fileName is a directory. Deleting it... \n";
             deleteDir($serverPath . $fileName);
             echo "Directory deleted: $fileName\n\n";
         } else {
-            echo "$fileName is a file. Deleting it... \n\n";
+            echo "$fileName is a file. Deleting it... \n";
             unlink($serverPath . $fileName);
             echo "File deleted: $fileName\n\n";
         }
@@ -57,7 +57,7 @@ function removeOldFile(string $fileName, string $serverPath) : void
         if (fileCanBeDeleted($fileName, $serverPath)) {
             deleteFile($fileName, $serverPath, $pdo);
         } else {
-            echo "File not deleted: " . $fileName . "\n"  . "\n";
+            echo "File not deleted: " . $fileName . "\n\n";
         }
     }
 }
@@ -99,11 +99,11 @@ function listFilesToDelete(string $serverPath) : array
 function deleteFile(string $file, string $serverPath, PDO $pdo) : void
 {
     echo "DELETING IN PROGRESS" . "\n";
-    echo "Deleting: " . $file . "\n" . "\n";
+    echo "Deleting: " . $file . "\n\n";
     if (unlink($serverPath . $file)) {
         deleteFileFromDatabase($pdo, $file);
         echo "\n" . "File deleted: $file!" . "\n";
-        echo "\n" . "\n";
+        echo "\n\n";
     } else {
         echo "Couldn't delete file: $file" . "\n";
     }
