@@ -299,3 +299,24 @@ if (!function_exists("getDomaineUrl"))
         }
     }
 }
+
+if (!function_exists("deleteDir")) {
+    function deleteDir(string $dirPath): void
+    {
+        if (! is_dir($dirPath)) {
+            throw new InvalidArgumentException("$dirPath must be a directory");
+        }
+        if (!str_ends_with($dirPath, '/')) {
+            $dirPath .= '/';
+        }
+        $files = glob($dirPath . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dirPath);
+    }
+}
