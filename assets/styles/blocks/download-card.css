@@ -55,6 +55,12 @@
     cursor: pointer;
 }
 
+#refreshButton:visited {
+    text-decoration: none;
+    color: black;
+}
+
+
 #downloadLink {
     margin-bottom: 15px;
     width: 200px;

@@ -1,6 +1,6 @@
 <div id="card-area-drop">
     <i class="fa-solid fa-paper-plane"></i>
-    <h1 class="card-area-title" id="card-area-title-drop">Drop your file here</h1>
+    <label class="card-area-title" id="card-area-title-drop">Drop your file here</label>
     <span id="drop-area-or">or</span>
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'browse-files-btn',
@@ -36,13 +36,13 @@
     <input readonly id="downloadLink" class="hidden">
     <div id="download-or-copy" class="hidden">
         {% include 'components/buttons/classic-button.html.twig' with {
-            'id': 'copyLinkButton',
+            'id': 'animatedButton',
             'extraClasses': 'downloadClipBoard',
             'color': 'blue',
             'text': 'Copy your link'
         } %}
-        <script type="text/javascript" src={{ asset("scripts/button_animation.js") }}></script>
-        <script type="text/javascript" src={{ asset("scripts/copyToClipboard.js") }}></script>
+        <script defer type="text/javascript" src={{ asset("scripts/button_animation.js") }}></script>
+        <script defer type="text/javascript" src={{ asset("scripts/copy_to_clipboard.js") }}></script>
     </div>
 
     <a id="refreshButton" class="downloadClipBoard hidden" onclick="window.location.href=window.location.href">Upload a new file</a>

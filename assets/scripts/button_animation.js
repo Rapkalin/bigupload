@@ -1,4 +1,4 @@
-const button = document.getElementById("copyLinkButton");
+const button = document.getElementById("animatedButton");
 button.addEventListener("click", addClassAnimation, false);
 
 function addClassAnimation(e) {

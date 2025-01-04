@@ -181,7 +181,7 @@ class Item
     {
         $now = new \DateTimeImmutable();
         $interval = $now->diff($expiration_date);
-        $pluralOrSing = $interval->d > 1 ? 'jours' : 'jour';
+        $pluralOrSing = $interval->d > 1 ? 'days' : 'day';
         return $interval->format('%d ' . $pluralOrSing);
     }
 
