@@ -5,7 +5,16 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### Tag 1.3.1 (current) / 2025.01.04
+#### Tag 1.3.2 (current) / 2025.01.04
+- [Evol] Add a message on the download page: Want to send a file? Clic here
+- [Evol] Improve SEO
+- [Evol] Add robots.txt and sitemap.xml
+- [Evol] Add animation on download button
+- [Evol] Improve JS performance
+- [Evol] Improve accessibility
+- [Evol] Translate french texts to english
+
+#### Tag 1.3.1 / 2025.01.04
 - [Bug] Cron fix old directory not deleted
 
 #### Tag 1.3.0 / 2025.01.03
@@ -91,6 +100,6 @@
 - [Evol] UX/UI changes to pages => HomePage, Upload, Download
 - [Evol] Add unit tests
 - [Evol] Add observability for debugging production errors => create a dedicated mailbox
-- [Evol] Add SEO / Tagging plan / Size attributes / schema.org
+- [Evol] Add Tagging plan / Size attributes / schema.org
 - [Evol] Enable uploading multiple files simultaneously
 - [Evol] Add error message in case something goes wrong (500 then 403)
