@@ -92,11 +92,15 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.3.2
-- [Evol] Review UI for uploaded file counter
-- [Evol] Review UI for upload progress bar
+#### => Tag 1.3.3
+- [Evol] Add local Docker configuration
+
+#### => Tag 1.4.0
+- [Evol] Upgrade Symfony core
 
 ### <a name="backlog"></a> >>> 1.3- Backlog
+- [Evol] Review UI for uploaded file counter
+- [Evol] Review UI for upload progress bar
 - [Evol] UX/UI changes to pages => HomePage, Upload, Download
 - [Evol] Add unit tests
 - [Evol] Add observability for debugging production errors => create a dedicated mailbox
