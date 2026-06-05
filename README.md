@@ -63,12 +63,15 @@ compose install or compose i
 APP_ENV=dev
 APP_SECRET=xxx
 APP_DEBUG=1
+
+### This is used to set download urls
 APP_DOMAINE_LOCAL=https://example.local
 APP_DOMAINE_PREPROD=https://preprod.example.com
 APP_DOMAINE_PROD=https://example.com
 
 DATABASE_URL="mysql://username:password@127.0.0.1:3306/databaseName?serverVersion=8.0.32&charset=utf8mb4"
 
+### This is used for cron script purpose
 DB_HOST=host_example
 DB_NAME=name_example
 DB_USERNAME=username_example
@@ -82,6 +85,7 @@ DB_PASSWORD=password_example
 
 ```
 php bin/console cache:clear 
+php bin/console doctrine:migrations:migrate
 php bin/console asset-map:compile
 php bin/console importmap:install
 ```
