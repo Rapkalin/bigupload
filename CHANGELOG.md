@@ -98,8 +98,8 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.3.4
-- [Fix] BIGUPL-3 - Fix download button
+#### => Tag 1.3.5
+- [Fix] BIGUPL-4 - Fix CI/CD download/artifact version
 
 ### <a name="backlog"></a> >>> 1.3- Backlog
 - [Evol] Review UI for uploaded file counter
