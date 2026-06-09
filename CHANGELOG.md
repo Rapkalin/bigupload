@@ -5,8 +5,16 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
+<<<<<<< Updated upstream
 #### => Tag 1.3.4 (current) / 2026.06.09
 - [Fix][BIGUPL-3] - Fix download button
+=======
+#### => Tag 1.3.5 (current) / 2026.06.09
+- [Fix] BIGUPL-4 - Fix CI/CD download/artifact version
+
+#### => Tag 1.3.4 / 2026.06.09
+- [Fix] BIGUPL-3 - Fix download button
+>>>>>>> Stashed changes
 
 #### => Tag 1.3.3 / 2026.06.09
 - [Evol][BIGUPL-2] - Add local Docker configuration && upgrade symfony
@@ -98,8 +106,8 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.3.5
-- [Fix] BIGUPL-4 - Fix CI/CD download/artifact version
+#### => Tag 1.4.0
+- [Evol][BIGUPL-5] - Add new tinyurl homemade mapper
 
 ### <a name="backlog"></a> >>> 1.3- Backlog
 - [Evol] Review UI for uploaded file counter
