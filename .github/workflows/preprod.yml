@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ 8.2 ]
+        php: [ 8.4 ]
 
     steps:
       - name: Checkout preprod-bigupload
@@ -20,11 +20,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
 
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
+          php_version: "8.4"
           dev: no
           args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts --ignore-platform-req=ext-zip
 
@@ -33,7 +34,7 @@ jobs:
           zip -r release.zip "bin" "config" "public" "src" "templates" "translations" "var" "vendor" "importmap.php" "symfony.lock"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: src
           path: release.zip
@@ -57,10 +58,10 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
 
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: src
 
@@ -101,7 +102,7 @@ jobs:
           port: 22
           script: |
             cd ~/preprod-bigupload/website
-            /usr/bin/php8.2-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
-            /usr/bin/php8.2-cli bin/console doctrine:migrations:migrate >> log_deploy.log
-            /usr/bin/php8.2-cli bin/console importmap:install >> log_deploy.log
-            /usr/bin/php8.2-cli bin/console asset:compile >> log_deploy.log
+            /usr/bin/php8.4-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
+            /usr/bin/php8.4-cli bin/console doctrine:migrations:migrate >> log_deploy.log
+            /usr/bin/php8.4-cli bin/console importmap:install >> log_deploy.log
+            /usr/bin/php8.4-cli bin/console asset:compile >> log_deploy.log

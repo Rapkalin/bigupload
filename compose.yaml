@@ -1,0 +1,67 @@
+services:
+
+  # ------------------------------------------------------------------ #
+  # MySQL 8
+  # ------------------------------------------------------------------ #
+  mysql:
+    image: mysql:${DATABASE_VERSION:-8.0}
+    container_name: ${COMPOSE_PROJECT_NAME:-bigupload}_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME:-bigupload}
+      MYSQL_USER: ${DATABASE_USER:-bigupload}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-bigupload_secret}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:-root_secret}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      # 3307 on the host to avoid conflicts with a local MySQL;
+      # containers still reach it at mysql:3306 on the compose network
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DATABASE_ROOT_PASSWORD:-root_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ------------------------------------------------------------------ #
+  # PHP-FPM 8.4 — Symfony
+  # ------------------------------------------------------------------ #
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: ${COMPOSE_PROJECT_NAME:-bigupload}_php
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/api
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_SECRET: ${APP_SECRET:-change_me}
+      # Defaults must match the MYSQL_* defaults of the mysql service above
+      DATABASE_URL: "mysql://${DATABASE_USER:-bigupload}:${DATABASE_PASSWORD:-bigupload_secret}@mysql:3306/${DATABASE_NAME:-bigupload}?serverVersion=8.0.40&charset=utf8mb4"
+      CORS_ALLOW_ORIGIN: '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ------------------------------------------------------------------ #
+  # Nginx — serves Symfony public/ and proxies to php-fpm
+  # Accessible at http://localhost:8000
+  # ------------------------------------------------------------------ #
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-bigupload}_nginx
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/api:ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8000:80"
+    depends_on:
+      - php
+
+volumes:
+  mysql_data:

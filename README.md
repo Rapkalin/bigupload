@@ -5,6 +5,7 @@
 
 # GETTING STARTED
 
+* [Local development with Docker (recommended)](#docker)
 * [Project Installation](#installation)
 * [Back-end installation](#back-installation)
 * [Front-end installation](#front-installation)
@@ -13,6 +14,48 @@
 This project has been created for a search and development purpose.
 It allows a user to download heavy files such as videos, jpgs, pdf etc. using the PLupload library.
 This is a component oriented project based on Symfony 7 based project.
+
+# <a name="docker"></a>LOCAL DEVELOPMENT WITH DOCKER (RECOMMENDED)
+
+The full stack (Nginx + PHP-FPM 8.4 + MySQL 8) runs in Docker, no MAMP/local PHP needed.
+
+### Quick start
+
+```bash
+docker compose up -d --build                                        # build the PHP image and start the stack
+docker compose exec php composer install                            # install PHP dependencies
+docker compose exec php php bin/console doctrine:migrations:migrate -n
+docker compose exec php php bin/console importmap:install           # install JS dependencies (Stimulus, Turbo, jQuery...)
+```
+
+The app is then available at <http://localhost:8000>.
+MySQL is exposed on the host at port **3307** (to avoid conflicts with a local MySQL) — inside the network, containers use `mysql:3306`.
+
+### Architecture
+
+```
+Browser ──:8000──> [nginx]  ──fastcgi :9000──> [php-fpm]  ──:3306──> [mysql]
+                   serves public/              runs index.php        mysql_data volume
+```
+
+### Files
+
+| File | Purpose |
+|---|---|
+| `Dockerfile` | Multi-stage PHP 8.4-FPM Alpine image: `base` (extensions intl, opcache, pdo_mysql, apcu + Composer) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
+| `compose.yaml` | The 3 services (mysql, php, nginx), their network, the `mysql_data` volume and env defaults (overridable via `.env`) |
+| `docker/php.ini` | PHP settings: `upload_max_filesize`/`post_max_size` 300M (PLupload sends 250 MB chunks — the 15 GB max file size never travels in a single request), 300s timeouts |
+| `docker/opcache.ini` | OPcache enabled with `validate_timestamps=1`/`revalidate_freq=0` so code changes are picked up instantly in dev |
+| `docker/nginx.conf` | Symfony front-controller vhost: static files served directly, everything else through `public/index.php`, `client_max_body_size 300M`, direct `.php` execution blocked |
+
+### Useful commands
+
+```bash
+docker compose logs -f php          # tail PHP logs
+docker compose exec php sh          # shell inside the PHP container
+docker compose exec php php bin/console cache:clear
+docker compose down                 # stop the stack (add -v to also drop the database)
+```
 
 # <a name="installation"></a>PROJECT INSTALLATION
 ### 1/ GET PROJECT FROM GIT
