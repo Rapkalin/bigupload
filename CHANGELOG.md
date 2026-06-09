@@ -6,7 +6,7 @@
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
 #### => Tag 1.3.4 (current) / 2026.06.09
-- [Fix] BIGUPL-3 - Fix download button
+- [Fix][BIGUPL-3] - Fix download button
 
 #### => Tag 1.3.3 / 2026.06.09
 - [Evol][BIGUPL-2] - Add local Docker configuration && upgrade symfony
