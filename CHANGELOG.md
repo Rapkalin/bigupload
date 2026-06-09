@@ -5,7 +5,10 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### Tag 1.3.2 (current) / 2025.01.04
+#### => Tag 1.3.3 (current) / 2026.06.09
+- [Evol] Add local Docker configuration && upgrade symfony
+
+#### Tag 1.3.2 / 2025.01.04
 - [Evol] Add a message on the download page: Want to send a file? Clic here
 - [Evol] Improve SEO
 - [Evol] Add robots.txt and sitemap.xml
@@ -92,9 +95,6 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.3.3
-- [Evol] Add local Docker configuration
-
 #### => Tag 1.4.0
 - [Evol] Upgrade Symfony core
 
