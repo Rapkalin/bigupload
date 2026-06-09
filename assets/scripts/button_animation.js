@@ -2,7 +2,6 @@ const button = document.getElementById("animatedButton");
 button.addEventListener("click", addClassAnimation, false);
 
 function addClassAnimation(e) {
-    e.preventDefault();
     button.classList.add("animate");
 
     setTimeout(() => {
