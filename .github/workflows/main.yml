@@ -116,8 +116,12 @@ jobs:
           port: 22
           script: |
             cd ~/bigupload/website
-            set -e
-            /usr/bin/php8.5-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log 2>&1
-            /usr/bin/php8.5-cli bin/console doctrine:migrations:migrate --no-interaction >> log_deploy.log 2>&1
-            /usr/bin/php8.5-cli bin/console importmap:install >> log_deploy.log 2>&1
-            /usr/bin/php8.5-cli bin/console asset:compile >> log_deploy.log 2>&1
+            # On failure, print the end of the log so the error is visible in GitHub Actions
+            console() {
+              echo "$ bin/console $*" >> log_deploy.log
+              /usr/bin/php8.5-cli bin/console "$@" >> log_deploy.log 2>&1 || { status=$?; echo "bin/console $* failed with exit code $status:"; tail -n 40 log_deploy.log; exit $status; }
+            }
+            console cache:clear --env=prod --no-interaction
+            console doctrine:migrations:migrate --no-interaction
+            console importmap:install
+            console asset:compile
