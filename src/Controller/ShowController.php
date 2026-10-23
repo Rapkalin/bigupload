@@ -16,8 +16,7 @@ class ShowController extends BaseController
 
         if (!$item) {
              throw $this->createNotFoundException(
-                 'It seems that the file you are looking for doesn\'t exist. <br>
-                 It might have been deleted.'
+                 "It seems that the file you are looking for doesn't exist.\nIt might have been deleted."
              );
         }
 

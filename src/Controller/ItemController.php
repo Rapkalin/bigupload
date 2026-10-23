@@ -31,6 +31,7 @@ use App\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -70,7 +71,7 @@ class ItemController extends BaseController
         EntityManagerInterface $entityManager,
         FileService $fileService,
         KernelInterface $kernel,
-        LoggerInterface $uploadLogger
+        #[Target('upload')] LoggerInterface $uploadLogger
     ) {
         $this->entityManager = $entityManager;
         $this->fileService = $fileService;
@@ -114,6 +115,22 @@ class ItemController extends BaseController
                         'message' => "{$this->fileName} is not allowed to proceed."
                     ],
                     403
+                );
+            }
+
+            if (!$this->isAllowedExtension($this->fileName)) {
+                formatDebug($this->uploadLogger, 'debug', 'Extension Error' , [
+                    'status' => 'error',
+                    'context' => __METHOD__,
+                    'file' => $this->fileName,
+                    'code' => 415,
+                ]);
+
+                return formatJsonResponseData([
+                        'status' => 'error',
+                        'message' => "{$this->fileName} has a file type that is not allowed."
+                    ],
+                    415
                 );
             }
 
@@ -172,6 +189,15 @@ class ItemController extends BaseController
             return false;
         }
         return true;
+    }
+
+    private function isAllowedExtension(string $fileName): bool
+    {
+        return in_array(
+            strtolower((string) $this->fileService->getFileExtension($fileName)),
+            $this->allowedFileExtensions,
+            true
+        );
     }
 
     private function clearFile(string $filePath): void
@@ -255,10 +281,11 @@ class ItemController extends BaseController
 
     private function setFileName(): void
     {
+        // basename() prevents writing outside the target directory (e.g. "../../file.jpg")
         if (isset($_REQUEST["name"])) {
-            $this->fileName = $_REQUEST["name"];
+            $this->fileName = basename($_REQUEST["name"]);
         } elseif (!empty($_FILES)) {
-            $this->fileName = $_FILES["file"]["name"];
+            $this->fileName = basename($_FILES["file"]["name"]);
         } else {
             $this->fileName = uniqid("file_", TRUE);
         }
@@ -282,26 +309,25 @@ class ItemController extends BaseController
             );
         }
 
-        $file = readdir($dir);
-
-        if ($file != "." && $file != ".." && $file != ".DS_Store") {
-            while ($file = true) {
-                $tmpfilePath = $this->targetDir . DIRECTORY_SEPARATOR . $file;
-
-
-                // If temp file is current file proceed to the next
-                if ($tmpfilePath === $this->filePath) {
-                    continue;
-                }
-
-                // Remove temp file if it is older than the max age and is not the current file
-                if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $this->maxFileAge)) {
-                    unlink($tmpfilePath);
-                }
+        while (($file = readdir($dir)) !== false) {
+            if ($file === "." || $file === ".." || $file === ".DS_Store") {
+                continue;
             }
 
-            closedir($dir);
+            $tmpfilePath = $this->targetDir . DIRECTORY_SEPARATOR . $file;
+
+            // If temp file is current file proceed to the next
+            if ($tmpfilePath === "{$this->filePath}.part") {
+                continue;
+            }
+
+            // Remove temp file if it is older than the max age and is not the current file
+            if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $this->maxFileAge)) {
+                unlink($tmpfilePath);
+            }
         }
+
+        closedir($dir);
 
         return true;
     }
@@ -395,7 +421,7 @@ class ItemController extends BaseController
         if (!$this->chunks || $this->chunk === $this->chunks - 1) {
             // Strip the temp .part suffix off
             rename("{$this->filePath}.part", $this->filePath);
-            if (in_array($this->fileService->getFileExtension($this->filePath), $this->allowedFileExtensions)) {
+            if ($this->isAllowedExtension($this->filePath)) {
                 $showId = $this->fileService->getFileDownloadPageUrl();
                 try {
                     $zipPath = $this->fileService->moveFileToDirectory($showId, $this->filePath, $this->fileName, $this->uploadDir);

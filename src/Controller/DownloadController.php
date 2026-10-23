@@ -20,7 +20,13 @@ class DownloadController extends AbstractController
     {
         $item = $itemRepository->findOneBy(['show_id' => $request->attributes->get('showId')]);
         $publicDir = $kernel->getProjectDir() . '/public';
-        $path = $publicDir . "/uploads/" . $item->getZipName();
+        $path = $item ? $publicDir . "/uploads/" . $item->getZipName() : null;
+
+        if (!$path || !is_file($path)) {
+            throw $this->createNotFoundException(
+                "It seems that the file you are looking for doesn't exist.\nIt might have been deleted."
+            );
+        }
 
         header("Content-Description: File Transfer");
         header("Content-Type: application/octet-stream");
