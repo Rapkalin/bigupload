@@ -32,3 +32,6 @@ uploads/
 /scripts/cron/*
 !/scripts/cron/cron.php
 
+
+### audit reports (kept locally, never committed)
+/docs/AUDIT-*.md

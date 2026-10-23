@@ -4,7 +4,7 @@
 {% block body %}
     <div class="container container-error" >
         <div class="message-error">
-            <i class="fa-solid fa-circle-chevron-down"></i>
+            {% include 'components/icon.html.twig' with {'name': 'circle-chevron-down'} %}
             <h1 class="title-error">File not found</h1>
             <p class="text-error">{{ exception.message |nl2br }}</p>
             {% include 'components/buttons/link-button.html.twig' with {

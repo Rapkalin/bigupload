@@ -2,42 +2,19 @@
 
 namespace App\Services;
 
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\Process\Process;
 
 class ZipService
 {
-    private LoggerInterface $uploadLogger;
-
-    public function __construct(
-        #[Target('upload')] LoggerInterface $uploadLogger
-    ) {
-        $this->uploadLogger = $uploadLogger;
-    }
-
     /**
-     * Zip a directory et save it in the archive un a file.
+     * Zips $workingDir/$dirName into $workingDir/$zipName.
+     * Files are stored without compression (-0): the allowed files (videos, images, pdf, zip) are already
+     * compressed, so deflating them costs a lot of time for no size gain.
      *
-     * @param string $source Absolute path to the directory to zip
-     * @param string $destination Absolute path to the zip file to create
-     *
-     * @return bool True if zip has been successfully create, False if not
-     * @throws \Exception
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
      */
-    public function zipDirectory(string $uploadDir, string $zipName, string $dirName): bool
+    public function zipDirectory(string $workingDir, string $zipName, string $dirName): void
     {
-        try {
-            return exec("cd $uploadDir && zip -r $zipName $dirName");
-        } catch (\Exception $e) {
-            formatDebug($this->uploadLogger, 'debug', 'ZIP ERROR' , [
-                'status' => 'error',
-                'message' => "Error while zipping item",
-                'context' => __METHOD__,
-                'error' => $e->getMessage(),
-                'code' => 500,
-            ]);
-
-            throw new \Exception("ZIP ERROR: {$e->getMessage()}", 500);
-        }
+        (new Process(['zip', '-0', '-q', '-r', $zipName, $dirName], $workingDir, timeout: null))->mustRun();
     }
 }

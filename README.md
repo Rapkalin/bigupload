@@ -10,6 +10,8 @@
 * [Back-end installation](#back-installation)
 * [Front-end installation](#front-installation)
 * [Uploads](#uploads)
+* [Tests](#tests)
+* [Versioning](#versioning)
 * [Deployment (CI/CD)](#deployment)
 
 #### Description
@@ -48,7 +50,7 @@ Browser ──:8000──> [nginx]  ──fastcgi :9000──> [php-fpm]  ──
 | `compose.yaml` | The 3 services (mysql, php, nginx), their network, the `mysql_data` volume and env defaults (overridable via `.env`) |
 | `docker/php.ini` | PHP settings: `upload_max_filesize`/`post_max_size` 300M (PLupload sends 250 MB chunks — the 15 GB max file size never travels in a single request), 300s timeouts |
 | `docker/opcache.ini` | OPcache enabled with `validate_timestamps=1`/`revalidate_freq=0` so code changes are picked up instantly in dev |
-| `docker/nginx.conf` | Symfony front-controller vhost: static files served directly, everything else through `public/index.php`, `client_max_body_size 300M`, direct `.php` execution blocked |
+| `docker/nginx.conf` | Symfony front-controller vhost: static files served directly, everything else through `public/index.php`, `client_max_body_size 300M`, direct `.php` execution blocked, `/uploads` not served (same rules as `public/.htaccess` in production) |
 
 ### Useful commands
 
@@ -143,12 +145,42 @@ php bin/console importmap:install
 
 # <a name="uploads"></a>UPLOADS
 
-- Files are sent by PLupload to `/handleFile` in **250 MB chunks**, max file size **15 GB**.
+All the upload rules (chunk size, max size, allowed extensions, expiration, rate limit) live in **`src/Constant/UploadConfig.php`**:
+the back-end, the purge command, the templates and `upload.js` (through data attributes) all read them from there.
+
+- Files are sent by PLupload to `POST /handleFile` in **250 MB chunks**, max file size **15 GB**.
+- The first chunk returns a random `upload_id`: the following chunks must send it, so two uploads never share a temp file and nobody can write into somebody else's upload.
+  Each chunk is written at its own offset: a chunk retried by PLupload is never duplicated.
 - Allowed extensions (case insensitive): `jpg`, `jpeg`, `png`, `gif`, `mp4`, `mov`, `pdf`, `mp3`, `vtt`, `srt`, `zip`.
   Any other file type is rejected with a **415** before anything is written on the disk.
-- Once the last chunk is received the file is zipped in `public/uploads/<showId>.zip`, saved in database and the download page is available at `/download/<showId>` (link shortened with tinyurl.com, or the direct link if tinyurl is unavailable). Files expire after **7 days**.
-- Unfinished `.part` files older than 5 hours are removed on the next upload.
-- Upload errors are logged in `var/log/upload.log`.
+- **20 new uploads per hour and per IP** (429 beyond).
+- Once the last chunk is received the file is zipped **without compression** (the allowed files are already compressed) in `public/uploads/<showId>.zip`, saved in database and the download page is available at `/download/<showId>` (link shortened with tinyurl.com, or the direct link if tinyurl is unavailable).
+- Files expire after **7 days**: expired files are no longer downloadable. `public/uploads` is never served directly, files are only downloaded through `/downloadFile/<showId>` (resumable downloads supported).
+- Refused uploads (warning) and errors are logged in `var/log/upload.log` (one file per day, kept 14 days in prod).
+
+### Purge (cron)
+`bin/console app:purge-expired` deletes the expired uploads (file + database row), the zips without database row older than 7 days
+and the temporary files (`.part`, interrupted zips) untouched for 5 hours. Run it every hour on the server:
+
+```
+0 * * * * /usr/bin/php8.4-cli ~/bigupload/website/bin/console app:purge-expired --no-interaction
+```
+`scripts/cron/cron.php` is kept so that an existing crontab calling it keeps working (it runs the same command).
+
+# <a name="tests"></a>TESTS
+
+Functional and unit tests (PHPUnit) cover the upload, download, purge, pages and security headers. They need a MySQL user allowed to create the `bigupload_test` database:
+
+```bash
+docker compose exec -e APP_ENV=test -e DATABASE_URL="mysql://root:root_secret@mysql:3306/bigupload?serverVersion=8.0.36&charset=utf8mb4" php composer test
+```
+`composer test` (re)creates the test database, runs the migrations and the tests. In the test env the chunks are 8 bytes and the files 20 bytes max (`config/services.yaml`), and tinyurl.com is mocked.
+The tests run in GitHub Actions (`.github/workflows/tests.yml`) on every pull request and before every deployment: no deployment if they fail.
+
+# <a name="versioning"></a>VERSIONING
+
+The project follows [semver](https://semver.org). The version is the `version` field of `composer.json`; it is displayed in the footer of every page.
+When releasing, update it with the CHANGELOG: **the production deployment fails if the pushed tag differs from the `composer.json` version**.
 
 # <a name="deployment"></a>DEPLOYMENT (CI/CD)
 
@@ -158,6 +190,7 @@ php bin/console importmap:install
 | `.github/workflows/main.yml` | push of any tag | `~/bigupload/website` (production) |
 
 Each workflow:
+0. **tests** — `composer audit`, tag = `composer.json` version (production), PHPUnit with a MySQL service.
 1. **build** — installs the prod dependencies with PHP 8.4 (`composer install --no-dev`), checks the application boots in prod (`lint:container`), then zips the release.
 2. **deploy** — backs up the current release to `old_website`, rsyncs the new one, links the shared `.env`, `.htaccess`, `.htpasswd` and `uploads`, then runs `cache:clear`, `doctrine:migrations:migrate`, `importmap:install` and `asset:compile`. Any failing command fails the job; output is written to `log_deploy.log` on the server.
 
@@ -166,6 +199,6 @@ Each workflow:
 ### Releasing a new version
 ```bash
 git checkout master && git merge develop
-# update CHANGELOG.md
+# update CHANGELOG.md and the "version" of composer.json (then `composer update --lock`)
 git tag x.y.z && git push origin master --tags   # the tag triggers the production deployment
 ```

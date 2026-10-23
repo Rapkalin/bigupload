@@ -1,0 +1,8 @@
+framework:
+    rate_limiter:
+        # New uploads (first chunk) per client IP, see ItemController::handleFile()
+        upload:
+            policy: sliding_window
+            limit: !php/const App\Constant\UploadConfig::UPLOADS_PER_HOUR
+            interval: '1 hour'
+
