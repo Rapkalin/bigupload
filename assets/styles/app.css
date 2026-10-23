@@ -1,5 +1,7 @@
 @import url("bundles/error.css");
 @import url("components/buttons.css");
+@import url("components/icon.css");
+@import url("components/footer.css");
 @import url("components/card.css");
 @import url("blocks/left-side.css");
 @import url("blocks/upload-card.css");

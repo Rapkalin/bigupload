@@ -34,17 +34,16 @@
     color: #6e6e6e;
 }
 
-.fa-light, .fas {
-    font-weight: 900;
+#card-area-drop .icon, #card-area-upload .icon {
     color: darkgrey;
     margin-bottom: 15px;
 }
 
-.fa-cloud-arrow-up, .fa-cloud-arrow-down {
+.icon-cloud-arrow-up, .icon-cloud-arrow-down {
     font-size: 7em;
 }
 
-.fa-dolly, .fa-paper-plane {
+.icon-paper-plane {
     font-size: 6em;
 }
 

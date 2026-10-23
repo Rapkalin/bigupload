@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,40 @@ class ItemRepository extends ServiceEntityRepository
         parent::__construct($registry, Item::class);
     }
 
-    //    /**
-    //     * @return Item[] Returns an array of Item objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Item that can still be downloaded (not expired yet)
+     */
+    public function findAvailableByShowId(string $showId): ?Item
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.show_id = :showId')
+            ->andWhere('i.expiration_date > :now')
+            ->setParameter('showId', $showId)
+            ->setParameter('now', new \DateTimeImmutable(), Types::DATETIMETZ_IMMUTABLE)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Item
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return list<Item>
+     */
+    public function findExpired(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.expiration_date <= :now')
+            ->setParameter('now', new \DateTimeImmutable(), Types::DATETIMETZ_IMMUTABLE)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function findAllZipNames(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('i.zip_name')
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }

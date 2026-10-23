@@ -18,13 +18,28 @@ nelmio_security:
         policies:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
+
+    # Applied on every host (no "hosts" filter: it used to restrict the CSP to local hosts only).
+    # Inline scripts must carry the csp_nonce('script') nonce.
     csp:
-        hosts:
-            - 'bigupload'
-            - '127.0.0.1'
         enforce:
             level1_fallback: true
+            default-src:
+                - 'self'
             script-src:
                 - 'self'
+                # es-module-shims polyfill loaded by importmap() for old browsers
                 - ga.jspm.io
+            style-src:
+                - 'self'
+            img-src:
+                - 'self'
                 - 'data:'
+            object-src:
+                - 'none'
+            base-uri:
+                - 'self'
+            form-action:
+                - 'self'
+            frame-ancestors:
+                - 'none'

@@ -1,5 +1,5 @@
 <div id="card-area-drop">
-    <i class="fa-solid fa-cloud-arrow-down"></i>
+    {% include 'components/icon.html.twig' with {'name': 'cloud-arrow-down'} %}
     <div id="card-area-content">
         <label class="card-area-title" id="card-area-title-download">Ready? GO!</label>
         <h2>This file expires in {{ item.expiration_time }}</h2>
@@ -15,13 +15,13 @@
         </div>
     </div>
 
-    <script defer type="text/javascript" src={{ asset("scripts/button_animation.js") }}></script>
+    <script defer src="{{ asset("scripts/button_animation.js") }}"></script>
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'animatedButton',
         'color': 'blue',
         'text': 'Download',
-        'href': item.download_file_url
+        'href': path('file.download', {'showId': item.show_id})
     } %}
 
-    <a id="refreshButton" class="downloadClipBoard" href="/">Want to send a file? Click here</a>
+    <a id="refreshButton" class="downloadClipBoard" href="{{ path('home.index') }}">Want to send a file? Click here</a>
 </div>

@@ -1,0 +1,67 @@
+name: Tests
+
+# Reused by main.yml and preprod.yml: no deployment if the tests fail
+on:
+  workflow_call:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: "mysql://root:root@127.0.0.1:3306/bigupload?serverVersion=8.0.36&charset=utf8mb4"
+
+    steps:
+      - name: Checkout bigupload
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: ctype, curl, iconv, intl, pdo_mysql, zip
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-8.4-composer-dev-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-8.4-composer-dev-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-scripts
+
+      - name: Check the dependencies have no known vulnerability
+        run: composer audit
+
+      - name: Check the version of composer.json matches the pushed tag
+        if: github.ref_type == 'tag'
+        run: |
+          version=$(php -r 'echo json_decode(file_get_contents("composer.json"))->version;')
+          [ "$version" = "$GITHUB_REF_NAME" ] || { echo "composer.json version ($version) differs from the tag ($GITHUB_REF_NAME)"; exit 1; }
+
+      - name: Run the tests
+        run: |
+          cp .env.example .env
+          php bin/console importmap:install
+          composer test
