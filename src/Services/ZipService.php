@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 
 class ZipService
 {
     private LoggerInterface $uploadLogger;
 
     public function __construct(
-        LoggerInterface $uploadLogger
+        #[Target('upload')] LoggerInterface $uploadLogger
     ) {
         $this->uploadLogger = $uploadLogger;
     }

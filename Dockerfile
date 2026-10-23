@@ -5,9 +5,9 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Base: PHP 8.4-FPM with required extensions
+# Base: PHP 8.5-FPM with required extensions
 # -----------------------------------------------------------------------------
-FROM php:8.4-fpm-alpine AS base
+FROM php:8.5-fpm-alpine AS base
 
 RUN apk add --no-cache \
     bash \
@@ -18,17 +18,18 @@ RUN apk add --no-cache \
     unzip \
     zip
 
+# OPcache is built into PHP since 8.5, it must not be installed as an extension
 RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
     icu-dev \
     libzip-dev \
     linux-headers \
-  && docker-php-ext-install intl opcache pdo_mysql zip \
+  && docker-php-ext-install intl pdo_mysql zip \
   && pecl install apcu \
   && docker-php-ext-enable apcu \
   && apk del .build-deps
 
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.10 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/api
 

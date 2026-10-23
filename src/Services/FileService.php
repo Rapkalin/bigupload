@@ -89,6 +89,7 @@ use Psr\Log\LoggerInterface;
             }
 
             curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
+            curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_URL, $apiUrl);
 
@@ -100,15 +101,15 @@ use Psr\Log\LoggerInterface;
             }
 
             // Check HTTP return code, too; might be something else than 200
-            // $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-            /* Process $content here */
-            curl_close($curl);
+            $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if ($httpReturnCode !== 200 || !filter_var($newUrl, FILTER_VALIDATE_URL)) {
+                throw new Exception("unexpected response (HTTP $httpReturnCode)");
+            }
 
             return $newUrl;
 
         } catch (\Exception $e) {
-            throw new Exception('something went wrong: ', $e);
+            throw new Exception('something went wrong: ' . $e->getMessage(), 0, $e);
         }
     }
 
