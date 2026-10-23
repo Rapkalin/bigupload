@@ -1,5 +1,5 @@
 ![node](https://img.shields.io/badge/nodejs-v8.17.0-122D05.svg?style=flat-square)
-![php](https://img.shields.io/badge/PHP-v8.5-828cb7.svg?style=flat-square)
+![php](https://img.shields.io/badge/PHP-v8.4-828cb7.svg?style=flat-square)
 ![composer](https://img.shields.io/badge/Composer-v2.10-644D31.svg?style=flat-square)
 ![symfony](https://img.shields.io/badge/Symfony-v8.1-122D53.svg?style=flat-square)
 
@@ -19,7 +19,7 @@ This is a component oriented project based on Symfony 8 based project.
 
 # <a name="docker"></a>LOCAL DEVELOPMENT WITH DOCKER (RECOMMENDED)
 
-The full stack (Nginx + PHP-FPM 8.5 + MySQL 8) runs in Docker, no MAMP/local PHP needed.
+The full stack (Nginx + PHP-FPM 8.4 + MySQL 8) runs in Docker, no MAMP/local PHP needed.
 
 ### Quick start
 
@@ -44,7 +44,7 @@ Browser ──:8000──> [nginx]  ──fastcgi :9000──> [php-fpm]  ──
 
 | File | Purpose |
 |---|---|
-| `Dockerfile` | Multi-stage PHP 8.5-FPM Alpine image: `base` (extensions intl, pdo_mysql, zip, apcu + Composer — OPcache is built into PHP since 8.5) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
+| `Dockerfile` | Multi-stage PHP 8.4-FPM Alpine image: `base` (extensions intl, opcache, pdo_mysql, zip, apcu + Composer) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
 | `compose.yaml` | The 3 services (mysql, php, nginx), their network, the `mysql_data` volume and env defaults (overridable via `.env`) |
 | `docker/php.ini` | PHP settings: `upload_max_filesize`/`post_max_size` 300M (PLupload sends 250 MB chunks — the 15 GB max file size never travels in a single request), 300s timeouts |
 | `docker/opcache.ini` | OPcache enabled with `validate_timestamps=1`/`revalidate_freq=0` so code changes are picked up instantly in dev |
@@ -61,7 +61,7 @@ docker compose down                 # stop the stack (add -v to also drop the da
 
 # <a name="installation"></a>PROJECT INSTALLATION
 ### Requirements (without Docker)
-- PHP **8.5** with the `ctype`, `curl`, `iconv`, `intl`, `pdo_mysql` and `zip` extensions
+- PHP **8.4** (8.4.1 minimum) with the `ctype`, `curl`, `iconv`, `intl`, `pdo_mysql` and `zip` extensions
 - Composer 2
 - MySQL 8
 - The `zip` command line tool (used to build the archives)
@@ -158,10 +158,10 @@ php bin/console importmap:install
 | `.github/workflows/main.yml` | push of any tag | `~/bigupload/website` (production) |
 
 Each workflow:
-1. **build** — installs the prod dependencies with PHP 8.5 (`composer install --no-dev`), checks the application boots in prod (`lint:container`), then zips the release.
+1. **build** — installs the prod dependencies with PHP 8.4 (`composer install --no-dev`), checks the application boots in prod (`lint:container`), then zips the release.
 2. **deploy** — backs up the current release to `old_website`, rsyncs the new one, links the shared `.env`, `.htaccess`, `.htpasswd` and `uploads`, then runs `cache:clear`, `doctrine:migrations:migrate`, `importmap:install` and `asset:compile`. Any failing command fails the job; output is written to `log_deploy.log` on the server.
 
-**Server requirement:** PHP 8.5 must be available at `/usr/bin/php8.5-cli` and the web server must run PHP 8.5.
+**Server requirement:** PHP 8.4 must be available at `/usr/bin/php8.4-cli` and the web server must run PHP 8.4 (set in the IONOS PHP settings of the domain). Composer is pinned to the PHP 8.4 platform (`config.platform.php` in `composer.json`) so `composer update` never installs packages the server cannot run.
 
 ### Releasing a new version
 ```bash

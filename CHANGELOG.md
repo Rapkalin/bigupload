@@ -5,7 +5,10 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### => Tag 1.5.1 (current) / 2026.10.23
+#### => Tag 1.5.2 (current) / 2026.10.23
+- [Fix][BIGUPL-5] - Run on PHP 8.4 (the version used by the production web server): PHP >= 8.4 with Composer platform pinned to 8.4, CI/CD and Docker image back on PHP 8.4
+
+#### => Tag 1.5.1 / 2026.10.23
 - [Fix][BIGUPL-5] - CI/CD: show the server command error in GitHub Actions when the deployment fails
 
 #### => Tag 1.5.0 / 2026.10.23
