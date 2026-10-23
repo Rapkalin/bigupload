@@ -10,7 +10,7 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                channels: ["!event, !upload"]
+                channels: ["!event", "!upload"]
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
@@ -73,8 +73,10 @@ when@prod:
                 channels: [deprecation]
                 path: php://stderr
                 formatter: monolog.formatter.json
+            # Refused uploads (warning) and failures (error), one file per day kept 14 days
             upload:
-                type: stream
+                type: rotating_file
                 path: "%kernel.logs_dir%/upload.log"
-                level: error
+                max_files: 14
+                level: warning
                 channels: ["upload"]

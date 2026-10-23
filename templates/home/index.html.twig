@@ -1,6 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}BIGUPLOAD{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script defer src="{{ asset("library/plupload/plupload.full.min.js") }}"></script>
+    <script defer src="{{ asset("scripts/upload.js") }}"></script>
+{% endblock %}
+
 {% block body %}
     <div class="container ctn-row-reverse">
         {% include 'components/card.html.twig' with {
@@ -9,8 +16,5 @@
         %}
 
         {% include 'blocks/left-side.html.twig' %}
-
-        <script defer type="text/javascript" src={{ asset("scripts/upload.js") }}></script>
-        <script defer type="text/javascript" src={{ asset("scripts/copy_to_clipboard.js") }}></script>
     </div>
 {% endblock %}

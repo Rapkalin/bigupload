@@ -3,45 +3,37 @@
 namespace App\Controller;
 
 use App\Repository\ItemRepository;
-use JetBrains\PhpStorm\NoReturn;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
-class DownloadController extends AbstractController
+class DownloadController extends BaseController
 {
-    #[NoReturn] #[Route('/downloadFile/{showId}', name: 'file.download', methods: ['GET'])]
+    // Max execution time of a download (multi GB files)
+    private const int DOWNLOAD_TIME_LIMIT = 20 * 60;
+
+    /**
+     * Streams the zip; BinaryFileResponse supports HTTP Range requests so interrupted downloads can be resumed.
+     */
+    #[Route('/downloadFile/{showId}', name: 'file.download', methods: ['GET'])]
     public function download(
-        Request $request,
-        KernelInterface $kernel,
-        ItemRepository $itemRepository
-    ): void
-    {
-        $item = $itemRepository->findOneBy(['show_id' => $request->attributes->get('showId')]);
-        $publicDir = $kernel->getProjectDir() . '/public';
-        $path = $item ? $publicDir . "/uploads/" . $item->getZipName() : null;
+        string $showId,
+        ItemRepository $itemRepository,
+        string $uploadDir,
+    ): BinaryFileResponse {
+        $item = $itemRepository->findAvailableByShowId($showId);
+        $path = $item ? $uploadDir . DIRECTORY_SEPARATOR . $item->getZipName() : null;
 
         if (!$path || !is_file($path)) {
-            throw $this->createNotFoundException(
-                "It seems that the file you are looking for doesn't exist.\nIt might have been deleted."
-            );
+            throw $this->createItemNotFoundException();
         }
 
-        header("Content-Description: File Transfer");
-        header("Content-Type: application/octet-stream");
-        header('Content-Disposition: attachment; filename="' . $item->getZipName() . '"');
-        header('Expires: Tue, 01 Jan 1980 1:00:00 GMT');
-        header("Cache-Control: no-cache");
-        header("Content-Length: {$item->getSize()}");
+        set_time_limit(self::DOWNLOAD_TIME_LIMIT);
 
-        if (ob_get_level()) {
-            ob_end_clean();
-        }
+        $response = new BinaryFileResponse($path, headers: ['Content-Type' => 'application/zip']);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $item->getZipName());
+        $response->setPrivate();
 
-        // 20 minutes execution time
-        set_time_limit(20 * 60);
-        readfile($path);
-        exit;
+        return $response;
     }
 }

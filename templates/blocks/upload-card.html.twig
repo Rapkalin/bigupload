@@ -1,5 +1,11 @@
-<div id="card-area-drop">
-    <i class="fa-solid fa-paper-plane"></i>
+{% set uploadConfig = 'App\\Constant\\UploadConfig::' %}
+<div id="card-area-drop"
+     data-upload-url="{{ path('file.handle') }}"
+     data-chunk-size="{{ constant(uploadConfig ~ 'CHUNK_SIZE') }}"
+     data-max-file-size="{{ constant(uploadConfig ~ 'MAX_FILE_SIZE') }}"
+     data-allowed-extensions="{{ constant(uploadConfig ~ 'ALLOWED_EXTENSIONS')|json_encode }}"
+>
+    {% include 'components/icon.html.twig' with {'name': 'paper-plane'} %}
     <label class="card-area-title" id="card-area-title-drop">Drop your file here</label>
     <span id="drop-area-or">or</span>
     {% include 'components/buttons/link-button.html.twig' with {
@@ -9,14 +15,14 @@
         'href': 'javascript:;'
     } %}
     <div id="card-area-subtitle">
-        <h2>Allowed extensions: jpg, jpeg, png, gif, mp4, mov, pdf, mp3, vtt, srt, zip</h2>
-        <h2>Max file size: 15GB</h2>
+        <h2>Allowed extensions: {{ constant(uploadConfig ~ 'ALLOWED_EXTENSIONS')|reduce((all, extensions) => all|merge(extensions), [])|join(', ') }}</h2>
+        <h2>Max file size: {{ constant(uploadConfig ~ 'MAX_FILE_SIZE_GB') }}GB</h2>
         <h2 id="counter">Already {{ counter }} files uploaded!</h2>
     </div>
 </div>
 
 <div id="card-area-upload" class="hidden">
-    <i class="fa-solid fa-cloud-arrow-up"></i>
+    {% include 'components/icon.html.twig' with {'name': 'cloud-arrow-up'} %}
     <h1 class="card-area-title" id="card-area-title-upload">Click the button to start the upload</h1>
 
     <div id="filelist"></div>
@@ -41,10 +47,9 @@
             'color': 'blue',
             'text': 'Copy your link'
         } %}
-        <script defer type="text/javascript" src={{ asset("scripts/button_animation.js") }}></script>
-        <script defer type="text/javascript" src={{ asset("scripts/copy_to_clipboard.js") }}></script>
+        <script defer src="{{ asset("scripts/button_animation.js") }}"></script>
+        <script defer src="{{ asset("scripts/copy_to_clipboard.js") }}"></script>
     </div>
 
-    <a id="refreshButton" class="downloadClipBoard hidden" onclick="window.location.href=window.location.href">Upload a new file</a>
+    <a id="refreshButton" class="downloadClipBoard hidden" href="{{ path('home.index') }}">Upload a new file</a>
 </div>
-

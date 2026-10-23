@@ -2,449 +2,100 @@
 
 namespace App\Controller;
 
-/**
- *
- * File content based on
- * Copyright 2013, Moxiecode Systems AB
- * Released under GPL License.
- *
- * License: http://www.plupload.com/license
- * Contributing: http://www.plupload.com/contributing
- *
- * And upgraded by
- * Rapkalin: https://github.com/Rapkalin
- */
-
-#!! IMPORTANT:
-#!! this file is just an example, it doesn't incorporate any security checks and
-#!! is not recommended to be used in production environment as it is. Be sure to
-#!! revise it and customize to your needs.
-
-// Make sure file is not cached (as it happens for example on iOS devices)
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-header("Cache-Control: no-store, no-cache, must-revalidate");
-header("Cache-Control: post-check=0, pre-check=0", false);
-
-use App\Entity\Item;
-use App\Services\FileService;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use App\Exception\UploadException;
+use App\Services\ChunkUploadService;
+use App\Services\ItemService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ItemController extends BaseController
 {
-    // Settings
-    // $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
-    private string $targetDir = 'uploads';
-    private bool $cleanupTargetDir = true; // Remove old files
-    private int $maxFileAge = 5 * 3600; // Temp file age in seconds
-    private string $filePath;
-    private string $fileName;
-    private string $zipName;
-    private string $zipPath;
-    private int $chunk;
-    private int $chunks;
-    private EntityManagerInterface $entityManager;
-    private FileService $fileService;
-    private LoggerInterface $uploadLogger;
-    private string $uploadDir;
-    private array $allowedFileExtensions = [
-        'jpg',
-        'jpeg',
-        'png',
-        'gif',
-        'mp4',
-        'mov',
-        'pdf',
-        'mp3',
-        'vtt',
-        'srt',
-        'zip'
-    ];
+    // Max execution time of one chunk request (upload of the chunk + zip of the file on the last one)
+    private const int CHUNK_TIME_LIMIT = 5 * 60;
+    private const string STATUS_SUCCESS = 'success';
+    private const string STATUS_ERROR = 'error';
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        FileService $fileService,
-        KernelInterface $kernel,
-        #[Target('upload')] LoggerInterface $uploadLogger
+        private readonly ChunkUploadService $chunkUploadService,
+        private readonly ItemService $itemService,
+        #[Target('upload.limiter')] private readonly RateLimiterFactoryInterface $uploadLimiter,
+        #[Target('upload')] private readonly LoggerInterface $uploadLogger,
     ) {
-        $this->entityManager = $entityManager;
-        $this->fileService = $fileService;
-        $this->uploadDir = $kernel->getProjectDir() . '/public/' . $this->targetDir;
-        $this->uploadLogger = $uploadLogger;
     }
 
     /**
-     * Return Success JSON-RPC response to FileUploaded event in upload.js
-     *
-     * @throws Exception
+     * Receives the chunks sent by PLupload (upload.js). The last chunk creates the item and returns its download url.
      */
-    #[Route('/handleFile', name: 'file.handle')]
-    public function handleFile (): JsonResponse
+    #[Route('/handleFile', name: 'file.handle', methods: ['POST'])]
+    public function handleFile(Request $request): JsonResponse
     {
+        // basename() prevents writing outside the upload directory (e.g. "../../file.jpg")
+        $fileName = basename($request->query->getString('name'));
+        $chunk = $request->query->getInt('chunk');
+
         try {
-            /*
-            // Support CORS
-            header("Access-Control-Allow-Origin: *");
-            // other CORS headers if any...
-            if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-                exit; // finish preflight CORS requests here
+            if (0 === $chunk && !$this->uploadLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+                throw new UploadException('Too many uploads, please try again later.', Response::HTTP_TOO_MANY_REQUESTS);
             }
-            */
 
-            // 5 minutes execution time
-            set_time_limit(5 * 60);
-            $this->setFileName();
-            $this->createTargetDir();
-            $this->setChunk();
+            set_time_limit(self::CHUNK_TIME_LIMIT);
+            $receivedChunk = $this->chunkUploadService->receive(
+                $fileName,
+                $chunk,
+                $request->query->getInt('chunks'),
+                $request->query->get('upload_id'),
+                $request->getContent(true),
+            );
 
-            if (!$this->isAllowedToProceed()) {
-                formatDebug($this->uploadLogger, 'debug', 'Proceed Error' , [
-                    'status' => 'error',
-                    'context' => __METHOD__,
-                    'code' => 403,
+            if (!$receivedChunk->isComplete) {
+                return $this->uploadResponse("$fileName chunk successfully uploaded.", Response::HTTP_OK, [
+                    'filename' => $fileName,
+                    'upload_id' => $receivedChunk->uploadId,
                 ]);
-
-                return formatJsonResponseData([
-                        'status' => 'error',
-                        'message' => "{$this->fileName} is not allowed to proceed."
-                    ],
-                    403
-                );
             }
 
-            if (!$this->isAllowedExtension($this->fileName)) {
-                formatDebug($this->uploadLogger, 'debug', 'Extension Error' , [
-                    'status' => 'error',
-                    'context' => __METHOD__,
-                    'file' => $this->fileName,
-                    'code' => 415,
-                ]);
+            $item = $this->itemService->createFromUpload($receivedChunk->partPath, $fileName);
 
-                return formatJsonResponseData([
-                        'status' => 'error',
-                        'message' => "{$this->fileName} has a file type that is not allowed."
-                    ],
-                    415
-                );
-            }
+            return $this->uploadResponse("$fileName has been created.", Response::HTTP_CREATED, [
+                'filename' => $fileName,
+                'download_url' => $item->getDownloadPageUrl(),
+            ]);
+        } catch (UploadException $e) {
+            $this->uploadLogger->warning('Upload refused', [
+                'file' => $fileName,
+                'reason' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'ip' => $request->getClientIp(),
+            ]);
 
-            $this->setFilePath();
-            if ($this->cleanupTargetDir) {
-                $this->removeOldTempFiles();
-            }
-
-            $this->rebuildFile();
-            $downloadUrl = $this->renameAndSaveFile();
-
-            if ($downloadUrl) {
-                return formatJsonResponseData([
-                        'status' => 'success',
-                        'message' => "{$this->fileName} has been created."
-                    ],
-                    201,
-                    extraData: [
-                        "filename" => $this->fileName,
-                        "download_url" => $downloadUrl
-                    ],
-                );
-            }
-        } catch (Exception $e) {
-            formatDebug($this->uploadLogger, 'debug', 'Success' , [
-                'status' => 'error',
-                'context' => __METHOD__,
+            return $this->uploadResponse($e->getMessage(), $e->getCode(), status: self::STATUS_ERROR);
+        } catch (\Throwable $e) {
+            $this->uploadLogger->error('Upload failed', [
+                'file' => $fileName,
                 'error' => $e->getMessage(),
-                'code' => 500,
+                'exception' => $e,
             ]);
 
-            return formatJsonResponseData([
-                    'status' => 'error',
-                    'message' => "{$this->fileName} was not uploaded.",
-                    'error' => 'See debug file for debug'
-                ],
-                500
-            );
-        }
-
-        return formatJsonResponseData([
-                'status' => 'success',
-                'message' => "{$this->fileName} chunk successfully was uploaded.",
-            ],
-            201,
-            extraData: ["filename" => $this->fileName],
-        );
-    }
-
-    private function isAllowedToProceed(): bool
-    {
-        if (
-            $this->chunk >= 1 &&
-            !file_exists($this->targetDir . DIRECTORY_SEPARATOR . $this->fileName . '.part')
-        ) {
-            return false;
-        }
-        return true;
-    }
-
-    private function isAllowedExtension(string $fileName): bool
-    {
-        return in_array(
-            strtolower((string) $this->fileService->getFileExtension($fileName)),
-            $this->allowedFileExtensions,
-            true
-        );
-    }
-
-    private function clearFile(string $filePath): void
-    {
-        $part = file_exists($this->filePath . '.part') ? '.part' : '';
-        if(
-            file_exists($this->filePath) ||
-            file_exists($this->filePath . 'part')
-        ) {
-            unlink($filePath) . $part;
+            return $this->uploadResponse("$fileName was not uploaded.", Response::HTTP_INTERNAL_SERVER_ERROR, status: self::STATUS_ERROR);
         }
     }
 
-    /**
-     * If item is successfully saved we return trye
-     * Else the item isn't saved in DB we delete the created file and return a 500 error
-     *
-     * @throws Exception
-     */
-    private function saveFile (string $showId) : string
+    private function uploadResponse(string $message, int $httpStatusCode, array $extraData = [], string $status = self::STATUS_SUCCESS): JsonResponse
     {
-        $retry = 0;
-        do {
-            if(file_exists($this->uploadDir . DIRECTORY_SEPARATOR . $showId . '.zip')) {
-                try {
-                    $data = $this->buildItemData($showId);
-                    $item = (new Item())->setItem($data);
-                    $this->entityManager->persist($item);
-                    $this->entityManager->flush();
-                    $this->entityManager->getConnection()->executeQuery('UPDATE count_downloads SET uploaded_files = uploaded_files + 1 WHERE id = ?', [1]);
-                    return $item->getDownloadPageUrl();
-                } catch (Exception $e) {
-                    $this->clearFile($this->filePath);
-                    throw new Exception("Error while saving file: {$e->getMessage()}", 500);
-                }
-            }
-
-            $retry++;
-        }  while (
-            !file_exists($this->filePath) &&
-            $retry < 5
-        );
-
-        throw new Exception("File might not exist", 500);
-    }
-
-
-    /**
-     * @throws DateMalformedStringException
-     * @throws Exception
-     */
-    private function buildItemData(string $showId): false|array
-    {
-        $createdAt = $this->fileService->getFileCreatedAt($this->filePath);
-
-        return [
-            'title' => $this->fileName,
-            'zip_name' => $this->zipName,
-            'download_page_url' => $this->fileService->buildDownloadUrl($showId),
-            'download_file_url' => getDomaineUrl() . DIRECTORY_SEPARATOR . "downloadFile/$showId",
-            'extension' => $this->fileService->getFileExtension($this->fileName),
-            'size' => $this->fileService->getFileSize($this->zipPath),
-            'created_at' => $createdAt,
-            'expiration_date' => $this->fileService->getFileSizeExpirationDate($createdAt),
-            'show_id' => $showId
-        ];
-    }
-
-    private function createTargetDir():  void
-    {
-        if (!file_exists($this->targetDir) && !mkdir($this->targetDir) && !is_dir($this->targetDir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->targetDir));
-        }
-    }
-
-    private function setFilePath(): void
-    {
-        $this->setFileName();
-        $this->filePath = $this->targetDir . DIRECTORY_SEPARATOR . $this->fileName;
-    }
-
-    private function setFileName(): void
-    {
-        // basename() prevents writing outside the target directory (e.g. "../../file.jpg")
-        if (isset($_REQUEST["name"])) {
-            $this->fileName = basename($_REQUEST["name"]);
-        } elseif (!empty($_FILES)) {
-            $this->fileName = basename($_FILES["file"]["name"]);
-        } else {
-            $this->fileName = uniqid("file_", TRUE);
-        }
-    }
-
-    private function setChunk(): void
-    {
-        // Chunking might be enabled
-        $this->chunk = isset($_REQUEST["chunk"]) ? (int) $_REQUEST["chunk"] : 0;
-        $this->chunks = isset($_REQUEST["chunks"]) ? (int) $_REQUEST["chunks"] : 0;
-    }
-
-    private function removeOldTempFiles(): true|JsonResponse
-    {
-        if (!is_dir($this->targetDir) || !$dir = opendir($this->targetDir)) {
-            return formatJsonResponseData([
-                    'status' => 'error',
-                    'message' => "Failed to open temp directory.",
-                ],
-            100
-            );
+        $data = ['status' => $status, 'message' => $message];
+        if ($extraData) {
+            $data['extraData'] = $extraData;
         }
 
-        while (($file = readdir($dir)) !== false) {
-            if ($file === "." || $file === ".." || $file === ".DS_Store") {
-                continue;
-            }
+        $response = new JsonResponse($data, $httpStatusCode);
+        // Make sure the response is not cached (as it happens for example on iOS devices)
+        $response->headers->set('Cache-Control', 'no-store');
 
-            $tmpfilePath = $this->targetDir . DIRECTORY_SEPARATOR . $file;
-
-            // If temp file is current file proceed to the next
-            if ($tmpfilePath === "{$this->filePath}.part") {
-                continue;
-            }
-
-            // Remove temp file if it is older than the max age and is not the current file
-            if (preg_match('/\.part$/', $file) && (filemtime($tmpfilePath) < time() - $this->maxFileAge)) {
-                unlink($tmpfilePath);
-            }
-        }
-
-        closedir($dir);
-
-        return true;
-    }
-
-    private function rebuildFile()
-    {
-        // Open temp file and rebuild the file
-        // create the finalfile ($filePath.part) that will be written with the chunk files
-        if (!$out = @fopen("{$this->filePath}.part", $this->chunks ? "ab" : "wb")) {
-            formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
-                'status' => 'error',
-                'context' => __METHOD__,
-                'error' => "Failed to open output stream.",
-                'code' => 102,
-            ]);
-
-            return formatJsonResponseData([
-                    'status' => 'error',
-                    'message' => "Failed to open output stream.",
-                ],
-                102
-            );
-        }
-
-        if (!empty($_FILES)) {
-            if ($_FILES["file"]["error"] || !is_uploaded_file($_FILES["file"]["tmp_name"])) {
-                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
-                    'status' => 'error',
-                    'context' => __METHOD__,
-                    'error' => "Failed to move uploaded file.",
-                    'code' => 103,
-                ]);
-
-                return formatJsonResponseData([
-                        'status' => 'error',
-                        'message' => "Failed to move uploaded file.",
-                    ],
-                    103
-                );
-            }
-
-            // Read binary input stream and append it to temp file
-            if (!$in = @fopen($_FILES["file"]["tmp_name"], "rb")) {
-                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
-                    'status' => 'error',
-                    'context' => __METHOD__,
-                    'error' => "Failed to open input stream and append it to temp file.",
-                    'code' => 101,
-                ]);
-
-                return formatJsonResponseData([
-                        'status' => 'error',
-                        'message' => "Failed to open input stream and append it to temp file.",
-                    ],
-                    101
-                );
-            }
-        } else {
-            if (!$in = @fopen("php://input", "rb")) {
-                formatDebug($this->uploadLogger, 'debug', 'REBUILD ERROR' , [
-                    'status' => 'error',
-                    'context' => __METHOD__,
-                    'error' => "Failed to open input stream.",
-                    'code' => 101,
-                ]);
-
-                return formatJsonResponseData([
-                        'status' => 'error',
-                        'message' => "Failed to open input stream.",
-                    ],
-                    101
-                );
-            }
-        }
-
-        // The file is rebuild here
-        while ($buff = fread($in, 4096)) {
-            fwrite($out, $buff);
-        }
-
-        fclose($out);
-        fclose($in);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function renameAndSaveFile(): bool|string
-    {
-        // Check if file has been uploaded
-        if (!$this->chunks || $this->chunk === $this->chunks - 1) {
-            // Strip the temp .part suffix off
-            rename("{$this->filePath}.part", $this->filePath);
-            if ($this->isAllowedExtension($this->filePath)) {
-                $showId = $this->fileService->getFileDownloadPageUrl();
-                try {
-                    $zipPath = $this->fileService->moveFileToDirectory($showId, $this->filePath, $this->fileName, $this->uploadDir);
-                    if ($zipPath) {
-                        $this->fileService->directoryToZip($showId, $this->uploadDir);
-                        $this->filePath = $zipPath;
-                        $this->zipName = $showId . '.zip';
-                        $this->zipPath = $zipPath;
-                        return $this->saveFile($showId);
-                    }
-                } catch (\Exception $e) {
-                    formatDebug($this->uploadLogger, 'debug', 'ZIP ERROR' , [
-                        'status' => 'error',
-                        'message' => "Something went wrong while trying to zip: {$this->fileName}.",
-                        'context' => __METHOD__,
-                        'error' => $e->getMessage(),
-                        'code' => 500,
-                    ]);
-                }
-            }
-
-            return false;
-        }
-        return true;
+        return $response;
     }
 }
