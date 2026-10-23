@@ -5,16 +5,25 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-<<<<<<< Updated upstream
-#### => Tag 1.3.4 (current) / 2026.06.09
-- [Fix][BIGUPL-3] - Fix download button
-=======
-#### => Tag 1.3.5 (current) / 2026.06.09
+#### => Tag 1.4.0 (current) / 2026.10.23
+- [Evol][BIGUPL-6] - Upgrade PHP to 8.5 and Symfony to 8.1
+- [Evol][BIGUPL-6] - Upgrade all dependencies (Doctrine DBAL 4 / DoctrineBundle 3 / Migrations 4, PHPUnit 13, Stimulus & Turbo bundles 3, Turbo JS 8)
+- [Evol][BIGUPL-6] - CI/CD: upgrade GitHub actions, Composer cache, prod boot check before deployment, deployment fails on server command errors
+- [Evol][BIGUPL-6] - Docker image on PHP 8.5 (OPcache now built into PHP)
+- [Fix][BIGUPL-6] - Uploads failing (500) when tinyurl.com is unavailable
+- [Fix][BIGUPL-6] - 404 pages returning a 500
+- [Fix][BIGUPL-6] - Download of an unknown or deleted file returning a 500 instead of a 404
+- [Fix][BIGUPL-6] - Uppercase extensions (e.g. .JPG) uploaded but never saved
+- [Fix][BIGUPL-6] - Possible infinite loop while cleaning temporary files
+- [Security][BIGUPL-6] - Forbidden file types rejected (415) before being written on the server
+- [Security][BIGUPL-6] - Prevent path traversal through the uploaded file name
+- [Security][BIGUPL-6] - Fix reflected XSS on the 404 page
+
+#### => Tag 1.3.5 / 2026.06.09
 - [Fix] BIGUPL-4 - Fix CI/CD download/artifact version
 
 #### => Tag 1.3.4 / 2026.06.09
 - [Fix] BIGUPL-3 - Fix download button
->>>>>>> Stashed changes
 
 #### => Tag 1.3.3 / 2026.06.09
 - [Evol][BIGUPL-2] - Add local Docker configuration && upgrade symfony
@@ -106,7 +115,7 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.4.0
+#### => Tag 1.5.0
 - [Evol][BIGUPL-5] - Add new tinyurl homemade mapper
 
 ### <a name="backlog"></a> >>> 1.3- Backlog

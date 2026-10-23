@@ -9,6 +9,8 @@
 * [Project Installation](#installation)
 * [Back-end installation](#back-installation)
 * [Front-end installation](#front-installation)
+* [Uploads](#uploads)
+* [Deployment (CI/CD)](#deployment)
 
 #### Description
 This project has been created for a search and development purpose.
@@ -42,7 +44,7 @@ Browser ──:8000──> [nginx]  ──fastcgi :9000──> [php-fpm]  ──
 
 | File | Purpose |
 |---|---|
-| `Dockerfile` | Multi-stage PHP 8.5-FPM Alpine image: `base` (extensions intl, opcache, pdo_mysql, apcu + Composer) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
+| `Dockerfile` | Multi-stage PHP 8.5-FPM Alpine image: `base` (extensions intl, pdo_mysql, zip, apcu + Composer — OPcache is built into PHP since 8.5) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
 | `compose.yaml` | The 3 services (mysql, php, nginx), their network, the `mysql_data` volume and env defaults (overridable via `.env`) |
 | `docker/php.ini` | PHP settings: `upload_max_filesize`/`post_max_size` 300M (PLupload sends 250 MB chunks — the 15 GB max file size never travels in a single request), 300s timeouts |
 | `docker/opcache.ini` | OPcache enabled with `validate_timestamps=1`/`revalidate_freq=0` so code changes are picked up instantly in dev |
@@ -58,6 +60,12 @@ docker compose down                 # stop the stack (add -v to also drop the da
 ```
 
 # <a name="installation"></a>PROJECT INSTALLATION
+### Requirements (without Docker)
+- PHP **8.5** with the `ctype`, `curl`, `iconv`, `intl`, `pdo_mysql` and `zip` extensions
+- Composer 2
+- MySQL 8
+- The `zip` command line tool (used to build the archives)
+
 ### 1/ GET PROJECT FROM GIT
 
 ```git
@@ -98,7 +106,7 @@ for <http://bigupload.local>
 - From the root directory (/bigupload/), enter the command:
 - This command will install the back dependencies linked to the *composer.json*
 ```
-compose install or compose i
+composer install
 ```
 - Add your .env file using the .env.example file as a base with at least the below settings:
 
@@ -131,4 +139,33 @@ php bin/console cache:clear
 php bin/console doctrine:migrations:migrate
 php bin/console asset-map:compile
 php bin/console importmap:install
+```
+
+# <a name="uploads"></a>UPLOADS
+
+- Files are sent by PLupload to `/handleFile` in **250 MB chunks**, max file size **15 GB**.
+- Allowed extensions (case insensitive): `jpg`, `jpeg`, `png`, `gif`, `mp4`, `mov`, `pdf`, `mp3`, `vtt`, `srt`, `zip`.
+  Any other file type is rejected with a **415** before anything is written on the disk.
+- Once the last chunk is received the file is zipped in `public/uploads/<showId>.zip`, saved in database and the download page is available at `/download/<showId>` (link shortened with tinyurl.com, or the direct link if tinyurl is unavailable). Files expire after **7 days**.
+- Unfinished `.part` files older than 5 hours are removed on the next upload.
+- Upload errors are logged in `var/log/upload.log`.
+
+# <a name="deployment"></a>DEPLOYMENT (CI/CD)
+
+| Workflow | Trigger | Target |
+|---|---|---|
+| `.github/workflows/preprod.yml` | push on `develop` | `~/preprod-bigupload/website` |
+| `.github/workflows/main.yml` | push of any tag | `~/bigupload/website` (production) |
+
+Each workflow:
+1. **build** — installs the prod dependencies with PHP 8.5 (`composer install --no-dev`), checks the application boots in prod (`lint:container`), then zips the release.
+2. **deploy** — backs up the current release to `old_website`, rsyncs the new one, links the shared `.env`, `.htaccess`, `.htpasswd` and `uploads`, then runs `cache:clear`, `doctrine:migrations:migrate`, `importmap:install` and `asset:compile`. Any failing command fails the job; output is written to `log_deploy.log` on the server.
+
+**Server requirement:** PHP 8.5 must be available at `/usr/bin/php8.5-cli` and the web server must run PHP 8.5.
+
+### Releasing a new version
+```bash
+git checkout master && git merge develop
+# update CHANGELOG.md
+git tag x.y.z && git push origin master --tags   # the tag triggers the production deployment
 ```
