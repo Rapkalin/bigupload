@@ -4,7 +4,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.5",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-iconv": "*",
@@ -58,6 +58,9 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
+        "platform": {
+            "php": "8.4.1"
+        },
         "sort-packages": true
     },
     "autoload": {
@@ -83,8 +86,7 @@
         "symfony/polyfill-php81": "*",
         "symfony/polyfill-php82": "*",
         "symfony/polyfill-php83": "*",
-        "symfony/polyfill-php84": "*",
-        "symfony/polyfill-php85": "*"
+        "symfony/polyfill-php84": "*"
     },
     "scripts": {
         "auto-scripts": {
