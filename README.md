@@ -1,7 +1,7 @@
 ![node](https://img.shields.io/badge/nodejs-v8.17.0-122D05.svg?style=flat-square)
-![php](https://img.shields.io/badge/PHP-v8.2-828cb7.svg?style=flat-square)
-![composer](https://img.shields.io/badge/Composer-v2.3.7-644D31.svg?style=flat-square)
-![symfony](https://img.shields.io/badge/Symfony-v7-122D53.svg?style=flat-square)
+![php](https://img.shields.io/badge/PHP-v8.5-828cb7.svg?style=flat-square)
+![composer](https://img.shields.io/badge/Composer-v2.10-644D31.svg?style=flat-square)
+![symfony](https://img.shields.io/badge/Symfony-v8.1-122D53.svg?style=flat-square)
 
 # GETTING STARTED
 
@@ -13,11 +13,11 @@
 #### Description
 This project has been created for a search and development purpose.
 It allows a user to download heavy files such as videos, jpgs, pdf etc. using the PLupload library.
-This is a component oriented project based on Symfony 7 based project.
+This is a component oriented project based on Symfony 8 based project.
 
 # <a name="docker"></a>LOCAL DEVELOPMENT WITH DOCKER (RECOMMENDED)
 
-The full stack (Nginx + PHP-FPM 8.4 + MySQL 8) runs in Docker, no MAMP/local PHP needed.
+The full stack (Nginx + PHP-FPM 8.5 + MySQL 8) runs in Docker, no MAMP/local PHP needed.
 
 ### Quick start
 
@@ -42,7 +42,7 @@ Browser ──:8000──> [nginx]  ──fastcgi :9000──> [php-fpm]  ──
 
 | File | Purpose |
 |---|---|
-| `Dockerfile` | Multi-stage PHP 8.4-FPM Alpine image: `base` (extensions intl, opcache, pdo_mysql, apcu + Composer) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
+| `Dockerfile` | Multi-stage PHP 8.5-FPM Alpine image: `base` (extensions intl, opcache, pdo_mysql, apcu + Composer) → `development` (source mounted as volume) / `production` (source copied, prod deps, warmed cache) |
 | `compose.yaml` | The 3 services (mysql, php, nginx), their network, the `mysql_data` volume and env defaults (overridable via `.env`) |
 | `docker/php.ini` | PHP settings: `upload_max_filesize`/`post_max_size` 300M (PLupload sends 250 MB chunks — the 15 GB max file size never travels in a single request), 300s timeouts |
 | `docker/opcache.ini` | OPcache enabled with `validate_timestamps=1`/`revalidate_freq=0` so code changes are picked up instantly in dev |

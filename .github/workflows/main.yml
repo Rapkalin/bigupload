@@ -11,40 +11,45 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [ 8.4 ]
+        php: [ 8.5 ]
 
     steps:
       - name: checkout bigupload
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: ${{ matrix.php }}
+          extensions: ctype, curl, iconv, intl, pdo_mysql, zip
+          tools: composer:v2
 
-      - name: Restore the Composer cache directory
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-'8.0'-composer-
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-composer-
 
       - name: Install dependencies
-        uses: php-actions/composer@v6
-        with:
-          php_version: "8.4"
-          dev: no
-          args: --no-interaction --prefer-dist --optimize-autoloader --no-scripts --ignore-platform-req=ext-zip
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
+      - name: Check the application boots in prod
+        run: |
+          cp .env.example .env
+          APP_ENV=prod APP_DEBUG=0 php bin/console lint:container
+          rm -rf .env var/cache
 
       - name: Zip artifact for deployment
         run: |
           zip -r release.zip "bin" "config" "public" "src" "templates" "translations" "var" "vendor" "importmap.php" "symfony.lock"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: src
           path: release.zip
@@ -54,7 +59,7 @@ jobs:
     needs: build
     steps:
       - name: create or replace backup release
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
@@ -62,12 +67,12 @@ jobs:
           port: 22
           script: "[ ! -d ~/bigupload/website ] || { [ -d ~/bigupload/old_website ] && rm -rf ~/bigupload/old_website/* ; } && mv -fu ~/bigupload/website/* ~/bigupload/old_website && rm -rf ~/bigupload/website/"
       - name: checkout bigupload
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.5
 
       - name: Download artifact
         uses: actions/download-artifact@v8
@@ -79,7 +84,7 @@ jobs:
           unzip -o release.zip
 
       - name: Deploy with rsync
-        uses: burnett01/rsync-deployments@5.2
+        uses: burnett01/rsync-deployments@9.0.2
         with:
           switches: -avzr --delete
           path: ./
@@ -89,7 +94,7 @@ jobs:
           remote_key: ${{ secrets.DEPLOY_KEY }}
 
       - name: create new Symlink
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
@@ -103,7 +108,7 @@ jobs:
             ln -nsrf ~/bigupload/shared/uploads ~/bigupload/website/public/uploads
 
       - name: Clear cache, importmap and asset:compile
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
@@ -111,7 +116,8 @@ jobs:
           port: 22
           script: |
             cd ~/bigupload/website
-            /usr/bin/php8.4-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log
-            /usr/bin/php8.4-cli bin/console doctrine:migrations:migrate >> log_deploy.log
-            /usr/bin/php8.4-cli bin/console importmap:install >> log_deploy.log
-            /usr/bin/php8.4-cli bin/console asset:compile >> log_deploy.log
+            set -e
+            /usr/bin/php8.5-cli bin/console cache:clear --env=prod --no-interaction >> log_deploy.log 2>&1
+            /usr/bin/php8.5-cli bin/console doctrine:migrations:migrate --no-interaction >> log_deploy.log 2>&1
+            /usr/bin/php8.5-cli bin/console importmap:install >> log_deploy.log 2>&1
+            /usr/bin/php8.5-cli bin/console asset:compile >> log_deploy.log 2>&1

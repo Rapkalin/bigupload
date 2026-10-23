@@ -103,8 +103,6 @@ use Psr\Log\LoggerInterface;
             // $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
             /* Process $content here */
-            curl_close($curl);
-
             return $newUrl;
 
         } catch (\Exception $e) {

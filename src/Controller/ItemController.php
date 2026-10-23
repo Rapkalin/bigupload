@@ -31,6 +31,7 @@ use App\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -70,7 +71,7 @@ class ItemController extends BaseController
         EntityManagerInterface $entityManager,
         FileService $fileService,
         KernelInterface $kernel,
-        LoggerInterface $uploadLogger
+        #[Target('upload')] LoggerInterface $uploadLogger
     ) {
         $this->entityManager = $entityManager;
         $this->fileService = $fileService;
