@@ -20,16 +20,17 @@ nelmio_security:
             - 'strict-origin-when-cross-origin'
 
     # Applied on every host (no "hosts" filter: it used to restrict the CSP to local hosts only).
-    # Inline scripts must carry the csp_nonce('script') nonce.
+    # No inline script and no third-party origin: scripts are files served by the site.
     csp:
+        # Only the standard Content-Security-Policy header (no X-Content-Security-Policy for IE 10/11)
+        compat_headers: false
         enforce:
-            level1_fallback: true
+            # No 'unsafe-inline' fallback for CSP level 1 browsers
+            level1_fallback: false
             default-src:
                 - 'self'
             script-src:
                 - 'self'
-                # es-module-shims polyfill loaded by importmap() for old browsers
-                - ga.jspm.io
             style-src:
                 - 'self'
             img-src:
@@ -43,3 +44,21 @@ nelmio_security:
                 - 'self'
             frame-ancestors:
                 - 'none'
+
+    # Features the site never uses are disabled, including for any embedded content
+    permissions_policy:
+        enabled: true
+        policies:
+            browsing_topics: []
+            camera: []
+            geolocation: []
+            microphone: []
+            payment: []
+            usb: []
+
+    # Pages opened by the site (or opening it) cannot access its window
+    cross_origin_isolation:
+        enabled: true
+        paths:
+            '^/':
+                coop: same-origin

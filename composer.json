@@ -1,11 +1,11 @@
 {
     "type": "project",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-iconv": "*",
@@ -23,20 +23,16 @@
         "symfony/asset": "8.1.*",
         "symfony/asset-mapper": "8.1.*",
         "symfony/console": "8.1.*",
-        "symfony/doctrine-messenger": "8.1.*",
         "symfony/dotenv": "8.1.*",
         "symfony/expression-language": "8.1.*",
         "symfony/filesystem": "8.1.*",
         "symfony/finder": "8.1.*",
         "symfony/flex": "^2.11",
-        "symfony/form": "8.1.*",
         "symfony/framework-bundle": "8.1.*",
         "symfony/http-client": "8.1.*",
         "symfony/intl": "8.1.*",
-        "symfony/mailer": "8.1.*",
         "symfony/mime": "8.1.*",
         "symfony/monolog-bundle": "^4.1",
-        "symfony/notifier": "8.1.*",
         "symfony/process": "8.1.*",
         "symfony/property-access": "8.1.*",
         "symfony/property-info": "8.1.*",
@@ -44,13 +40,10 @@
         "symfony/runtime": "8.1.*",
         "symfony/security-bundle": "8.1.*",
         "symfony/serializer": "8.1.*",
-        "symfony/stimulus-bundle": "^3.6",
         "symfony/string": "8.1.*",
         "symfony/translation": "8.1.*",
         "symfony/twig-bundle": "8.1.*",
-        "symfony/ux-turbo": "^3.6",
         "symfony/validator": "8.1.*",
-        "symfony/web-link": "8.1.*",
         "symfony/yaml": "8.1.*",
         "twig/extra-bundle": "^3.29",
         "twig/twig": "^3.30"
@@ -62,7 +55,7 @@
             "symfony/runtime": true
         },
         "platform": {
-            "php": "8.4.1"
+            "php": "8.5.0"
         },
         "sort-packages": true
     },
@@ -89,7 +82,8 @@
         "symfony/polyfill-php81": "*",
         "symfony/polyfill-php82": "*",
         "symfony/polyfill-php83": "*",
-        "symfony/polyfill-php84": "*"
+        "symfony/polyfill-php84": "*",
+        "symfony/polyfill-php85": "*"
     },
     "scripts": {
         "auto-scripts": {

@@ -7,21 +7,11 @@
     width: inherit;
 }
 
-#card-area-content > p {
-    text-align: center;
-    font-size: 1.3em;
-    margin: 0;
-}
-
-#card-area-content > h1, #card-area-content > h2 {
+#item-expiration {
     text-align: center;
     margin: 0;
-}
-
-#card-area-content > h2 {
-    font-weight: normal;
-    font-size: 1em;
-    color: grey;
+    /* Contrast 5.33:1 on white (grey was 3.95:1) */
+    color: #6b6b6b;
 }
 
 #metadata {
@@ -31,7 +21,8 @@
 #metadata > p {
     padding: 0 5px;
     margin: 0;
-    color: grey;
+    /* Contrast 4.89:1 on whitesmoke (grey was 3.62:1) */
+    color: #6b6b6b;
 }
 
 #item-info {

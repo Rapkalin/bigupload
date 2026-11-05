@@ -33,7 +33,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.5
           extensions: ctype, curl, iconv, intl, pdo_mysql, zip
           tools: composer:v2
 
@@ -45,8 +45,8 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-php-8.4-composer-dev-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-8.4-composer-dev-
+          key: ${{ runner.os }}-php-8.5-composer-dev-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-php-8.5-composer-dev-
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-scripts
@@ -64,4 +64,8 @@ jobs:
         run: |
           cp .env.example .env
           php bin/console importmap:install
+          php bin/console lint:yaml config --parse-tags
+          php bin/console lint:twig templates
+          php bin/console lint:container
           composer test
+          php bin/console doctrine:schema:validate --env=test

@@ -21,19 +21,6 @@
     text-align: center;
 }
 
-#drop-area-off {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#drop-area-off > p {
-    text-align: center;
-    font-weight: bold;
-    font-size: 2em;
-    color: #6e6e6e;
-}
-
 #card-area-drop .icon, #card-area-upload .icon {
     color: darkgrey;
     margin-bottom: 15px;
@@ -55,10 +42,15 @@
 .card-area-title {
     font-size: 1.8em !important;
     font-weight: 600;
+    margin: 0;
+}
+
+#card-area-title-upload {
+    margin: 0.67em 0;
 }
 
 
-#card-area-subtitle > h2 {
+#card-area-subtitle > p {
     font-size: 1em !important;
     font-weight: lighter !important;
     margin: 20px 15px;
@@ -92,14 +84,13 @@
     align-items: center;
 }
 
-textarea {
-    width: 50%;
-    height: 100%;
-    line-height: 100%;
-    text-align: center;
-    border: none;
-    color: darkgrey;
-    margin-top: 15px;
+#copy-status {
+    margin: 10px 0 0;
+    color: #4c4c4c;
+}
+
+#copy-status:empty {
+    display: none;
 }
 
 #filelist {

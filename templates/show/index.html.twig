@@ -1,15 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}BIGUPLOAD{% endblock %}
+{% block title %}Download {{ item.title }}{% endblock %}
+{% block description %}{{ item.title }} ({{ item.size }}) can be downloaded for {{ item.expiration_time }}.{% endblock %}
+
+{# Shared download links are private and temporary: never in the search results #}
+{% block meta %}
+    <meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
 {% block body %}
-<div class="container ctn-row-reverse">
-    {% include 'components/card.html.twig' with {
-            'template': 'download',
-            'item': item
-        }
-    %}
-
-    {% include 'blocks/left-side.html.twig' %}
-</div>
-
+    <main class="container ctn-row">
+        {% include 'blocks/left-side.html.twig' %}
+        {% include 'components/card.html.twig' with {'template': 'download', 'item': item} %}
+    </main>
 {% endblock %}

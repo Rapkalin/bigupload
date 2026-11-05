@@ -19,6 +19,8 @@ final class UploadConfig
     public const string SHOW_ID_PREFIX = 'bgpld-';
     public const string ZIP_EXTENSION = 'zip';
     public const string PART_EXTENSION = 'part';
+    // Longest file name accepted by the file system (ext4: 255 bytes)
+    public const int MAX_FILE_NAME_BYTES = 255;
 
     /** Extensions grouped by plupload filter title */
     public const array ALLOWED_EXTENSIONS = [
@@ -41,5 +43,15 @@ final class UploadConfig
     public static function isAllowedExtension(string $fileName): bool
     {
         return in_array(strtolower(pathinfo($fileName, PATHINFO_EXTENSION)), self::allowedExtensions(), true);
+    }
+
+    /**
+     * Non-empty UTF-8 name without control characters (e.g. null byte), short enough to be written on the disk
+     */
+    public static function isValidFileName(string $fileName): bool
+    {
+        return '' !== $fileName
+            && strlen($fileName) <= self::MAX_FILE_NAME_BYTES
+            && 1 === preg_match('/^[^\p{Cc}]+$/u', $fileName);
     }
 }

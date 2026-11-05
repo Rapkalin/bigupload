@@ -2,7 +2,7 @@
 
 // Kept so that the existing server crontab keeps working: runs `bin/console app:purge-expired`.
 // Prefer calling the command directly in the crontab (see README):
-// 0 * * * * /usr/bin/php8.4-cli ~/bigupload/website/bin/console app:purge-expired --no-interaction
+// 0 * * * * /usr/bin/php8.5-cli ~/bigupload/website/bin/console app:purge-expired --no-interaction
 
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

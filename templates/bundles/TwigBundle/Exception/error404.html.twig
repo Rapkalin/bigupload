@@ -1,8 +1,13 @@
-{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %}File not found{% endblock %}
+
+{% block meta %}
+    <meta name="robots" content="noindex">
+{% endblock %}
+
 {% block body %}
-    <div class="container container-error" >
+    <main class="container container-error">
         <div class="message-error">
             {% include 'components/icon.html.twig' with {'name': 'circle-chevron-down'} %}
             <h1 class="title-error">File not found</h1>
@@ -14,5 +19,5 @@
                 'href': path('home.index')
             } %}
         </div>
-    </div>
+    </main>
 {% endblock %}

@@ -1,45 +1,45 @@
-{% set uploadConfig = 'App\\Constant\\UploadConfig::' %}
 <div id="card-area-drop"
      data-upload-url="{{ path('file.handle') }}"
-     data-chunk-size="{{ constant(uploadConfig ~ 'CHUNK_SIZE') }}"
-     data-max-file-size="{{ constant(uploadConfig ~ 'MAX_FILE_SIZE') }}"
-     data-allowed-extensions="{{ constant(uploadConfig ~ 'ALLOWED_EXTENSIONS')|json_encode }}"
+     data-chunk-size="{{ constant(upload_config ~ 'CHUNK_SIZE') }}"
+     data-max-file-size="{{ constant(upload_config ~ 'MAX_FILE_SIZE') }}"
+     data-max-file-name-bytes="{{ constant(upload_config ~ 'MAX_FILE_NAME_BYTES') }}"
+     data-allowed-extensions="{{ constant(upload_config ~ 'ALLOWED_EXTENSIONS')|json_encode }}"
 >
     {% include 'components/icon.html.twig' with {'name': 'paper-plane'} %}
-    <label class="card-area-title" id="card-area-title-drop">Drop your file here</label>
+    {# Also shows the errors of the selected file (type, size): announced by screen readers #}
+    <h2 class="card-area-title" id="card-area-title-drop" aria-live="polite">Drop your file here</h2>
     <span id="drop-area-or">or</span>
-    {% include 'components/buttons/link-button.html.twig' with {
+    {% include 'components/buttons/classic-button.html.twig' with {
         'id': 'browse-files-btn',
         'color': 'blue',
-        'text': 'Choose your file',
-        'href': 'javascript:;'
+        'text': 'Choose your file'
     } %}
     <div id="card-area-subtitle">
-        <h2>Allowed extensions: {{ constant(uploadConfig ~ 'ALLOWED_EXTENSIONS')|reduce((all, extensions) => all|merge(extensions), [])|join(', ') }}</h2>
-        <h2>Max file size: {{ constant(uploadConfig ~ 'MAX_FILE_SIZE_GB') }}GB</h2>
-        <h2 id="counter">Already {{ counter }} files uploaded!</h2>
+        <p>Allowed extensions: {{ constant(upload_config ~ 'ALLOWED_EXTENSIONS')|reduce((all, extensions) => all|merge(extensions), [])|join(', ') }}</p>
+        <p>Max file size: {{ constant(upload_config ~ 'MAX_FILE_SIZE_GB') }}GB</p>
+        <p id="counter">Already {{ counter }} files uploaded!</p>
     </div>
 </div>
 
 <div id="card-area-upload" class="hidden">
     {% include 'components/icon.html.twig' with {'name': 'cloud-arrow-up'} %}
-    <h1 class="card-area-title" id="card-area-title-upload">Click the button to start the upload</h1>
+    {# Upload progress, result and errors: announced by screen readers #}
+    <h2 class="card-area-title" id="card-area-title-upload" aria-live="polite">Click the button to start the upload</h2>
 
     <div id="filelist"></div>
 
-    <div id="file-processing" class="hidden">
-        You file is almost ready!<br>
+    <p id="file-processing" class="hidden" aria-live="polite">
+        Your file is almost ready!<br>
         This step can take a few seconds... :)
-    </div>
+    </p>
 
-    {% include 'components/buttons/link-button.html.twig' with {
+    {% include 'components/buttons/classic-button.html.twig' with {
         'id': 'upload-files',
         'color': 'blue',
-        'text': 'Upload your file',
-        'href': 'javascript:;'
+        'text': 'Upload your file'
     } %}
 
-    <input readonly id="downloadLink" class="hidden">
+    <input readonly id="downloadLink" class="hidden" aria-label="Download link of your file">
     <div id="download-or-copy" class="hidden">
         {% include 'components/buttons/classic-button.html.twig' with {
             'id': 'animatedButton',
@@ -47,8 +47,9 @@
             'color': 'blue',
             'text': 'Copy your link'
         } %}
-        <script defer src="{{ asset("scripts/button_animation.js") }}"></script>
-        <script defer src="{{ asset("scripts/copy_to_clipboard.js") }}"></script>
+        <p id="copy-status" role="status"></p>
+        <script defer src="{{ asset('scripts/button_animation.js') }}"></script>
+        <script defer src="{{ asset('scripts/copy_to_clipboard.js') }}"></script>
     </div>
 
     <a id="refreshButton" class="downloadClipBoard hidden" href="{{ path('home.index') }}">Upload a new file</a>

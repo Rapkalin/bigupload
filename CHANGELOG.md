@@ -5,7 +5,21 @@
 * [1.3 - backlog](#backlog)
 
 ### <a name="changelog"></a> >>> 1.1 - Change log
-#### => Tag 1.6.0 (current) / 2026.10.23
+#### => Tag 1.7.0 (current) / 2026.11.05
+- [Evol][BIGUPL-7] - PHP 8.5 required (production web server on PHP 8.5), Symfony 8.1.11 and all dependencies up to date, Symfony recipes updated
+- [Evol][BIGUPL-7] - CI/CD on PHP 8.5 with YAML/Twig/container linters and database schema validation, Docker image on PHP 8.5 / Composer 2.11 / Nginx 1.30
+- [Fix][BIGUPL-7] - A file name longer than 255 bytes or with control characters failed (500) only once the whole file was uploaded: now refused before sending (400)
+- [Fix][BIGUPL-7] - Sitemap pointing to the former domain (bigupload.myminicom.com), 500 error page saying "page couldn't be located"
+- [Security][BIGUPL-7] - HSTS also sent on the pages rendered by Symfony, Permissions-Policy and Cross-Origin-Opener-Policy headers
+- [Security][BIGUPL-7] - Stricter CSP: no third-party script origin (ga.jspm.io), no 'unsafe-inline' fallback
+- [Security][BIGUPL-7] - Hidden files (.DS_Store...) no longer served, uploads sent from another site refused
+- [Perf][BIGUPL-7] - Background image in WebP 1920 px (577 KB -> 120 KB), unused Stimulus/Turbo removed (9 JS modules), stylesheets loaded in parallel: home page 677 KB / 24 requests -> 166 KB / 15 requests
+- [Perf][BIGUPL-7] - Unused Messenger, Mailer, Notifier, Form and WebLink components removed (unused messenger_messages table dropped)
+- [A11y][BIGUPL-7] - RGAA: logical heading order and reading order, main landmark, real buttons, labelled link field and progress bars, upload status and errors announced to screen readers, text contrasts, visible keyboard focus, reduced motion
+- [SEO][BIGUPL-7] - Descriptive page titles and descriptions, canonical URL, Open Graph tags for shared links, download pages and file downloads kept out of search engines, sitemap declared in robots.txt
+- [Evol][BIGUPL-7] - Copy of the download link with the Clipboard API and a visible confirmation
+
+#### => Tag 1.6.0 / 2026.10.23
 - [Evol][BIGUPL-6] - Semver version (composer.json) displayed in the footer of every page, deployment refused if the tag differs from it
 - [Evol][BIGUPL-6] - Non-regression tests (PHPUnit, 65 tests) run in CI on every pull request and before every deployment, with `composer audit`
 - [Evol][BIGUPL-6] - Purge moved to the `app:purge-expired` command (based on the expiration date in database), `scripts/cron/cron.php` kept as an alias
@@ -139,14 +153,13 @@
 - [Evol] First tag && Add github actiond
 
 ### <a name="next-release"></a> >>> 1.2- Next release to come
-#### => Tag 1.7.0
+#### => Tag 1.8.0
 - [Evol][BIGUPL-5] - Add new tinyurl homemade mapper
 
 ### <a name="backlog"></a> >>> 1.3- Backlog
 - [Evol] Review UI for uploaded file counter
 - [Evol] Review UI for upload progress bar
 - [Evol] UX/UI changes to pages => HomePage, Upload, Download
-- [Evol] Add unit tests
 - [Evol] Add observability for debugging production errors => create a dedicated mailbox
 - [Evol] Add Tagging plan / Size attributes / schema.org
 - [Evol] Enable uploading multiple files simultaneously

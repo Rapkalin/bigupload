@@ -1,25 +1,35 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Upload your heavy files with Bigupload">
-        <meta name="keywords" content="Upload files, heavy files, files transfer, Bigupload">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {# set captures keep the blocks already escaped: printed below without double escaping #}
+        {% set page_title %}{% if block('title') is defined %}{{ block('title') }} - {% endif %}Bigupload{% endset %}
+        {% set page_description %}
+            {%- if block('description') is defined -%}
+                {{ block('description') }}
+            {%- else -%}
+                Send large files up to {{ constant(upload_config ~ 'MAX_FILE_SIZE_GB') }} GB with Bigupload: drop your file and share its download link, valid for {{ constant(upload_config ~ 'EXPIRATION_DAYS') }} days.
+            {%- endif -%}
+        {% endset %}
+        <title>{{ page_title }}</title>
+        <meta name="description" content="{{ page_description }}">
         <meta name="author" content="Rapkalin">
-        <title>{% block title %}Bigupload{% endblock %}</title>
-        <link rel="icon" href="{{ asset("styles/images/favicon.svg") }}" sizes="any" type="image/svg+xml" >
+        {% block meta %}{% endblock %}
+        <meta property="og:site_name" content="Bigupload">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ page_title }}">
+        <meta property="og:description" content="{{ page_description }}">
+        <link rel="icon" href="{{ asset('styles/images/favicon.svg') }}" sizes="any" type="image/svg+xml">
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset("styles/app.css") }}">
+            {# Linked one by one (no @import in app.css): the browser downloads them in parallel #}
+            {% for stylesheet in ['app', 'components/buttons', 'components/icon', 'components/footer', 'components/card', 'blocks/left-side', 'blocks/upload-card', 'blocks/download-card', 'bundles/error'] %}
+                <link rel="stylesheet" href="{{ asset('styles/' ~ stylesheet ~ '.css') }}">
+            {% endfor %}
         {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}
-                {{ importmap('app', {'nonce': csp_nonce('script')}) }}
-            {% endblock %}
-        {% endblock %}
+        {% block javascripts %}{% endblock %}
     </head>
-    {# Turbo Drive disabled: the page scripts (upload.js, plupload) expect full page loads #}
-    <body data-turbo="false">
+    <body>
         {% block body %}{% endblock %}
         <footer id="app-footer">Bigupload v{{ app_version }}</footer>
     </body>
