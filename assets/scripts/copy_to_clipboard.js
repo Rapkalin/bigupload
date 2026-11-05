@@ -1,49 +1,15 @@
-document.getElementById("animatedButton").addEventListener("click", copy_to_clipboard);
-function copy_to_clipboard() {
-    window.Clipboard = (function(window, document, navigator) {
-        let textArea,
-            copy;
+// Copies the download link; the result is shown and announced by screen readers (role="status")
+const copyButton = document.getElementById('animatedButton');
+const copyStatus = document.getElementById('copy-status');
+const linkInput = document.getElementById('downloadLink');
 
-        function isOS() {
-            return navigator.userAgent.match(/ipad|iphone/i);
-        }
-
-        function createTextArea(text) {
-            textArea = document.createElement('textArea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-        }
-
-        function selectText() {
-            let range,
-                selection;
-
-            if (isOS()) {
-                range = document.createRange();
-                range.selectNodeContents(textArea);
-                selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-                textArea.setSelectionRange(0, 999999);
-            } else {
-                textArea.select();
-            }
-        }
-
-        function copyToClipboardText() {
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        }
-
-
-        let text = document.getElementById("downloadLink");
-        console.log('Download URL: ', text.value);
-        createTextArea(text.value);
-        selectText();
-        copyToClipboardText();
-
-        return {
-            copy: text.value
-        };
-    })(window, document, navigator);
-}
+copyButton.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(linkInput.value);
+    copyStatus.textContent = 'Link copied to your clipboard!';
+  } catch (e) {
+    // Clipboard refused by the browser: the link is selected so that it can be copied by hand
+    linkInput.select();
+    copyStatus.textContent = 'Press Ctrl+C (Cmd+C on Mac) to copy the selected link.';
+  }
+});

@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends BaseController
 {
-    #[Route('/', name: 'home.index')]
+    #[Route('/', name: 'home.index', methods: ['GET'])]
     public function index(UploadCounterRepository $uploadCounterRepository): Response
     {
         return $this->render('home/index.html.twig', ['counter' => $uploadCounterRepository->get()]);

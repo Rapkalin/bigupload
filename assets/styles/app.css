@@ -1,18 +1,10 @@
-@import url("bundles/error.css");
-@import url("components/buttons.css");
-@import url("components/icon.css");
-@import url("components/footer.css");
-@import url("components/card.css");
-@import url("blocks/left-side.css");
-@import url("blocks/upload-card.css");
-@import url("blocks/download-card.css");
-
 html {
     background: white;
 }
 
 body {
-    background-image: url("images/bigupload-background.jpg");
+    /* Darkened so that the white title and footer stay readable (contrast) on the light parts of the photo */
+    background-image: linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .35)), url("images/bigupload-background.webp");
     background-size: cover;
     background-position: center;
     font-family: Verdana, sans-serif;
@@ -27,24 +19,34 @@ body {
     height: inherit;
 }
 
-.ctn-centered {
-    align-items: center;
-    justify-content: center;
-}
-
 .hidden {
     display: none !important;
 }
 
-.ctn-row-reverse {
-    flex-direction: row-reverse;
+.ctn-row {
     align-items: center;
+    /* Title then card, packed on the right of the page */
+    justify-content: flex-end;
 }
 
 @media (max-width:960px) {
-    .ctn-row-reverse {
-        flex-direction: column-reverse;
+    .ctn-row {
+        flex-direction: column;
         justify-content: center;
+    }
+}
+
+/* Keyboard focus always visible, on the photo as on the white card */
+a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 3px solid #1a3a8f;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px white;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
     }
 }
 

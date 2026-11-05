@@ -33,6 +33,9 @@ DirectoryIndex index.php
     # never directly: this also hides the uploads in progress (.part)
     RewriteRule ^uploads(/|$) - [R=404,L]
 
+    # Hidden files (.DS_Store, .env...) are never served
+    RewriteRule (^|/)\.(?!well-known/) - [R=404,L]
+
     # Determine the RewriteBase automatically and set it as environment variable.
     # If you are using Apache aliases to do mass virtual hosting or installed the
     # project in a subdirectory, the base path will be prepended to allow proper
@@ -59,7 +62,7 @@ DirectoryIndex index.php
     # - use Apache >= 2.3.9 and replace all L flags by END flags and remove the
     #   following RewriteCond (best solution)
     RewriteCond %{ENV:REDIRECT_STATUS} =""
-    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=301,L]
+    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=308,L]
 
     # If the requested filename exists, simply serve it.
     # We only want to let Apache serve files and not directories.

@@ -1,13 +1,18 @@
-{# templates/bundles/TwigBundle/Exception/error404.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %}Error{% endblock %}
+
+{% block meta %}
+    <meta name="robots" content="noindex">
+{% endblock %}
+
 {% block body %}
-    <div class="container container-error" >
+    <main class="container container-error">
         <div class="message-error">
             <h1 class="title-error">Error</h1>
             <p class="text-error">
-                The requested page couldn't be located. <br>
-                Checkout for any URL misspelling
+                Something went wrong on our side.<br>
+                Please try again in a few minutes.
             </p>
             {% include 'components/buttons/link-button.html.twig' with {
                 'id': 'error-404-btn',
@@ -16,5 +21,5 @@
                 'href': path('home.index')
             } %}
         </div>
-    </div>
+    </main>
 {% endblock %}

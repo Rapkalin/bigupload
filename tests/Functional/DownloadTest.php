@@ -13,11 +13,25 @@ class DownloadTest extends AppWebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextSame('#item-title', 'photo.jpg');
         self::assertSelectorTextSame('#item-extension', 'jpg');
-        self::assertSelectorTextContains('h2', 'This file expires in 6 days');
+        self::assertSelectorTextSame('#item-expiration', 'This file expires in 6 days');
         self::assertSame(
             '/downloadFile/' . $item->getShowId(),
             $crawler->filter('#animatedButton')->attr('href')
         );
+    }
+
+    /**
+     * Shared download links are private: kept out of the search engines, with a title naming the file
+     */
+    public function testDownloadPageIsNotIndexedAndNamesTheFile(): void
+    {
+        $item = $this->createItem();
+
+        $this->client->request('GET', '/download/' . $item->getShowId());
+
+        self::assertSelectorExists('meta[name="robots"][content="noindex, nofollow"]');
+        self::assertPageTitleSame('Download photo.jpg - Bigupload');
+        self::assertSelectorExists('meta[property="og:title"][content="Download photo.jpg - Bigupload"]');
     }
 
     public function testFileNameIsEscapedOnTheDownloadPage(): void
@@ -30,6 +44,9 @@ class DownloadTest extends AppWebTestCase
         self::assertResponseIsSuccessful();
         self::assertStringNotContainsString('<img src=x', $this->client->getResponse()->getContent());
         self::assertSelectorTextSame('#item-title', '<img src=x onerror=alert(1)>.jpg');
+        // Escaped once in the <title> and the meta tags (no double escaping)
+        self::assertPageTitleSame('Download <img src=x onerror=alert(1)>.jpg - Bigupload');
+        self::assertStringContainsString('content="Download &lt;img src=x onerror=alert(1)&gt;.jpg - Bigupload"', $this->client->getResponse()->getContent());
     }
 
     public function testDownloadReturnsTheZip(): void

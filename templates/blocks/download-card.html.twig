@@ -1,21 +1,21 @@
 <div id="card-area-drop">
     {% include 'components/icon.html.twig' with {'name': 'cloud-arrow-down'} %}
     <div id="card-area-content">
-        <label class="card-area-title" id="card-area-title-download">Ready? GO!</label>
-        <h2>This file expires in {{ item.expiration_time }}</h2>
+        <h2 class="card-area-title" id="card-area-title-download">Ready? GO!</h2>
+        <p id="item-expiration">This file expires in {{ item.expiration_time }}</p>
 
         <div id="item-info">
             <p id="item-title">{{ item.title }}</p>
 
             <div id="metadata">
                 <p id="item-size">{{ item.size }}</p>
-                <p>-</p>
+                <p aria-hidden="true">-</p>
                 <p id="item-extension">{{ item.extension }}</p>
             </div>
         </div>
     </div>
 
-    <script defer src="{{ asset("scripts/button_animation.js") }}"></script>
+    <script defer src="{{ asset('scripts/button_animation.js') }}"></script>
     {% include 'components/buttons/link-button.html.twig' with {
         'id': 'animatedButton',
         'color': 'blue',

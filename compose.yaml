@@ -26,7 +26,7 @@ services:
       start_period: 30s
 
   # ------------------------------------------------------------------ #
-  # PHP-FPM 8.4 — Symfony
+  # PHP-FPM 8.5 — Symfony
   # ------------------------------------------------------------------ #
   php:
     build:
@@ -52,7 +52,7 @@ services:
   # Accessible at http://localhost:8000
   # ------------------------------------------------------------------ #
   nginx:
-    image: nginx:1.27-alpine
+    image: nginx:1.30-alpine
     container_name: ${COMPOSE_PROJECT_NAME:-bigupload}_nginx
     restart: unless-stopped
     volumes:

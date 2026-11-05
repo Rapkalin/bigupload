@@ -147,6 +147,60 @@ class UploadTest extends AppWebTestCase
         yield 'svg' => ['image.svg'];
     }
 
+    /**
+     * Regression: these names were accepted on every chunk, then failed (500) once the whole file was uploaded.
+     */
+    #[DataProvider('invalidFileNameProvider')]
+    public function testInvalidFileNamesAreRefusedBeforeBeingWritten(string $name): void
+    {
+        $response = $this->upload($name, 'content');
+
+        self::assertResponseStatusCodeSame(400);
+        self::assertSame('The file name is invalid or too long, please rename the file.', $response['message']);
+        self::assertSame([], array_values(array_diff(scandir($this->uploadDir()), ['.', '..'])));
+        self::assertNull($this->findItem());
+    }
+
+    public static function invalidFileNameProvider(): iterable
+    {
+        yield 'longer than 255 bytes' => [str_repeat('a', UploadConfig::MAX_FILE_NAME_BYTES - 3) . '.jpg'];
+        yield 'multibyte, longer than 255 bytes' => [str_repeat('é', 126) . '.jpg'];
+        yield 'null byte' => ["photo\0.jpg"];
+        yield 'invalid UTF-8' => ["photo\xff.jpg"];
+        yield 'control character' => ["photo\n.jpg"];
+    }
+
+    public function testLongestFileNameIsAccepted(): void
+    {
+        $name = str_repeat('a', UploadConfig::MAX_FILE_NAME_BYTES - 4) . '.jpg';
+
+        $this->upload($name, 'content');
+
+        self::assertResponseStatusCodeSame(201);
+        self::assertSame($name, $this->findItem()->getTitle());
+    }
+
+    /**
+     * A form of another site (enctype="text/plain") could upload files from the visitor's browser.
+     */
+    public function testUploadsFromAnotherSiteAreRefused(): void
+    {
+        $this->client->request('POST', '/handleFile?name=photo.jpg&chunk=0&chunks=1', server: ['HTTP_SEC_FETCH_SITE' => 'cross-site'], content: 'content');
+
+        self::assertResponseStatusCodeSame(403);
+        self::assertNull($this->findItem());
+        // The visitor's rate limit is not consumed
+        $limit = $this->getService('limiter.upload')->create(self::CLIENT_IP)->consume(0);
+        self::assertSame(UploadConfig::UPLOADS_PER_HOUR, $limit->getRemainingTokens());
+    }
+
+    public function testUploadsFromTheSiteAreAccepted(): void
+    {
+        $this->client->request('POST', '/handleFile?name=photo.jpg&chunk=0&chunks=1', server: ['HTTP_SEC_FETCH_SITE' => 'same-origin'], content: 'content');
+
+        self::assertResponseStatusCodeSame(201);
+    }
+
     public function testUppercaseExtensionsAreAccepted(): void
     {
         $this->upload('PHOTO.JPG', 'content');

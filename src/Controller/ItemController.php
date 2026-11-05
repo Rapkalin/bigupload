@@ -19,6 +19,8 @@ class ItemController extends BaseController
     private const int CHUNK_TIME_LIMIT = 5 * 60;
     private const string STATUS_SUCCESS = 'success';
     private const string STATUS_ERROR = 'error';
+    private const string FETCH_SITE_HEADER = 'Sec-Fetch-Site';
+    private const string CROSS_SITE = 'cross-site';
 
     public function __construct(
         private readonly ChunkUploadService $chunkUploadService,
@@ -39,6 +41,12 @@ class ItemController extends BaseController
         $chunk = $request->query->getInt('chunk');
 
         try {
+            // Chunks are only sent by upload.js: a request sent by another site (e.g. a form posted
+            // with enctype="text/plain") must not upload files, nor use the visitor's rate limit
+            if (self::CROSS_SITE === $request->headers->get(self::FETCH_SITE_HEADER)) {
+                throw new UploadException('Uploads from another site are not allowed.', Response::HTTP_FORBIDDEN);
+            }
+
             if (0 === $chunk && !$this->uploadLimiter->create($request->getClientIp())->consume()->isAccepted()) {
                 throw new UploadException('Too many uploads, please try again later.', Response::HTTP_TOO_MANY_REQUESTS);
             }

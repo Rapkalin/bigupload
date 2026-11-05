@@ -28,6 +28,26 @@ class UploadConfigTest extends TestCase
         yield ['', false];
     }
 
+    #[DataProvider('validFileNameProvider')]
+    public function testIsValidFileName(string $fileName, bool $expected): void
+    {
+        self::assertSame($expected, UploadConfig::isValidFileName($fileName));
+    }
+
+    public static function validFileNameProvider(): iterable
+    {
+        yield ['photo.jpg', true];
+        yield ['My holidays (1) - été.jpg', true];
+        yield ['日本.mp4', true];
+        yield [str_repeat('a', 251) . '.jpg', true];
+        yield [str_repeat('a', 252) . '.jpg', false];
+        yield ['', false];
+        yield ["a\0b.jpg", false];
+        yield ["a\tb.jpg", false];
+        yield ["a\x7fb.jpg", false];
+        yield ["\xff.jpg", false];
+    }
+
     public function testAllowedExtensionsAreTheFlattenedGroups(): void
     {
         self::assertSame(

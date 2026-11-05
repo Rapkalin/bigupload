@@ -1,2 +1,5 @@
 User-agent: *
-Allow: /
+# Files of the users: private, temporary and heavy
+Disallow: /downloadFile/
+
+Sitemap: https://bigupload.rapkalin.fr/sitemap.xml

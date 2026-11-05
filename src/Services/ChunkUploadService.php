@@ -38,6 +38,11 @@ final class ChunkUploadService
     {
         $chunks = max($chunks, 1);
 
+        // Checked on every chunk: an invalid name used to fail only after the whole file was uploaded
+        if (!UploadConfig::isValidFileName($fileName)) {
+            throw new UploadException('The file name is invalid or too long, please rename the file.', Response::HTTP_BAD_REQUEST);
+        }
+
         if (!UploadConfig::isAllowedExtension($fileName)) {
             throw new UploadException("$fileName has a file type that is not allowed.", Response::HTTP_UNSUPPORTED_MEDIA_TYPE);
         }
